@@ -1,0 +1,32 @@
+ISim log file
+Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/decoder-2-to-4/decoder-4-to-2-simulator/tb_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/decoder-2-to-4/decoder-4-to-2-simulator/tb_isim_beh.wdb 
+ISim P.20131013 (signature 0xfbc00daa)
+----------------------------------------------------------------------
+WARNING:Security:42 - Your software subscription period has lapsed. Your current version of Xilinx tools will continue to function, but you no longer qualify for Xilinx software updates or new releases.
+
+
+----------------------------------------------------------------------
+This is a Full version of ISim.
+Time resolution is 1 ps
+# onerror resume
+# wave add /
+# run 1000 ns
+Simulator is doing circuit initialization process.
+Finished circuit initialization process.
+in = 00, en = 0, HL = 0, data_out = 1111
+in = 01, en = 0, HL = 0, data_out = 1111
+in = 10, en = 0, HL = 0, data_out = 1111
+in = 11, en = 0, HL = 0, data_out = 1111
+in = 00, en = 0, HL = 1, data_out = 0000
+in = 01, en = 0, HL = 1, data_out = 0000
+in = 10, en = 0, HL = 1, data_out = 0000
+in = 11, en = 0, HL = 1, data_out = 0000
+in = 00, en = 1, HL = 0, data_out = 1110
+in = 01, en = 1, HL = 0, data_out = 1101
+in = 10, en = 1, HL = 0, data_out = 1011
+in = 11, en = 1, HL = 0, data_out = 0111
+in = 00, en = 1, HL = 1, data_out = 0001
+in = 01, en = 1, HL = 1, data_out = 0010
+in = 10, en = 1, HL = 1, data_out = 0100
+in = 11, en = 1, HL = 1, data_out = 1000
+# exit 0

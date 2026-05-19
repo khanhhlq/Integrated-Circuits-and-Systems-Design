@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -lib "unisims_ver" -lib "unimacro_ver" -lib "xilinxcorelib_ver" -lib "secureip" -o "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/decoder-2-to-4/decoder-4-to-2-simulator/tb_isim_beh.exe" -prj "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/decoder-2-to-4/decoder-4-to-2-simulator/tb_beh.prj" "work.tb" "work.glbl" 
