@@ -13,4 +13,8 @@ Time resolution is 1 ps
 # run 1000 ns
 Simulator is doing circuit initialization process.
 Finished circuit initialization process.
-Stopped at time : 40 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/half adder/testbench.v" Line 24
+At time 0: a=0 b=0, sum=0, carry = 0
+At time 200000: a=0 b=1, sum=1, carry = 0
+At time 400000: a=1 b=0, sum=1, carry = 0
+At time 600000: a=1 b=1, sum=0, carry = 1
+# exit 0
