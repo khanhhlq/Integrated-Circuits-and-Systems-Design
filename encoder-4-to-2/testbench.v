@@ -6,6 +6,7 @@ module tb;
 
     initial begin
         in = 4'b0000; en = 0; HL = 0;
+        #10 in = 4'b0000; en = 0; HL = 1;
         #10 in = 4'b0001; en = 1; HL = 1;
         #10 in = 4'b0010; en = 1; HL = 1;
         #10 in = 4'b0100; en = 1; HL = 1;

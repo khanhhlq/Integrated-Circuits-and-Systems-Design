@@ -8,7 +8,7 @@ module encoder_4_to_2(input [3:0] in, input en, HL, output [1:0] data_out);
             else if (in == 4'b0010) temp = 2'b01;
             else if (in == 4'b0100) temp = 2'b10;
             else if (in == 4'b1000) temp = 2'b11;
-            else temp = 2'bxx;
+            else temp = 2'b00;
         end
         else temp = 2'b00;
     end
