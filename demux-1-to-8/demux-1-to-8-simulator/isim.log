@@ -1,2 +1,24 @@
 ISim log file
 Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/demux-1-to-8/demux-1-to-8-simulator/tb_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/demux-1-to-8/demux-1-to-8-simulator/tb_isim_beh.wdb 
+ISim P.20131013 (signature 0xfbc00daa)
+----------------------------------------------------------------------
+WARNING:Security:42 - Your software subscription period has lapsed. Your current version of Xilinx tools will continue to function, but you no longer qualify for Xilinx software updates or new releases.
+
+
+----------------------------------------------------------------------
+This is a Full version of ISim.
+Time resolution is 1 ps
+# onerror resume
+# wave add /
+# run 1000 ns
+Simulator is doing circuit initialization process.
+Finished circuit initialization process.
+Test case 1: sel=000, dout=00000001
+Test case 2: sel=001, dout=00000010
+Test case 3: sel=010, dout=00000100
+Test case 4: sel=011, dout=00001000
+Test case 5: sel=100, dout=00010000
+Test case 6: sel=101, dout=00100000
+Test case 7: sel=110, dout=01000000
+Test case 8: sel=111, dout=10000000
+Test case with din=0: sel=000, dout=00000000
