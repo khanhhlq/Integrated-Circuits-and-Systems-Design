@@ -14,3 +14,4 @@ module encoder_4_to_2(input [3:0] in, input en, HL, output [1:0] data_out);
     end
     assign data_out = (HL == 1'b1) ? temp : ~temp;
 endmodule
+
