@@ -22,3 +22,4 @@ Test case 6: sel=101, dout=00100000
 Test case 7: sel=110, dout=01000000
 Test case 8: sel=111, dout=10000000
 Test case with din=0: sel=000, dout=00000000
+# exit 0
