@@ -1,0 +1,32 @@
+ISim log file
+Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/decoder-for-7-seg-led/decoder-for-7-seg-led-simulator/tb_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/decoder-for-7-seg-led/decoder-for-7-seg-led-simulator/tb_isim_beh.wdb 
+ISim P.20131013 (signature 0xfbc00daa)
+----------------------------------------------------------------------
+WARNING:Security:42 - Your software subscription period has lapsed. Your current version of Xilinx tools will continue to function, but you no longer qualify for Xilinx software updates or new releases.
+
+
+----------------------------------------------------------------------
+This is a Full version of ISim.
+Time resolution is 1 ps
+# onerror resume
+# wave add /
+# run 1000 ns
+Simulator is doing circuit initialization process.
+Finished circuit initialization process.
+Test case 1: in=0000, seg=0111111
+Test case 2: in=0001, seg=0000110
+Test case 3: in=0010, seg=1011011
+Test case 4: in=0011, seg=1001111
+Test case 5: in=0100, seg=1100110
+Test case 6: in=0101, seg=1101101
+Test case 7: in=0110, seg=1111101
+Test case 8: in=0111, seg=0000111
+Test case 9: in=1000, seg=1111111
+Test case 10: in=1001, seg=1101111
+Test case 11: in=1010, seg=0000000
+Test case 12: in=1011, seg=0000000
+Test case 13: in=1100, seg=0000000
+Test case 14: in=1101, seg=0000000
+Test case 15: in=1110, seg=0000000
+Test case 16: in=1111, seg=0000000
+# exit 0
