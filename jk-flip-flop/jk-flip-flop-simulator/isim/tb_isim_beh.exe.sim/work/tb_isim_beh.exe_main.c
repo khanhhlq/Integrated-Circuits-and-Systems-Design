@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     xsi_register_info(&xsi_info);
 
     xsi_register_min_prec_unit(-12);
-    work_m_02106519445904404821_0370641065_init();
+    work_m_01710178727497646210_0370641065_init();
     work_m_02709134801562754512_3671711236_init();
     work_m_16541823861846354283_2073120511_init();
 

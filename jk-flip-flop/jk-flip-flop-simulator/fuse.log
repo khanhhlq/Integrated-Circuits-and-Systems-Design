@@ -9,13 +9,13 @@ Analyzing Verilog file "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into li
 Starting static elaboration
 Completed static elaboration
 Fuse Memory Usage: 94928 KB
-Fuse CPU Usage: 1290 ms
+Fuse CPU Usage: 1320 ms
 Compiling module jk_flip_flop
 Compiling module tb
 Compiling module glbl
 Time Resolution for simulation is 1ps.
 Compiled 3 Verilog Units
 Built simulation executable /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/jk-flip-flop/jk-flip-flop-simulator/tb_isim_beh.exe
-Fuse Memory Usage: 98072 KB
-Fuse CPU Usage: 1340 ms
-GCC CPU Usage: 280 ms
+Fuse Memory Usage: 98048 KB
+Fuse CPU Usage: 1350 ms
+GCC CPU Usage: 250 ms
