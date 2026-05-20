@@ -21,3 +21,4 @@ Test case 5: r=0, s=1, clk=0, q=x, qb=x
 Test case 6: r=1, s=0, clk=0, q=x, qb=x
 Test case 7: r=0, s=0, clk=0, q=x, qb=x
 Test case 8: r=1, s=1, clk=0, q=x, qb=x
+# exit 0
