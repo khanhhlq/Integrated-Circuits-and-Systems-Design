@@ -1,2 +1,31 @@
 ISim log file
 Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/jk-flip-flop/jk-flip-flop-simulator/tb_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/jk-flip-flop/jk-flip-flop-simulator/tb_isim_beh.wdb 
+ISim P.20131013 (signature 0xfbc00daa)
+----------------------------------------------------------------------
+WARNING:Security:42 - Your software subscription period has lapsed. Your current version of Xilinx tools will continue to function, but you no longer qualify for Xilinx software updates or new releases.
+
+
+----------------------------------------------------------------------
+This is a Full version of ISim.
+Time resolution is 1 ps
+# onerror resume
+# wave add /
+# run 1000 ns
+Simulator is doing circuit initialization process.
+Finished circuit initialization process.
+Time=0ns | PRE=0 CLR=0 | CLK=x | J=x K=x | Q=1 QD=1
+Time=10ns | PRE=0 CLR=1 | CLK=x | J=x K=x | Q=1 QD=1
+Time=20ns | PRE=1 CLR=0 | CLK=x | J=x K=x | Q=0 QD=1
+Time=30ns | PRE=1 CLR=1 | CLK=0 | J=x K=x | Q=0 QD=1
+Time=40ns | PRE=1 CLR=1 | CLK=1 | J=x K=x | Q=0 QD=1
+Time=45ns | PRE=1 CLR=1 | CLK=1 | J=0 K=0 | Q=0 QD=1
+Time=50ns | PRE=1 CLR=1 | CLK=0 | J=0 K=0 | Q=0 QD=1
+Time=55ns | PRE=1 CLR=1 | CLK=1 | J=0 K=1 | Q=0 QD=1
+Time=60ns | PRE=1 CLR=1 | CLK=0 | J=0 K=1 | Q=0 QD=1
+Time=65ns | PRE=1 CLR=1 | CLK=1 | J=1 K=0 | Q=0 QD=1
+Time=70ns | PRE=1 CLR=1 | CLK=0 | J=1 K=0 | Q=1 QD=0
+Time=75ns | PRE=1 CLR=1 | CLK=1 | J=1 K=1 | Q=1 QD=0
+Time=80ns | PRE=1 CLR=1 | CLK=0 | J=1 K=1 | Q=0 QD=1
+Time=85ns | PRE=1 CLR=1 | CLK=1 | J=1 K=1 | Q=0 QD=1
+Time=95ns | PRE=1 CLR=1 | CLK=0 | J=1 K=1 | Q=1 QD=0
+Mo phong thanh cong va hoan tat!
