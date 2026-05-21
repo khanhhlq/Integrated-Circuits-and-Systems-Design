@@ -29,3 +29,4 @@ Time=80ns | PRE=1 CLR=1 | CLK=0 | J=1 K=1 | Q=0 QD=1
 Time=85ns | PRE=1 CLR=1 | CLK=1 | J=1 K=1 | Q=0 QD=1
 Time=95ns | PRE=1 CLR=1 | CLK=0 | J=1 K=1 | Q=1 QD=0
 Mo phong thanh cong va hoan tat!
+# exit 0
