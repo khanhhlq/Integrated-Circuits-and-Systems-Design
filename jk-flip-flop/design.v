@@ -1,6 +1,4 @@
-`timescale 1ns / 1ps
-
-module jk_flip_flop ( input j, k, clk, pre, clr, output reg q, qd);
+module jk_flip_flop (input j, k, clk, pre, clr, output reg q, qd);
     always @(negedge clk or negedge pre or negedge clr) begin
         if (!pre && !clr) begin
             q  <= 1'b1;

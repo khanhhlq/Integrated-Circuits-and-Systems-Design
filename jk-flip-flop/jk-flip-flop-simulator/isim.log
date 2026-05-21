@@ -13,6 +13,5 @@ Time resolution is 1 ps
 # run 1000 ns
 Simulator is doing circuit initialization process.
 Finished circuit initialization process.
-Mo phong thanh cong va hoan tat!
-Stopped at time : 110 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/jk-flip-flop/testbench.v" Line 46
+Stopped at time : 80 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/jk-flip-flop/testbench.v" Line 20
 # exit 0
