@@ -1,0 +1,25 @@
+ISim log file
+Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ripple-adder/ripple-adder-simulator/tb_adder_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ripple-adder/ripple-adder-simulator/tb_adder_isim_beh.wdb 
+ISim P.20131013 (signature 0xfbc00daa)
+----------------------------------------------------------------------
+WARNING:Security:42 - Your software subscription period has lapsed. Your current version of Xilinx tools will continue to function, but you no longer qualify for Xilinx software updates or new releases.
+
+
+----------------------------------------------------------------------
+This is a Full version of ISim.
+WARNING:  For instance uut/add0/, width 1 of formal port ci is not equal to width 32 of actual constant.
+Time resolution is 1 ps
+# onerror resume
+# wave add /
+# run 1000 ns
+Simulator is doing circuit initialization process.
+Thời gian	 A 	 B 	| Tổng R (5-bit)
+-------------------------------------------
+Finished circuit initialization process.
+10ns		  7 	  8 	| 15 (Nhị phân: 01111)
+20ns		 15 	  1 	| 16 (Nhị phân: 10000)
+30ns		 15 	 15 	| 30 (Nhị phân: 11110)
+40ns		  0 	  0 	|  0 (Nhị phân: 00000)
+50ns		  0 	  0 	|  0 (Nhị phân: 00000)
+Stopped at time : 55 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ripple-adder/testbench.v" Line 49
+# exit 0

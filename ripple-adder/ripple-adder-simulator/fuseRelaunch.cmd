@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -lib "unisims_ver" -lib "unimacro_ver" -lib "xilinxcorelib_ver" -lib "secureip" -o "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ripple-adder/ripple-adder-simulator/tb_adder_isim_beh.exe" -prj "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ripple-adder/ripple-adder-simulator/tb_adder_beh.prj" "work.tb_adder" "work.glbl" 
