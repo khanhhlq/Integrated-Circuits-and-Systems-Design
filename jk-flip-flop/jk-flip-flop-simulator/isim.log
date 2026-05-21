@@ -13,20 +13,6 @@ Time resolution is 1 ps
 # run 1000 ns
 Simulator is doing circuit initialization process.
 Finished circuit initialization process.
-Time=0ns | PRE=0 CLR=0 | CLK=x | J=x K=x | Q=1 QD=1
-Time=10ns | PRE=0 CLR=1 | CLK=x | J=x K=x | Q=1 QD=1
-Time=20ns | PRE=1 CLR=0 | CLK=x | J=x K=x | Q=0 QD=1
-Time=30ns | PRE=1 CLR=1 | CLK=0 | J=x K=x | Q=0 QD=1
-Time=40ns | PRE=1 CLR=1 | CLK=1 | J=x K=x | Q=0 QD=1
-Time=45ns | PRE=1 CLR=1 | CLK=1 | J=0 K=0 | Q=0 QD=1
-Time=50ns | PRE=1 CLR=1 | CLK=0 | J=0 K=0 | Q=0 QD=1
-Time=55ns | PRE=1 CLR=1 | CLK=1 | J=0 K=1 | Q=0 QD=1
-Time=60ns | PRE=1 CLR=1 | CLK=0 | J=0 K=1 | Q=0 QD=1
-Time=65ns | PRE=1 CLR=1 | CLK=1 | J=1 K=0 | Q=0 QD=1
-Time=70ns | PRE=1 CLR=1 | CLK=0 | J=1 K=0 | Q=1 QD=0
-Time=75ns | PRE=1 CLR=1 | CLK=1 | J=1 K=1 | Q=1 QD=0
-Time=80ns | PRE=1 CLR=1 | CLK=0 | J=1 K=1 | Q=0 QD=1
-Time=85ns | PRE=1 CLR=1 | CLK=1 | J=1 K=1 | Q=0 QD=1
-Time=95ns | PRE=1 CLR=1 | CLK=0 | J=1 K=1 | Q=1 QD=0
 Mo phong thanh cong va hoan tat!
+Stopped at time : 110 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/jk-flip-flop/testbench.v" Line 46
 # exit 0
