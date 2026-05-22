@@ -1,15 +1,14 @@
-`timescale 1ns / 1ps
-
-module SISO(input in, clk, output [3:0] q);
-    reg [3:0] shift_reg;
-
-    initial begin
-        shift_reg = 4'b0000;
-    end
-
+module dff(input d, clk, output reg q);
     always @(posedge clk) begin
-        shift_reg <= {in, shift_reg[3:1]};
+        q <= d;
     end
+endmodule
 
-    assign q = shift_reg;
+module SISO(input in, clk, output out);
+    wire q1, q2, q3;
+    dff 
+    ff1(.d(in), .clk(clk), .q(q1)),
+	ff2(.d(q1), .clk(clk), .q(q2)),
+    ff3(.d(q2), .clk(clk), .q(q3)),
+    ff4(.d(q3), .clk(clk), .q(out));
 endmodule
