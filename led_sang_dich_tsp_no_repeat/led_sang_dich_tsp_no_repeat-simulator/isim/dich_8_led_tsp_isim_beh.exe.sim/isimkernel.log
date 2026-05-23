@@ -1,0 +1,28 @@
+Command line:
+   dich_8_led_tsp_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  53776
+
+Sat May 23 06:10:57 2026
+
+
+ Elaboration Time: 0.12 sec
+
+ Current Memory Usage: 198.574 Meg
+
+ Total Signals          : 15
+ Total Nets             : 23
+ Total Signal Drivers   : 6
+ Total Blocks           : 2
+ Total Primitive Blocks : 2
+ Total Processes        : 8
+ Total Traceable Variables  : 19
+ Total Scalar Nets and Variables : 111
+
+ Total Simulation Time: 0.13 sec
+
+ Current Memory Usage: 276.173 Meg
+
+Sat May 23 06:10:58 2026
+
