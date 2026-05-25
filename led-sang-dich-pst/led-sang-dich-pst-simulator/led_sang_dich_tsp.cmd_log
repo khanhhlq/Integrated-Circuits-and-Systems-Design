@@ -1,0 +1,1 @@
+xst -intstyle ise -ifn "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/led-sang-dich-pst/led-sang-dich-pst-simulator/led_sang_dich_tsp.xst" -ofn "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/led-sang-dich-pst/led-sang-dich-pst-simulator/led_sang_dich_tsp.syr" 
