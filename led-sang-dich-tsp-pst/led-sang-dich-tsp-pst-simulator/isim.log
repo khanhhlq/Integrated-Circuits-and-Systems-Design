@@ -69,3 +69,4 @@ This is a Full version of ISim.
 Simulator is doing circuit initialization process.
 Finished circuit initialization process.
 Stopped at time : 190 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/led-sang-dich-tsp-pst/testbench.v" Line 21
+# exit 0
