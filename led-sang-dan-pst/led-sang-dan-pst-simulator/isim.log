@@ -14,3 +14,4 @@ Time resolution is 1 ps
 Simulator is doing circuit initialization process.
 Finished circuit initialization process.
 Stopped at time : 215 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/led-sang-dan-pst/testbench.v" Line 10
+# exit 0
