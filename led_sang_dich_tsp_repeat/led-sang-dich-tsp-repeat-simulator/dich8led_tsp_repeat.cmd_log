@@ -1,0 +1,5 @@
+xst -intstyle ise -ifn "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/led_sang_dich_tsp_repeat/led-sang-dich-tsp-repeat-simulator/dich8led_tsp_repeat.xst" -ofn "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/led_sang_dich_tsp_repeat/led-sang-dich-tsp-repeat-simulator/dich8led_tsp_repeat.syr" 
+ngdbuild -intstyle ise -dd _ngo -nt timestamp -i -p xa7a100t-csg324-2I dich8led_tsp_repeat.ngc dich8led_tsp_repeat.ngd  
+map -intstyle ise -p xa7a100t-csg324-2I -w -logic_opt off -ol high -t 1 -xt 0 -register_duplication off -r 4 -mt off -ir off -pr off -lc off -power off -o dich8led_tsp_repeat_map.ncd dich8led_tsp_repeat.ngd dich8led_tsp_repeat.pcf 
+par -w -intstyle ise -ol high -mt off dich8led_tsp_repeat_map.ncd dich8led_tsp_repeat.ncd dich8led_tsp_repeat.pcf 
+trce -intstyle ise -v 3 -s 2I -n 3 -fastpaths -xml dich8led_tsp_repeat.twx dich8led_tsp_repeat.ncd -o dich8led_tsp_repeat.twr dich8led_tsp_repeat.pcf 
