@@ -9,14 +9,14 @@ Analyzing Verilog file "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into li
 Starting static elaboration
 Completed static elaboration
 Fuse Memory Usage: 94928 KB
-Fuse CPU Usage: 1170 ms
-Compiling module t_flip_flop
-Compiling module asynchronous_counter
+Fuse CPU Usage: 1970 ms
+Compiling module T_FF
+Compiling module AsyncCounter_4b_TFF
 Compiling module tb
 Compiling module glbl
 Time Resolution for simulation is 1ps.
 Compiled 4 Verilog Units
 Built simulation executable /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/asynchronous-counter/asynchronous-counter-simulator/tb_isim_beh.exe
 Fuse Memory Usage: 98036 KB
-Fuse CPU Usage: 1200 ms
-GCC CPU Usage: 280 ms
+Fuse CPU Usage: 2030 ms
+GCC CPU Usage: 500 ms

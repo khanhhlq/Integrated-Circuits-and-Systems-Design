@@ -1,4 +1,4 @@
-module t_flip_flop(input t, clk, output reg q, output qd);
+module T_FF (input t, clk, output reg q, output qd);
     assign qd = ~q;
 
     initial begin
@@ -6,17 +6,16 @@ module t_flip_flop(input t, clk, output reg q, output qd);
     end    
 
     always @(posedge clk) begin
-        if (t)
-            q <= ~q;
-        else
-            q <= q;
+        if (t) q <= ~q;
+        else q <= q;
     end
 endmodule
 
-module asynchronous_counter(input clk, output [2:0] q);
-    wire clk1, clk2;
+module AsyncCounter_4b_TFF(input clk, output [3:0] q);
+    wire clk1, clk2, clk3;
 
-    t_flip_flop tff0(.t(1'b1), .clk(clk), .q(q[0]), .qd(clk1));
-    t_flip_flop tff1(.t(1'b1), .clk(clk1), .q(q[1]), .qd(clk2));
-    t_flip_flop tff2(.t(1'b1), .clk(clk2), .q(q[2]), .qd());
+    T_FF tff0(.t(1'b1), .clk(clk), .q(q[0]), .qd(clk1));
+    T_FF tff1(.t(1'b1), .clk(clk1), .q(q[1]), .qd(clk2));
+    T_FF tff2(.t(1'b1), .clk(clk2), .q(q[2]), .qd(clk3));
+    T_FF tff3(.t(1'b1), .clk(clk3), .q(q[3]), .qd());
 endmodule

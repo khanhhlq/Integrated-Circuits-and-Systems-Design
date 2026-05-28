@@ -1,13 +1,13 @@
-module tb();
+module tb;
     reg clk = 0;
-    wire [2:0] q;
+    wire [3:0] q;
 
-    asynchronous_counter dut(.clk(clk), .q(q));
+    AsyncCounter_4b_TFF uut(.clk(clk), .q(q));
 
     always #5 clk = ~clk;
     
     initial begin
-        #100;
+        #200;
         $finish;
     end
 endmodule

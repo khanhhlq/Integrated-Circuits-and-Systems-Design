@@ -132,7 +132,7 @@ LAB2:    xsi_set_current_line(9, ng0);
 
 LAB4:    xsi_set_current_line(10, ng0);
     t2 = (t0 + 2416);
-    xsi_process_wait(t2, 100000LL);
+    xsi_process_wait(t2, 200000LL);
     *((char **)t1) = &&LAB5;
 
 LAB1:    return;
@@ -143,9 +143,9 @@ LAB5:    xsi_set_current_line(11, ng0);
 }
 
 
-extern void work_m_04862593884424218520_3671711236_init()
+extern void work_m_14769971564915411241_3671711236_init()
 {
 	static char *pe[] = {(void *)Always_7_0,(void *)Initial_9_1};
-	xsi_register_didat("work_m_04862593884424218520_3671711236", "isim/tb_isim_beh.exe.sim/work/m_04862593884424218520_3671711236.didat");
+	xsi_register_didat("work_m_14769971564915411241_3671711236", "isim/tb_isim_beh.exe.sim/work/m_14769971564915411241_3671711236.didat");
 	xsi_register_executes(pe);
 }

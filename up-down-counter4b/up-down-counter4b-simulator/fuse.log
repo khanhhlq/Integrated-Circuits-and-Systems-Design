@@ -8,14 +8,14 @@ Analyzing Verilog file "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design
 Analyzing Verilog file "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into library work
 Starting static elaboration
 Completed static elaboration
-Fuse Memory Usage: 94920 KB
-Fuse CPU Usage: 2170 ms
+Fuse Memory Usage: 94924 KB
+Fuse CPU Usage: 1980 ms
 Compiling module up_down_counter4b
 Compiling module tb
 Compiling module glbl
 Time Resolution for simulation is 1ps.
 Compiled 3 Verilog Units
 Built simulation executable /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/up-down-counter4b/up-down-counter4b-simulator/tb_isim_beh.exe
-Fuse Memory Usage: 98028 KB
-Fuse CPU Usage: 2220 ms
-GCC CPU Usage: 420 ms
+Fuse Memory Usage: 98032 KB
+Fuse CPU Usage: 2030 ms
+GCC CPU Usage: 430 ms

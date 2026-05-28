@@ -1,21 +1,21 @@
 module tb;
-    reg clk = 0, reset, ss, mode;
-    wire [7:0] led;
+    reg clk = 0, reset, SS, MODE;
+    wire [7:0] LED;
 
-    led_sang_dich_tsp_pst uuu(.clk(clk), .reset(reset), .ss(ss), .mode(mode), .led(led));
+    LED_SANG_DICH_TSP_PST uut(.clk(clk), .reset(reset), .SS(SS), .MODE(MODE), .LED(LED));
 
     always #5 clk = ~clk;
 
     initial begin        
         reset = 0;
-        ss = 1; mode = 0;
+        SS = 1; MODE = 0;
         #90;
 
 
         reset =  1; #10;
 
         reset = 0;
-        ss = 1; mode = 1;
+        SS = 1; MODE = 1;
         #90;
 
         $finish;

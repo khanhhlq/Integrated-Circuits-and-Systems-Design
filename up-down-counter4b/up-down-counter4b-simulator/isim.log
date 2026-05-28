@@ -14,3 +14,4 @@ Time resolution is 1 ps
 Simulator is doing circuit initialization process.
 Finished circuit initialization process.
 Stopped at time : 330 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/up-down-counter4b/testbench.v" Line 11
+# exit 0

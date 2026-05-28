@@ -1,21 +1,21 @@
-module led_sang_dich_tsp_pst(input clk, reset, ss, mode, output reg [7:0] led); 
+module LED_SANG_DICH_TSP_PST(input clk, reset, SS, MODE, output reg [7:0] LED); 
     initial begin
-        led = 8'b0000_0000;
+        LED = 8'b0000_0000;
     end
     always @(posedge clk) begin
-        if (reset) led = 8'b0000_0000;
+        if (reset) LED = 8'b0000_0000;
         else begin
-            if(ss) begin
-                if (mode == 0) begin // tsp
-                    if (led == 8'b0000_0000) led = 8'b1000_0000;
-                    else led = led >> 1;
+            if(SS) begin
+                if (MODE == 0) begin // tsp
+                    if (LED == 8'b0000_0000) LED = 8'b1000_0000;
+                    else LED = LED >> 1;
                 end 
                      else begin // pst
-                        if (led == 8'b0000_0000) led = 8'b0000_0001;
-                        else led = led << 1;
+                        if (LED == 8'b0000_0000) LED = 8'b0000_0001;
+                        else LED = LED << 1;
                     end
                 end
-            else led = led;   
+            else LED = LED;   
         end
     end
 endmodule
