@@ -9,7 +9,7 @@ Analyzing Verilog file "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into li
 Starting static elaboration
 Completed static elaboration
 Fuse Memory Usage: 94932 KB
-Fuse CPU Usage: 1300 ms
+Fuse CPU Usage: 1120 ms
 Compiling module led_sang_dan_tsp_pst
 Compiling module tb
 Compiling module glbl
@@ -17,5 +17,5 @@ Time Resolution for simulation is 1ps.
 Compiled 3 Verilog Units
 Built simulation executable /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/led-sang-dan-tsp-pst/led-sang-dan-tsp-pst-simulator/tb_isim_beh.exe
 Fuse Memory Usage: 98044 KB
-Fuse CPU Usage: 1340 ms
-GCC CPU Usage: 380 ms
+Fuse CPU Usage: 1140 ms
+GCC CPU Usage: 240 ms

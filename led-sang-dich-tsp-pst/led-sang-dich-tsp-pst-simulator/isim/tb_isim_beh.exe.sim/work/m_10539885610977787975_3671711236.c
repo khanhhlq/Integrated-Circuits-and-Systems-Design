@@ -186,9 +186,9 @@ LAB7:    xsi_set_current_line(21, ng0);
 }
 
 
-extern void work_m_00875556570605652648_3671711236_init()
+extern void work_m_10539885610977787975_3671711236_init()
 {
 	static char *pe[] = {(void *)Always_7_0,(void *)Initial_9_1};
-	xsi_register_didat("work_m_00875556570605652648_3671711236", "isim/tb_isim_beh.exe.sim/work/m_00875556570605652648_3671711236.didat");
+	xsi_register_didat("work_m_10539885610977787975_3671711236", "isim/tb_isim_beh.exe.sim/work/m_10539885610977787975_3671711236.didat");
 	xsi_register_executes(pe);
 }

@@ -338,9 +338,9 @@ LAB34:    xsi_set_current_line(14, ng0);
 }
 
 
-extern void work_m_08620510943795069107_0393796984_init()
+extern void work_m_00723110103375062931_0209933574_init()
 {
 	static char *pe[] = {(void *)Initial_2_0,(void *)Always_5_1};
-	xsi_register_didat("work_m_08620510943795069107_0393796984", "isim/tb_isim_beh.exe.sim/work/m_08620510943795069107_0393796984.didat");
+	xsi_register_didat("work_m_00723110103375062931_0209933574", "isim/tb_isim_beh.exe.sim/work/m_00723110103375062931_0209933574.didat");
 	xsi_register_executes(pe);
 }
