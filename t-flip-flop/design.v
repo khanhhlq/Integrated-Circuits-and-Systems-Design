@@ -1,19 +1,11 @@
-module t_flip_flop(input t, clk, rst, output reg q, qb);
-    initial begin
-        q = 0;
-        qb = 1;
-    end
-    always @(posedge clk or posedge rst)
-    begin
-        if (rst) begin
-            q <= 0;
-            qb <= 1;
-        end
-        else begin
-          if (t) begin
-            q <= ~q;
-            qb <= ~qb;
-          end
-        end
+module tff (input clk, rst, t, output reg q);
+    always @ (posedge clk) begin
+    if (!rst)
+        q <= 0;
+    else
+    	if (t)
+      		q <= ~q;
+    	else
+      		q <= q;
     end
 endmodule

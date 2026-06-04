@@ -1,5 +1,0 @@
-Command line:
-   t_flip_flop_isim_beh.exe
-     -simmode  gui
-     -simrunnum  0
-     -socket  37062

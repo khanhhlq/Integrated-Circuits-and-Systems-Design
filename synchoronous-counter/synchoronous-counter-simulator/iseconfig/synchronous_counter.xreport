@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2026-05-23T06:07:55</DateModified>
+  <DateModified>2026-06-04T02:21:36</DateModified>
   <ModuleName>synchronous_counter</ModuleName>
   <SummaryTimeStamp>Unknown</SummaryTimeStamp>
-  <SavedFilePath>/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/synchoronous-counter/synchoronous-counter-simulator/iseconfig/synchronous_counter.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/synchoronous-counter/synchoronous-counter-simulator/</ImplementationReportsDirectory>
-  <DateInitialized>2026-05-22T10:49:45</DateInitialized>
+  <SavedFilePath>/home/ise/Integrated-Circuits-and-Systems-Design/synchoronous-counter/synchoronous-counter-simulator/iseconfig/synchronous_counter.xreport</SavedFilePath>
+  <ImplementationReportsDirectory>/home/ise/Integrated-Circuits-and-Systems-Design/synchoronous-counter/synchoronous-counter-simulator</ImplementationReportsDirectory>
+  <DateInitialized>2026-06-04T02:21:36</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>
  <body>

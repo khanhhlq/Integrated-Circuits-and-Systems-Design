@@ -1,0 +1,28 @@
+Command line:
+   AsyncCounter_4b_TFF_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  44608
+
+Sat May 30 08:49:16 2026
+
+
+ Elaboration Time: 0.13 sec
+
+ Current Memory Usage: 198.582 Meg
+
+ Total Signals          : 30
+ Total Nets             : 26
+ Total Signal Drivers   : 17
+ Total Blocks           : 6
+ Total Primitive Blocks : 5
+ Total Processes        : 26
+ Total Traceable Variables  : 22
+ Total Scalar Nets and Variables : 110
+
+ Total Simulation Time: 0.14 sec
+
+ Current Memory Usage: 276.181 Meg
+
+Sat May 30 08:49:22 2026
+

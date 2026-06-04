@@ -1,22 +1,25 @@
 module tb();
     reg t, clk, rst;
-    wire q, qb;
+    wire q;
 
-    t_flip_flop uut(.t(t), .clk(clk), .rst(rst), .q(q), .qb(qb));
+    tff uut(.t(t), .clk(clk), .rst(rst), .q(q));
+
+    always #5 clk = ~clk;
 
     initial begin
         clk = 0;
-        rst = 1;
-        forever #5 clk = ~clk; // Clock with a period of 10 time units
-    end
+        rst = 0;
+        t = 0;
 
-    initial begin
-        // Test sequence
-        #7 rst = 0;
-        t = 0; #10; // Initial state
-        t = 1; #10; // Toggle
-        t = 0; #10; // No toggle
-        t = 1; #10; // Toggle
-        t = 0; #10; // No toggle
+        #10 rst = 1;
+
+        t = 0; #10;
+        t = 1; #10;
+        t = 0; #10;
+        t = 1; #10;
+        t = 0; #10;
+
+        #10;
+        $finish;
     end
 endmodule
