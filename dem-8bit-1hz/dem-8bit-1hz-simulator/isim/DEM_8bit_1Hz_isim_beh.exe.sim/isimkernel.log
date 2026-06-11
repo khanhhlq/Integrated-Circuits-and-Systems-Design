@@ -1,0 +1,28 @@
+Command line:
+   DEM_8bit_1Hz_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  42095
+
+Thu Jun 11 03:56:04 2026
+
+
+ Elaboration Time: 0.04 sec
+
+ Current Memory Usage: 198.574 Meg
+
+ Total Signals          : 24
+ Total Nets             : 26
+ Total Signal Drivers   : 7
+ Total Blocks           : 4
+ Total Primitive Blocks : 3
+ Total Processes        : 11
+ Total Traceable Variables  : 21
+ Total Scalar Nets and Variables : 140
+
+ Total Simulation Time: 0.06 sec
+
+ Current Memory Usage: 276.173 Meg
+
+Thu Jun 11 03:56:08 2026
+

@@ -1,0 +1,24 @@
+Running: /opt/Xilinx/14.7/ISE_DS/ISE/bin/lin64/unwrapped/fuse -intstyle ise -incremental -lib unisims_ver -lib unimacro_ver -lib xilinxcorelib_ver -lib secureip -o /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/tb_DEM_8bit_1Hz_realtime_isim_beh.exe -prj /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/tb_DEM_8bit_1Hz_realtime_beh.prj work.tb_DEM_8bit_1Hz_realtime work.glbl 
+ISim P.20131013 (signature 0xfbc00daa)
+Number of CPUs detected in this system: 1
+Turning on mult-threading, number of parallel sub-compilation jobs: 0 
+Determining compilation order of HDL files
+Analyzing Verilog file "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/../design.v" into library work
+Analyzing Verilog file "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/../testbench.v" into library work
+Analyzing Verilog file "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into library work
+Starting static elaboration
+Completed static elaboration
+Fuse Memory Usage: 94936 KB
+Fuse CPU Usage: 1310 ms
+Compiling module CK_DIV
+Compiling module DEM_8bit
+Compiling module DEM_8bit_1Hz
+Compiling module tb_DEM_8bit_1Hz_realtime
+WARNING:Simulator:833 - "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/../testbench.v" Line 37. Negative delay (-1294967296000.000000) treated as 0.
+Compiling module glbl
+Time Resolution for simulation is 1ps.
+Compiled 5 Verilog Units
+Built simulation executable /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/tb_DEM_8bit_1Hz_realtime_isim_beh.exe
+Fuse Memory Usage: 98048 KB
+Fuse CPU Usage: 1370 ms
+GCC CPU Usage: 440 ms
