@@ -1,0 +1,1 @@
+-intstyle "ise" -incremental -lib "unisims_ver" -lib "unimacro_ver" -lib "xilinxcorelib_ver" -lib "secureip" -o "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/ck-1hz-simulator/CK_1HZ_tb_isim_beh.exe" -prj "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/ck-1hz-simulator/CK_1HZ_tb_beh.prj" "work.CK_1HZ_tb" "work.glbl" 

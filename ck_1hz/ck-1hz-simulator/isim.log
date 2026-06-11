@@ -1,0 +1,20 @@
+ISim log file
+Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/ck-1hz-simulator/CK_1HZ_tb_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/ck-1hz-simulator/CK_1HZ_tb_isim_beh.wdb 
+ISim P.20131013 (signature 0xfbc00daa)
+----------------------------------------------------------------------
+WARNING:Security:42 - Your software subscription period has lapsed. Your current version of Xilinx tools will continue to function, but you no longer qualify for Xilinx software updates or new releases.
+
+
+----------------------------------------------------------------------
+This is a Full version of ISim.
+Time resolution is 1 ps
+# onerror resume
+# wave add /
+# run 1000 ns
+Simulator is doing circuit initialization process.
+Finished circuit initialization process.
+# run 1000s
+Stopped at time : 100 ms : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/testbench.v" Line 20
+# run 1000s
+Stopped at time : 975793120 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/testbench.v" Line 13
+# exit 0
