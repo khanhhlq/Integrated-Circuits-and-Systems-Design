@@ -1,0 +1,2 @@
+ISim log file
+Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz_2hz/ck-1hz-2hz-simulator/CK_DIV_tb_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz_2hz/ck-1hz-2hz-simulator/CK_DIV_tb_isim_beh.wdb 
