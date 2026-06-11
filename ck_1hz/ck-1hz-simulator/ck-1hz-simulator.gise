@@ -73,7 +73,7 @@
       <outfile xil_pn:name="isim.log"/>
       <outfile xil_pn:name="xilinxsim.ini"/>
     </transform>
-    <transform xil_pn:end_ts="1781144874" xil_pn:in_ck="-495320999197101148" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="8227251445337204970" xil_pn:start_ts="1781144874">
+    <transform xil_pn:end_ts="1781145377" xil_pn:in_ck="-495320999197101148" xil_pn:name="TRAN_ISimulateBehavioralModel" xil_pn:prop_ck="8227251445337204970" xil_pn:start_ts="1781145377">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="CK_1HZ_tb_isim_beh.wdb"/>

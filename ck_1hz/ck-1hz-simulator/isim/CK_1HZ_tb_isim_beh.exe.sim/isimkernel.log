@@ -2,12 +2,12 @@ Command line:
    CK_1HZ_tb_isim_beh.exe
      -simmode  gui
      -simrunnum  0
-     -socket  49663
+     -socket  36592
 
-Thu Jun 11 02:27:57 2026
+Thu Jun 11 02:36:20 2026
 
 
- Elaboration Time: 0.03 sec
+ Elaboration Time: 0.04 sec
 
  Current Memory Usage: 198.582 Meg
 
@@ -20,9 +20,9 @@ Thu Jun 11 02:27:57 2026
  Total Traceable Variables  : 21
  Total Scalar Nets and Variables : 122
 
- Total Simulation Time: 43.01 sec
+ Total Simulation Time: 289.97 sec
 
  Current Memory Usage: 276.181 Meg
 
-Thu Jun 11 02:29:26 2026
+Thu Jun 11 02:42:25 2026
 

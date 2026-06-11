@@ -16,5 +16,5 @@ Finished circuit initialization process.
 # run 1000s
 Stopped at time : 100 ms : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/testbench.v" Line 20
 # run 1000s
-Stopped at time : 975793120 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/testbench.v" Line 13
+Stopped at time : 6469270070 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz/testbench.v" Line 14
 # exit 0
