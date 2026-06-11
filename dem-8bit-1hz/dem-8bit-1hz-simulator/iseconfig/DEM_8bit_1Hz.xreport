@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2026-06-11T03:46:17</DateModified>
+  <DateModified>2026-06-11T04:06:57</DateModified>
   <ModuleName>DEM_8bit_1Hz</ModuleName>
   <SummaryTimeStamp>Unknown</SummaryTimeStamp>
   <SavedFilePath>/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/iseconfig/DEM_8bit_1Hz.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator</ImplementationReportsDirectory>
+  <ImplementationReportsDirectory>/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/</ImplementationReportsDirectory>
   <DateInitialized>2026-06-11T03:46:16</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>

@@ -1,18 +1,2 @@
 ISim log file
-Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/tb_DEM_8bit_1Hz_realtime_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/tb_DEM_8bit_1Hz_realtime_isim_beh.wdb 
-ISim P.20131013 (signature 0xfbc00daa)
-----------------------------------------------------------------------
-WARNING:Security:42 - Your software subscription period has lapsed. Your current version of Xilinx tools will continue to function, but you no longer qualify for Xilinx software updates or new releases.
-
-
-----------------------------------------------------------------------
-This is a Full version of ISim.
-Time resolution is 1 ps
-# onerror resume
-# wave add /
-# run 1000 ns
-Simulator is doing circuit initialization process.
-Finished circuit initialization process.
-# run 1000ms
-# run 10s
-Stopped at time : 3000000300 ns : File "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/testbench.v" Line 46
+Running: /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/tb_isim_beh.exe -intstyle ise -gui -tclbatch isim.cmd -wdb /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/dem-8bit-1hz/dem-8bit-1hz-simulator/tb_isim_beh.wdb 
