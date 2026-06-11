@@ -8,14 +8,14 @@ Analyzing Verilog file "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design
 Analyzing Verilog file "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into library work
 Starting static elaboration
 Completed static elaboration
-Fuse Memory Usage: 94924 KB
-Fuse CPU Usage: 1190 ms
+Fuse Memory Usage: 94920 KB
+Fuse CPU Usage: 3200 ms
 Compiling module CK_DIV
 Compiling module CK_DIV_tb
 Compiling module glbl
 Time Resolution for simulation is 1ps.
 Compiled 3 Verilog Units
 Built simulation executable /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/ck_1hz_2hz/ck-1hz-2hz-simulator/CK_DIV_tb_isim_beh.exe
-Fuse Memory Usage: 98032 KB
-Fuse CPU Usage: 1220 ms
-GCC CPU Usage: 260 ms
+Fuse Memory Usage: 98028 KB
+Fuse CPU Usage: 3220 ms
+GCC CPU Usage: 470 ms

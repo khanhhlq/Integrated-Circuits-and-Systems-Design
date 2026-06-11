@@ -18,14 +18,12 @@ module CK_DIV_tb;
 
     initial begin
         CK50M = 0;
-        MODE = 0;
 
-        #500000050;
+        MODE = 0;
+        #1500000000; 
 
         MODE = 1;
-        
-        #500000050;
+        #1100000000;
         $finish;
     end
-
 endmodule
