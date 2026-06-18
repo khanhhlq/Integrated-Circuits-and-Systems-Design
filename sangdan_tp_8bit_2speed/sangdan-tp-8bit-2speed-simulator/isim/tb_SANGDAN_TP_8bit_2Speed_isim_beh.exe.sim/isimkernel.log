@@ -1,0 +1,28 @@
+Command line:
+   tb_SANGDAN_TP_8bit_2Speed_isim_beh.exe
+     -simmode  gui
+     -simrunnum  0
+     -socket  57023
+
+Thu Jun 18 03:40:09 2026
+
+
+ Elaboration Time: 0.03 sec
+
+ Current Memory Usage: 198.599 Meg
+
+ Total Signals          : 19
+ Total Nets             : 26
+ Total Signal Drivers   : 11
+ Total Blocks           : 7
+ Total Primitive Blocks : 6
+ Total Processes        : 20
+ Total Traceable Variables  : 36
+ Total Scalar Nets and Variables : 522
+
+ Total Simulation Time: 18.78 sec
+
+ Current Memory Usage: 276.197 Meg
+
+Thu Jun 18 03:40:47 2026
+
