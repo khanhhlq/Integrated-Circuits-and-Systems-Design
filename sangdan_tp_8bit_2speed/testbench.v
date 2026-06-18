@@ -2,10 +2,7 @@ module tb_SANGDAN;
     reg CK50M, RESET, MODE, SS, SPEED;
     wire [7:0] LED8_out;
 
-    SANGDAN_TP_8bit_2Speed uut (
-        .CK50M(CK50M), .RESET(RESET), .MODE(MODE), 
-        .SS(SS), .SPEED(SPEED), .LED8_out(LED8_out)
-    );
+    SANGDAN_TP_8bit_2Speed uut (.CK50M(CK50M), .RESET(RESET), .MODE(MODE), .SS(SS), .SPEED(SPEED), .LED8_out(LED8_out));
 
     always #10 CK50M = ~CK50M;
 
