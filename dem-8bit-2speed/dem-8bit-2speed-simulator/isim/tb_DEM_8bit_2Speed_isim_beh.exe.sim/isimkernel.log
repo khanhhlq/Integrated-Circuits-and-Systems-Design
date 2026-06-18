@@ -1,0 +1,28 @@
+Command line:
+   tb_DEM_8bit_2Speed_isim_beh.exe
+     -simmode  gui
+     -simrunnum  1
+     -socket  52385
+
+Thu Jun 11 04:46:33 2026
+
+
+ Elaboration Time: 0.06 sec
+
+ Current Memory Usage: 198.59 Meg
+
+ Total Signals          : 20
+ Total Nets             : 52
+ Total Signal Drivers   : 12
+ Total Blocks           : 3
+ Total Primitive Blocks : 2
+ Total Processes        : 17
+ Total Traceable Variables  : 28
+ Total Scalar Nets and Variables : 236
+
+ Total Simulation Time: 2.65 sec
+
+ Current Memory Usage: 276.189 Meg
+
+Thu Jun 11 04:47:18 2026
+
