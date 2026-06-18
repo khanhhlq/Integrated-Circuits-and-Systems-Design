@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module tb_SANGDAN;
     reg CK50M, RESET, MODE, SS, SPEED;
     wire [7:0] LED8_out;
@@ -15,13 +13,9 @@ module tb_SANGDAN;
         CK50M = 0; RESET = 1; MODE = 0; SS = 0; SPEED = 0;
         #100 RESET = 0; SS = 1;
 
-        // 1Hz: 8 bước * 1 giây/bước = 8 giây
-        MODE = 0; SPEED = 0; #8000000000; 
-        MODE = 1; SPEED = 0; #8000000000; 
+        MODE = 0; SPEED = 0; repeat(8) #1000000000; 
 
-        // 2Hz: 8 bước * 0.5 giây/bước = 4 giây
-        MODE = 0; SPEED = 1; #4000000000;  
-        MODE = 1; SPEED = 1; #4000000000;
+        MODE = 1; SPEED = 1; repeat(8) #500000000;
 
         SS = 0;
         #20000000;

@@ -1,11 +1,21 @@
-Running: /opt/Xilinx/14.7/ISE_DS/ISE/bin/lin64/unwrapped/fuse -intstyle ise -incremental -lib unisims_ver -lib unimacro_ver -lib xilinxcorelib_ver -lib secureip -o /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/tb_isim_beh.exe -prj /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/tb_beh.prj work.tb work.glbl 
+Running: /opt/Xilinx/14.7/ISE_DS/ISE/bin/lin64/unwrapped/fuse -intstyle ise -incremental -lib unisims_ver -lib unimacro_ver -lib xilinxcorelib_ver -lib secureip -o /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/tb_SANGDAN_isim_beh.exe -prj /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/tb_SANGDAN_beh.prj work.tb_SANGDAN work.glbl 
 ISim P.20131013 (signature 0xfbc00daa)
 Number of CPUs detected in this system: 1
 Turning on mult-threading, number of parallel sub-compilation jobs: 0 
 Determining compilation order of HDL files
 Analyzing Verilog file "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/../design.v" into library work
 Analyzing Verilog file "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/../testbench.v" into library work
-ERROR:HDLCompiler:911 - "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/../testbench.v" Line 19: Decimal constant 8000000000 is too large, using -589934592 instead
-ERROR:HDLCompiler:911 - "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/../testbench.v" Line 23: Decimal constant 8000000000 is too large, using -589934592 instead
-ERROR:HDLCompiler:598 - "/home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/../testbench.v" Line 1: Module <tb> ignored due to previous errors.
-Verilog file /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/../testbench.v ignored due to errors
+Analyzing Verilog file "/opt/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into library work
+Starting static elaboration
+Completed static elaboration
+Fuse Memory Usage: 94936 KB
+Fuse CPU Usage: 1380 ms
+Compiling module SANGDAN_TP_8bit_2Speed
+Compiling module tb_SANGDAN
+Compiling module glbl
+Time Resolution for simulation is 1ps.
+Compiled 3 Verilog Units
+Built simulation executable /home/ise/D_DRIVE/Integrated-Circuits-and-Systems-Design/sangdan_tp_8bit_2speed/sangdan-tp-8bit-2speed-simulator/tb_SANGDAN_isim_beh.exe
+Fuse Memory Usage: 98048 KB
+Fuse CPU Usage: 1420 ms
+GCC CPU Usage: 470 ms
