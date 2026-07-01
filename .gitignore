@@ -1,2 +1,26 @@
-"*.vcd" 
-"*.vcd" 
+# Waveform
+*.vcd
+
+# GTKWave
+*.gtkw
+
+# Vivado
+*.jou
+*.log
+*.str
+*.wdb
+*.cache
+*.Xil
+*.hw
+
+# Questa/Modelsim
+transcript
+work/
+modelsim.ini
+
+# Icarus
+*.vvp
+
+# Temporary
+*.tmp
+*.bak
