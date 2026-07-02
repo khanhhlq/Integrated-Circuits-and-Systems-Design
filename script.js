@@ -2634,7 +2634,7 @@ window.QUESTION_BANK = [
       {
         "id": "D",
         "text": "5 transistor chuyển mạch và 5 ô nhớ sram.",
-        "correct": true
+        "correct": false
       }
     ],
     "answers": [
