@@ -42,10 +42,15 @@
         <h2>Đăng nhập Admin</h2>
         <button id="closeAdminDialogBtn" class="btn ghost" type="button">Đóng</button>
       </div>
-      <p>Admin cần nhập <strong>Admin key</strong> đã được ký riêng. Không còn mật khẩu admin hoặc mã tạo key trong file website học viên.</p>
+      <p>Admin đăng nhập qua server. Mật khẩu admin không nằm trong file HTML/CSS/JS gửi cho học viên.</p>
+      <div class="admin-device-hint">
+        <span>Mã thiết bị hiện tại:</span>
+        <code id="adminDeviceCode">Đang tạo...</code>
+        <button id="copyDeviceBtnAdmin" class="btn small ghost" type="button">Copy</button>
+      </div>
       <label>
-        Admin key
-        <textarea id="adminKeyInput" class="admin-output" placeholder="Dán Admin key tại đây"></textarea>
+        Mật khẩu Admin
+        <textarea id="adminKeyInput" class="admin-output" placeholder="Nhập mật khẩu admin server"></textarea>
       </label>
       <div class="actions">
         <button id="adminLoginBtn" class="btn primary" type="button">Đăng nhập Admin</button>
@@ -67,6 +72,18 @@
         <span>câu hỏi</span>
       </div>
     </header>
+
+    <section class="device-inline" aria-label="Mã thiết bị hiện tại">
+      <div>
+        <span>Mã thiết bị hiện tại</span>
+        <code id="deviceCodeMain">Đang tạo...</code>
+        <small>Dùng mã này để xin key hoặc kiểm tra thiết bị đang đăng nhập.</small>
+      </div>
+      <div class="device-inline-actions">
+        <button id="copyDeviceBtnMain" class="btn ghost" type="button">Copy mã thiết bị</button>
+        <span id="deviceInlineMessage" class="device-inline-message"></span>
+      </div>
+    </section>
 
     <main>
       <section id="setupView" class="panel setup">
@@ -113,16 +130,7 @@
           <button id="startBtn" class="btn primary">Bắt đầu làm bài</button>
           <button id="reviewBankBtn" class="btn">Xem ngân hàng câu hỏi</button>
         </div>
-
-        <details class="source-box">
-          <summary>Tài liệu gốc kèm theo</summary>
-          <div class="source-links">
-            <a href="assets/tong_hop_cau_hoi_trac_nghiem.pdf" target="_blank">PDF tổng hợp câu hỏi</a>
-            <a href="assets/kiem_tra_online_lan_1.pdf" target="_blank">Kiểm tra online lần 1</a>
-            <a href="assets/kiem_tra_online_lan_2.pdf" target="_blank">Kiểm tra online lần 2</a>
-          </div>
-        </details>
-      </section>
+</section>
 
       <section id="quizView" class="panel hidden">
         <div class="quiz-top">
@@ -206,10 +214,17 @@
         <div>© 2026 Bản quyền thuộc về <strong>Lê Quốc Khánh - 24161276</strong>.</div>
         <div class="footer-actions">
           <span id="licenseStatus" class="license-status">Chưa kích hoạt</span>
+          <span class="footer-device">Mã thiết bị: <code id="footerDeviceCode">Đang tạo...</code></span>
+          <button id="copyDeviceBtnFooter" class="btn small ghost" type="button">Copy mã</button>
           <button id="openAdminFooterBtn" class="btn ghost" type="button">Admin</button>
         </div>
       </footer>
   </div>
+  <script>
+    // Khi up GitHub Pages, đổi URL này thành URL backend của bạn.
+    // Ví dụ: window.API_BASE_URL = "https://ten-app-cua-ban.onrender.com";
+    window.API_BASE_URL = "";
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
