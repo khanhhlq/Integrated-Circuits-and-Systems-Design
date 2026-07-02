@@ -12496,13 +12496,16 @@ window.QUESTION_BANK = [
 ];
 
 const QUESTIONS = window.QUESTION_BANK || [];
-const LICENSE_SECRET = "LKQ_24161276_TKHTS_OFFLINE_KEY_V1";
-const LICENSE_STORAGE_KEY = "lkq_license_v1";
+const LICENSE_STORAGE_KEY = "lkq_license_v2_signed";
 const DEVICE_STORAGE_KEY = "lkq_device_id_v1";
-const ADMIN_PASSWORD = "24161276";
-const ADMIN_SESSION_KEY = "lkq_admin_session_v1";
-let isAdmin = sessionStorage.getItem(ADMIN_SESSION_KEY) === "1";
+const ADMIN_SESSION_KEY = "lkq_admin_session_v2";
 const ANSWER_CORRECTION_KEY = "tkhts_answer_corrections_v1";
+// Chỉ chứa PUBLIC KEY để xác thực chữ ký license. Không chứa mật khẩu admin, private key hoặc thuật toán tạo key.
+const PUBLIC_KEY_N = BigInt("0xab4c9775518e19d7f56d6e38a8e6f9c529181ff464964689e46a6babc525daef59ac4039399c8c70dd213d3cc9c71323caf31d9a4d3c0fafbde074f72c09e9231621fc7436bcb6facc80b1265da5d8b955167f4f26ec68167858e06f7fbcb1c5abc1d27482576c6c7baf1e3f52cb225d298d22b9310a8c52011d54a4051f4fd587712b276732b45a95d61865dfd18162c4a81a4d715ed1e35f5ec73e2acff30eeb73ffeabb57db44ce80c1aa1e16427f46f92aa6ee8a82ce737fd0b6513dccbb0957baa6d66b3e2c1293b12bb887a66b6f1a817857c17c09cc15851d74c2b297683c31b527f94a612ed792025b4a878c9e29204647e55e662c8821ab68e1e533");
+const PUBLIC_KEY_E = BigInt(65537);
+const RSA_KEY_BYTES = 256;
+const LICENSE_PRODUCT = "TKHTS-LKQ-24161276";
+let isAdmin = false;
 const DEFAULT_CORRECT = {};
 let savedCorrections = {};
 
@@ -13021,11 +13024,12 @@ function resetCurrentAnswerEdit() {
 function initLicenseAndAdmin() {
   const deviceId = getDeviceId();
   if ($("deviceCode")) $("deviceCode").textContent = deviceId;
+  restoreAdminSession();
   updateAdminUI();
   if (canUseApp()) {
     unlockApp(isAdmin ? "admin" : "license");
   } else {
-    showLicenseGate("Nhập mã key đã mua để sử dụng website trên thiết bị này.", false);
+    showLicenseGate("Nhập mã key đã mua để sử dụng website trên thiết bị này. Muốn mua key vui lòng liên hệ Zalo: 0772998989.", false);
   }
 }
 
@@ -13037,9 +13041,7 @@ function bindLicenseEvents() {
     ["openAdminFooterBtn", "click", openAdminDialog],
     ["closeAdminDialogBtn", "click", closeAdminDialog],
     ["adminLoginBtn", "click", adminLogin],
-    ["adminLogoutBtn", "click", adminLogout],
-    ["generateKeyBtn", "click", generateKeyForCustomer],
-    ["adminEnterAppBtn", "click", () => unlockApp("admin")]
+    ["adminLogoutBtn", "click", adminLogout]
   ];
   binds.forEach(([id, event, handler]) => {
     const el = $(id);
@@ -13052,11 +13054,6 @@ function bindLicenseEvents() {
   if (licenseInput && !licenseInput.dataset.bound) {
     licenseInput.addEventListener("keydown", (e) => { if (e.key === "Enter") activateLicense(); });
     licenseInput.dataset.bound = "1";
-  }
-  const adminPassword = $("adminPassword");
-  if (adminPassword && !adminPassword.dataset.bound) {
-    adminPassword.addEventListener("keydown", (e) => { if (e.key === "Enter") adminLogin(); });
-    adminPassword.dataset.bound = "1";
   }
 }
 
@@ -13072,38 +13069,139 @@ function getDeviceId() {
 }
 
 function canonicalKey(str) {
-  return String(str || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return String(str || "").trim();
 }
 
-function hash32(str, seed = 2166136261) {
-  let h = seed >>> 0;
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619) >>> 0;
+function base64UrlToBytes(str) {
+  str = String(str || "").replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+  while (str.length % 4) str += "=";
+  const bin = atob(str);
+  return Array.from(bin, ch => ch.charCodeAt(0));
+}
+
+function bytesToString(bytes) {
+  return new TextDecoder().decode(new Uint8Array(bytes));
+}
+
+function bytesToBigInt(bytes) {
+  let hex = bytes.map(b => b.toString(16).padStart(2, "0")).join("");
+  return BigInt("0x" + (hex || "0"));
+}
+
+function bigIntToBytes(num, len) {
+  let hex = num.toString(16);
+  if (hex.length % 2) hex = "0" + hex;
+  let bytes = hex.match(/.{1,2}/g)?.map(h => parseInt(h, 16)) || [];
+  if (len) {
+    while (bytes.length < len) bytes.unshift(0);
+    if (bytes.length > len) bytes = bytes.slice(bytes.length - len);
   }
-  return h >>> 0;
+  return bytes;
 }
 
-function licenseForDevice(deviceId) {
-  const base = `${deviceId}|${LICENSE_SECRET}|LeQuocKhanh|24161276|50000`;
-  const parts = [];
-  for (let i = 0; i < 4; i++) {
-    const n = hash32(base + "|" + i, 2166136261 + i * 1013904223);
-    parts.push(n.toString(36).toUpperCase().padStart(7, "0").slice(-5));
+function modPow(base, exp, mod) {
+  let result = 1n;
+  base = base % mod;
+  while (exp > 0n) {
+    if (exp & 1n) result = (result * base) % mod;
+    exp >>= 1n;
+    base = (base * base) % mod;
   }
-  return `LKQ-${parts.join("-")}`;
+  return result;
 }
 
-function isValidKeyForDevice(key, deviceId) {
-  return canonicalKey(key) === canonicalKey(licenseForDevice(deviceId));
+function sha256Bytes(message) {
+  function rotr(n, x) { return (x >>> n) | (x << (32 - n)); }
+  const K = [
+    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+  ];
+  const msg = Array.from(new TextEncoder().encode(message));
+  const bitLen = msg.length * 8;
+  msg.push(0x80);
+  while ((msg.length % 64) !== 56) msg.push(0);
+  const hi = Math.floor(bitLen / 0x100000000);
+  const lo = bitLen >>> 0;
+  [hi, lo].forEach(num => msg.push((num>>>24)&255, (num>>>16)&255, (num>>>8)&255, num&255));
+  let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  for (let i = 0; i < msg.length; i += 64) {
+    const W = new Array(64);
+    for (let t = 0; t < 16; t++) W[t] = ((msg[i+4*t]<<24)|(msg[i+4*t+1]<<16)|(msg[i+4*t+2]<<8)|msg[i+4*t+3]) >>> 0;
+    for (let t = 16; t < 64; t++) {
+      const s0 = rotr(7,W[t-15]) ^ rotr(18,W[t-15]) ^ (W[t-15]>>>3);
+      const s1 = rotr(17,W[t-2]) ^ rotr(19,W[t-2]) ^ (W[t-2]>>>10);
+      W[t] = (W[t-16] + s0 + W[t-7] + s1) >>> 0;
+    }
+    let [a,b,c,d,e,f,g,h] = H;
+    for (let t = 0; t < 64; t++) {
+      const S1 = rotr(6,e) ^ rotr(11,e) ^ rotr(25,e);
+      const ch = (e & f) ^ (~e & g);
+      const temp1 = (h + S1 + ch + K[t] + W[t]) >>> 0;
+      const S0 = rotr(2,a) ^ rotr(13,a) ^ rotr(22,a);
+      const maj = (a & b) ^ (a & c) ^ (b & c);
+      const temp2 = (S0 + maj) >>> 0;
+      h = g; g = f; f = e; e = (d + temp1) >>> 0; d = c; c = b; b = a; a = (temp1 + temp2) >>> 0;
+    }
+    H = H.map((v, idx) => (v + [a,b,c,d,e,f,g,h][idx]) >>> 0);
+  }
+  const out = [];
+  H.forEach(num => out.push((num>>>24)&255, (num>>>16)&255, (num>>>8)&255, num&255));
+  return out;
+}
+
+function expectedPkcs1Block(payloadText) {
+  const digestInfo = [0x30,0x31,0x30,0x0d,0x06,0x09,0x60,0x86,0x48,0x01,0x65,0x03,0x04,0x02,0x01,0x05,0x00,0x04,0x20];
+  const hash = sha256Bytes(payloadText);
+  const tail = digestInfo.concat(hash);
+  const psLen = RSA_KEY_BYTES - tail.length - 3;
+  return [0x00, 0x01].concat(new Array(psLen).fill(0xff), [0x00], tail);
+}
+
+function constantTimeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+  return diff === 0;
+}
+
+function verifySignedKey(key) {
+  try {
+    const raw = canonicalKey(key);
+    const parts = raw.split(".");
+    if (parts.length !== 3 || parts[0] !== "LKQ1") return null;
+    const payloadB64 = parts[1];
+    const sigBytes = base64UrlToBytes(parts[2]);
+    const payloadText = bytesToString(base64UrlToBytes(payloadB64));
+    const payload = JSON.parse(payloadText);
+    if (payload.product !== LICENSE_PRODUCT) return null;
+    const sigNum = bytesToBigInt(sigBytes);
+    const decoded = bigIntToBytes(modPow(sigNum, PUBLIC_KEY_E, PUBLIC_KEY_N), RSA_KEY_BYTES);
+    const expected = expectedPkcs1Block(payloadB64);
+    if (!constantTimeEqual(decoded, expected)) return null;
+    return payload;
+  } catch (err) {
+    console.warn("License verify failed", err);
+    return null;
+  }
+}
+
+function isPayloadForThisDevice(payload) {
+  return payload && payload.deviceId === getDeviceId();
 }
 
 function canUseApp() {
   if (isAdmin) return true;
   try {
     const record = JSON.parse(localStorage.getItem(LICENSE_STORAGE_KEY) || "null");
-    if (!record || !record.key || !record.deviceId) return false;
-    return record.deviceId === getDeviceId() && isValidKeyForDevice(record.key, record.deviceId);
+    if (!record || !record.key) return false;
+    const payload = verifySignedKey(record.key);
+    return !!(payload && payload.role === "user" && isPayloadForThisDevice(payload));
   } catch (_) {
     return false;
   }
@@ -13112,18 +13210,26 @@ function canUseApp() {
 function activateLicense() {
   const input = $("licenseInput");
   const key = input ? input.value.trim() : "";
-  const deviceId = getDeviceId();
   if (!key) {
-    showLicenseMessage("Bạn chưa nhập mã key.", "error");
+    showLicenseMessage("Bạn chưa nhập mã key. Muốn mua key vui lòng liên hệ Zalo: 0772998989.", "error");
     return;
   }
-  if (!isValidKeyForDevice(key, deviceId)) {
-    showLicenseMessage("Mã key không hợp lệ với thiết bị này. Key chỉ dùng được trên đúng 1 thiết bị đã cấp.", "error");
+  const payload = verifySignedKey(key);
+  if (!payload || payload.role !== "user" || !isPayloadForThisDevice(payload)) {
+    showLicenseMessage("Mã key không hợp lệ với thiết bị này. Key chỉ dùng được trên đúng 1 thiết bị đã cấp. Liên hệ Zalo: 0772998989.", "error");
     return;
   }
-  localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify({ deviceId, key, activatedAt: new Date().toISOString() }));
+  localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify({ key, deviceId: getDeviceId(), activatedAt: new Date().toISOString() }));
   showLicenseMessage("Kích hoạt thành công. Bạn có thể sử dụng website trên thiết bị này.", "ok");
   unlockApp("license");
+}
+
+function restoreAdminSession() {
+  try {
+    const key = sessionStorage.getItem(ADMIN_SESSION_KEY) || "";
+    const payload = verifySignedKey(key);
+    isAdmin = !!(payload && payload.role === "admin" && isPayloadForThisDevice(payload));
+  } catch (_) { isAdmin = false; }
 }
 
 function unlockApp(mode = "license") {
@@ -13167,9 +13273,9 @@ function showLicenseMessage(message, type = "") {
 function copyDeviceCode() {
   const code = getDeviceId();
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(code).then(() => showLicenseMessage("Đã copy mã thiết bị.", "ok"));
+    navigator.clipboard.writeText(code).then(() => showLicenseMessage("Đã copy mã thiết bị. Gửi mã này qua Zalo 0772998989 để mua key.", "ok"));
   } else {
-    prompt("Copy mã thiết bị:", code);
+    prompt("Copy mã thiết bị và gửi qua Zalo 0772998989:", code);
   }
 }
 
@@ -13185,14 +13291,15 @@ function closeAdminDialog() {
 }
 
 function adminLogin() {
-  const pass = ($("adminPassword")?.value || "").trim();
-  if (pass !== ADMIN_PASSWORD) {
-    showAdminMessage("Sai mật khẩu admin.", "error");
+  const key = ($("adminKeyInput")?.value || "").trim();
+  const payload = verifySignedKey(key);
+  if (!payload || payload.role !== "admin" || !isPayloadForThisDevice(payload)) {
+    showAdminMessage("Admin key không hợp lệ với thiết bị này.", "error");
     return;
   }
   isAdmin = true;
-  sessionStorage.setItem(ADMIN_SESSION_KEY, "1");
-  showAdminMessage("Đăng nhập admin thành công. Bạn có thể tạo key và chỉnh đáp án.", "ok");
+  sessionStorage.setItem(ADMIN_SESSION_KEY, key);
+  showAdminMessage("Đăng nhập Admin thành công. Bạn có thể chỉnh đáp án.", "ok");
   unlockApp("admin");
   updateAdminUI();
 }
@@ -13201,38 +13308,19 @@ function adminLogout() {
   isAdmin = false;
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   closeAnswerEditor();
-  showAdminMessage("Đã đăng xuất admin.", "");
+  showAdminMessage("Đã đăng xuất Admin.", "");
   updateAdminUI();
-  if (!canUseApp()) showLicenseGate("Đã đăng xuất admin. Vui lòng nhập key để sử dụng website.", false);
+  if (!canUseApp()) showLicenseGate("Đã đăng xuất Admin. Vui lòng nhập key để sử dụng website.", false);
 }
 
 function updateAdminUI() {
   const editBtn = $("editAnswerBtn");
   if (editBtn) editBtn.classList.toggle("admin-only-hidden", !isAdmin);
-  const adminPanel = $("adminPanel");
-  if (adminPanel) adminPanel.classList.toggle("hidden", !isAdmin);
   const logoutBtn = $("adminLogoutBtn");
   if (logoutBtn) logoutBtn.classList.toggle("hidden", !isAdmin);
   const loginBtn = $("adminLoginBtn");
   if (loginBtn) loginBtn.classList.toggle("hidden", isAdmin);
   updateLicenseStatus(isAdmin ? "admin" : (canUseApp() ? "license" : "locked"));
-}
-
-function generateKeyForCustomer() {
-  if (!isAdmin) {
-    showAdminMessage("Bạn cần đăng nhập admin trước khi tạo key.", "error");
-    return;
-  }
-  const input = $("adminDeviceInput");
-  const deviceId = (input?.value || "").trim();
-  if (!deviceId) {
-    showAdminMessage("Vui lòng nhập mã thiết bị của khách.", "error");
-    return;
-  }
-  const key = licenseForDevice(deviceId);
-  const out = $("generatedKey");
-  if (out) out.value = key;
-  showAdminMessage("Đã tạo key 50k cho đúng mã thiết bị này. Key sẽ không hợp lệ trên thiết bị khác.", "ok");
 }
 
 function showAdminMessage(message, type = "") {

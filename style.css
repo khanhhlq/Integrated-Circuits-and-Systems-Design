@@ -741,3 +741,15 @@ body.license-unlocked .license-view { display: none; }
 .admin-only-hidden { display: none !important; }
 
 .btn.small { padding: 7px 10px; border-radius: 10px; font-size: 13px; }
+
+
+.contact-zalo {
+  display: inline-block;
+  margin: 6px 0 16px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #eaf2ff;
+  color: #1e40af;
+  font-weight: 850;
+}
+.contact-zalo strong { color: #dc2626; }

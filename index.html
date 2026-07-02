@@ -13,6 +13,7 @@
       <p class="eyebrow">Bản quyền • Lê Quốc Khánh - 24161276</p>
       <h1>Kích hoạt website luyện thi</h1>
       <p class="license-desc">Website sử dụng mã key riêng cho từng thiết bị. Giá key: <strong>50.000đ / 1 thiết bị</strong>. Key đã mua chỉ hợp lệ với đúng mã thiết bị bên dưới.</p>
+      <p class="contact-zalo">Muốn mua key vui lòng liên hệ Zalo: <strong>0772998989</strong></p>
 
       <div class="device-box">
         <span>Mã thiết bị của bạn</span>
@@ -31,40 +32,24 @@
       </div>
       <div id="licenseMessage" class="license-message hidden"></div>
 
-      <p class="license-note">Lưu ý: bản HTML chạy offline nên cơ chế khóa key phù hợp dùng nội bộ/lớp học. Muốn chống chia sẻ key tuyệt đối cần triển khai thêm máy chủ xác thực.</p>
+      <p class="license-note">Mỗi key chỉ dùng cho đúng 1 mã thiết bị. Khi đổi thiết bị, người dùng cần liên hệ Zalo để cấp key mới.</p>
     </div>
   </section>
 
   <div id="adminDialog" class="admin-dialog hidden" role="dialog" aria-modal="true">
     <div class="admin-card">
       <div class="admin-head">
-        <h2>Trang quản trị Admin</h2>
+        <h2>Đăng nhập Admin</h2>
         <button id="closeAdminDialogBtn" class="btn ghost" type="button">Đóng</button>
       </div>
-      <p>Đăng nhập admin để tạo mã key theo mã thiết bị và chỉnh sửa đáp án.</p>
+      <p>Admin cần nhập <strong>Admin key</strong> đã được ký riêng. Không còn mật khẩu admin hoặc mã tạo key trong file website học viên.</p>
       <label>
-        Mật khẩu admin
-        <input id="adminPassword" class="search" type="password" placeholder="Nhập mật khẩu admin" />
+        Admin key
+        <textarea id="adminKeyInput" class="admin-output" placeholder="Dán Admin key tại đây"></textarea>
       </label>
       <div class="actions">
-        <button id="adminLoginBtn" class="btn primary" type="button">Đăng nhập admin</button>
-        <button id="adminLogoutBtn" class="btn danger hidden" type="button">Đăng xuất admin</button>
-      </div>
-
-      <div id="adminPanel" class="admin-panel hidden">
-        <h3>Tạo key cho 1 thiết bị</h3>
-        <label>
-          Mã thiết bị khách gửi
-          <input id="adminDeviceInput" class="search" placeholder="Dán mã thiết bị tại đây" />
-        </label>
-        <div class="actions">
-          <button id="generateKeyBtn" class="btn success" type="button">Tạo key 50k</button>
-          <button id="adminEnterAppBtn" class="btn" type="button">Vào website bằng quyền admin</button>
-        </div>
-        <label>
-          Key cấp cho khách
-          <textarea id="generatedKey" class="admin-output" readonly placeholder="Key sẽ hiện tại đây"></textarea>
-        </label>
+        <button id="adminLoginBtn" class="btn primary" type="button">Đăng nhập Admin</button>
+        <button id="adminLogoutBtn" class="btn danger hidden" type="button">Đăng xuất Admin</button>
       </div>
       <div id="adminMessage" class="license-message hidden"></div>
     </div>
