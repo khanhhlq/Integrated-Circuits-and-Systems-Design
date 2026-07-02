@@ -42,10 +42,10 @@
         <h2>Đăng nhập Admin</h2>
         <button id="closeAdminDialogBtn" class="btn ghost" type="button">Đóng</button>
       </div>
-      <p>Admin đăng nhập qua server. Mật khẩu admin không nằm trong file HTML/CSS/JS gửi cho học viên.</p>
+      <p>Admin cần nhập <strong>Admin key</strong> đã được ký riêng. Không còn mật khẩu admin hoặc mã tạo key trong file website học viên.</p>
       <label>
-        Mật khẩu Admin
-        <textarea id="adminKeyInput" class="admin-output" placeholder="Nhập mật khẩu admin server"></textarea>
+        Admin key
+        <textarea id="adminKeyInput" class="admin-output" placeholder="Dán Admin key tại đây"></textarea>
       </label>
       <div class="actions">
         <button id="adminLoginBtn" class="btn primary" type="button">Đăng nhập Admin</button>
@@ -113,7 +113,16 @@
           <button id="startBtn" class="btn primary">Bắt đầu làm bài</button>
           <button id="reviewBankBtn" class="btn">Xem ngân hàng câu hỏi</button>
         </div>
-</section>
+
+        <details class="source-box">
+          <summary>Tài liệu gốc kèm theo</summary>
+          <div class="source-links">
+            <a href="assets/tong_hop_cau_hoi_trac_nghiem.pdf" target="_blank">PDF tổng hợp câu hỏi</a>
+            <a href="assets/kiem_tra_online_lan_1.pdf" target="_blank">Kiểm tra online lần 1</a>
+            <a href="assets/kiem_tra_online_lan_2.pdf" target="_blank">Kiểm tra online lần 2</a>
+          </div>
+        </details>
+      </section>
 
       <section id="quizView" class="panel hidden">
         <div class="quiz-top">
@@ -197,51 +206,10 @@
         <div>© 2026 Bản quyền thuộc về <strong>Lê Quốc Khánh - 24161276</strong>.</div>
         <div class="footer-actions">
           <span id="licenseStatus" class="license-status">Chưa kích hoạt</span>
-          <span class="footer-device">Mã thiết bị: <code id="footerDeviceCode">Đang tạo...</code></span>
-          <button id="copyDeviceBtnFooter" class="btn small ghost" type="button">Copy mã</button>
           <button id="openAdminFooterBtn" class="btn ghost" type="button">Admin</button>
         </div>
       </footer>
   </div>
-  <script>
-    // Fallback hiển thị mã thiết bị ngay cả khi script.js chưa tải xong.
-    (function () {
-      const DEVICE_STORAGE_KEY = "lkq_device_id_v1";
-      function makeDeviceId() {
-        let id = localStorage.getItem(DEVICE_STORAGE_KEY);
-        if (!id) {
-          const arr = new Uint32Array(3);
-          if (window.crypto && crypto.getRandomValues) {
-            crypto.getRandomValues(arr);
-          } else {
-            arr[0] = Math.floor(Math.random() * 0xffffffff);
-            arr[1] = Date.now() & 0xffffffff;
-            arr[2] = Math.floor(Math.random() * 0xffffffff);
-          }
-          const part = Array.from(arr).map(n => n.toString(36).toUpperCase().padStart(7, "0")).join("-");
-          id = "LKQ-" + part;
-          localStorage.setItem(DEVICE_STORAGE_KEY, id);
-        }
-        window.__LKQ_DEVICE_ID__ = id;
-        return id;
-      }
-      function fillDeviceId() {
-        const id = makeDeviceId();
-        ["deviceCode", "footerDeviceCode"].forEach(function (domId) {
-          const el = document.getElementById(domId);
-          if (el) el.textContent = id;
-        });
-      }
-      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fillDeviceId);
-      else fillDeviceId();
-    })();
-  </script>
-
-  <script>
-    // Khi up GitHub Pages, đổi URL này thành URL backend của bạn.
-    // Ví dụ: window.API_BASE_URL = "https://ten-app-cua-ban.onrender.com";
-    window.API_BASE_URL = "";
-  </script>
   <script src="script.js"></script>
 </body>
 </html>
