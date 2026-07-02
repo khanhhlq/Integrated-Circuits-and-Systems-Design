@@ -1,4 +1,5 @@
 // Question bank extracted from uploaded PDF.
+// Question bank extracted from uploaded PDF.
 window.QUESTION_BANK = [
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -4204,7 +4205,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 40",
-    "question": "Cho khai báo: integer i; kết quả thu được khi thực hiện lệnh gán i=2,9 là?",
+    "question": "Cho khai báo sau, kết quả thu được khi thực hiện lệnh gán là?",
     "options": [
       {
         "id": "A",
@@ -4231,7 +4232,14 @@ window.QUESTION_BANK = [
       "B"
     ],
     "type": "single",
-    "id": "main_117"
+    "id": "main_117",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "integer i;\ni = 2.9;"
+      }
+    ],
+    "note": "Đã trình bày lại đoạn khai báo/lệnh gán theo dạng code để dễ đọc."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -4350,7 +4358,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 43",
-    "question": "Xác định số kí tự tối đa mà khai báo chuỗi sau chứa được: reg [8*13:1] string_val;",
+    "question": "Xác định số kí tự tối đa mà khai báo chuỗi sau chứa được:",
     "options": [
       {
         "id": "A",
@@ -4378,7 +4386,13 @@ window.QUESTION_BANK = [
     ],
     "type": "single",
     "id": "main_121",
-    "note": "Đáp án được bổ sung do trong PDF dòng đáp án không được in đậm rõ."
+    "note": "Đáp án được bổ sung do trong PDF dòng đáp án không được in đậm rõ.",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "reg [8*13:1] string_val;"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -5647,7 +5661,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 79",
-    "question": "Giá trị được lưu trữ trong thanh ghi sau là gì khi thực hiện các câu lệnh? reg [15:0] reg A; regA= -4’d12;",
+    "question": "Giá trị được lưu trữ trong thanh ghi sau là gì khi thực hiện các câu lệnh?",
     "options": [
       {
         "id": "A",
@@ -5674,7 +5688,14 @@ window.QUESTION_BANK = [
       "D"
     ],
     "type": "single",
-    "id": "main_157"
+    "id": "main_157",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "reg [15:0] regA;\nregA = -4'd12;"
+      }
+    ],
+    "note": "Chuẩn hóa lại tên biến regA do bản PDF/OCR bị tách thành “reg A”."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -6079,21 +6100,21 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 89",
-    "question": "Đoạn chương trình sau chỉ được thực hiện khi nào? always",
+    "question": "Đoạn chương trình sau chỉ được thực hiện khi nào?",
     "options": [
       {
         "id": "A",
-        "text": "Luôn được thực thi begin",
+        "text": "Luôn được thực thi",
         "correct": false
       },
       {
         "id": "B",
-        "text": "Khi tín hiệu ctrl lên mức 1 wait (ctrl) #10 cnt = cnt + 1;",
+        "text": "Khi tín hiệu ctrl lên mức 1",
         "correct": true
       },
       {
         "id": "C",
-        "text": "Khi hết thời gian chờ end #10 cnt2 = cnt2 + 2; end",
+        "text": "Khi hết thời gian chờ",
         "correct": false
       },
       {
@@ -6106,7 +6127,14 @@ window.QUESTION_BANK = [
       "B"
     ],
     "type": "single",
-    "id": "main_169"
+    "id": "main_169",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "always begin\n  wait (ctrl);\n  #10 cnt = cnt + 1;\n  #10 cnt2 = cnt2 + 2;\nend"
+      }
+    ],
+    "note": "Tách phần code ra khỏi đáp án vì bản OCR làm dính code vào các lựa chọn."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -6115,21 +6143,21 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 90",
-    "question": "Xung clock được tạo ra từ đoạn chương trình sau với chu kỳ là? initial begin",
+    "question": "Xung clock được tạo ra từ đoạn chương trình sau với chu kỳ là?",
     "options": [
       {
         "id": "A",
-        "text": "10 ns clk = 0;",
+        "text": "10 ns",
         "correct": false
       },
       {
         "id": "B",
-        "text": "20 ns forever #10 clk = ~clk;",
+        "text": "20 ns",
         "correct": false
       },
       {
         "id": "C",
-        "text": "10 ms end",
+        "text": "10 ms",
         "correct": false
       },
       {
@@ -6142,7 +6170,14 @@ window.QUESTION_BANK = [
       "D"
     ],
     "type": "single",
-    "id": "main_170"
+    "id": "main_170",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "initial begin\n  clk = 0;\n  forever #10 clk = ~clk;\nend"
+      }
+    ],
+    "note": "Tách phần code ra khỏi đáp án vì bản OCR làm dính code vào các lựa chọn."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -6332,7 +6367,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 96",
-    "question": "Cho biết thời gian được trì hoãn của câu lệnh sau trước khi được thực hiện `timescale 10ns/1ns later: #5 a = b;",
+    "question": "Cho biết thời gian được trì hoãn của câu lệnh sau trước khi được thực hiện:",
     "options": [
       {
         "id": "A",
@@ -6359,7 +6394,13 @@ window.QUESTION_BANK = [
       "B"
     ],
     "type": "single",
-    "id": "main_176"
+    "id": "main_176",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "`timescale 10ns/1ns\nlater: #5 a = b;"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -6764,7 +6805,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 12",
-    "question": "Câu lệnh \"assign f=(a|b)&(c|d)\" biểu thị điều gì?",
+    "question": "Câu lệnh sau biểu thị điều gì?",
     "options": [
       {
         "id": "A",
@@ -6791,7 +6832,13 @@ window.QUESTION_BANK = [
       "D"
     ],
     "type": "single",
-    "id": "main_188"
+    "id": "main_188",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "assign f = (a | b) & (c | d);"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7088,7 +7135,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 21",
-    "question": "Cho đoạn chương trình Verilog sau: wire [7:0] A; wire B; assign B = ~|A; Nếu giá trị của A là 8'b00111001 thì giá trị của {A[5:3], 3{B}} sẽ là bao nhiêu?",
+    "question": "Cho đoạn chương trình Verilog sau. Nếu A = 8'b00111001 thì giá trị của {A[5:3], {3{B}}} là bao nhiêu?",
     "options": [
       {
         "id": "A",
@@ -7115,7 +7162,13 @@ window.QUESTION_BANK = [
       "C"
     ],
     "type": "single",
-    "id": "main_197"
+    "id": "main_197",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "wire [7:0] A;\nwire B;\nassign B = ~|A;"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7304,7 +7357,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 27",
-    "question": "Trong đoạn mã đã cho, câu lệnh 2 sẽ được thực thi tại Initial Begin #5 x=1'b0; // câu lệnh 1 #15 y= 1b'1; // câu lệnh 2 End",
+    "question": "Trong đoạn mã đã cho, câu lệnh 2 sẽ được thực thi tại thời điểm nào?",
     "options": [
       {
         "id": "A",
@@ -7331,7 +7384,14 @@ window.QUESTION_BANK = [
       "B"
     ],
     "type": "single",
-    "id": "main_203"
+    "id": "main_203",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "initial begin\n  #5  x = 1'b0; // câu lệnh 1\n  #15 y = 1'b1; // câu lệnh 2\nend"
+      }
+    ],
+    "note": "Chuẩn hóa lại cú pháp 1'b1 do OCR trong PDF bị sai thứ tự ký tự."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7376,7 +7436,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 29",
-    "question": "Xem xét đoạn mã Verilog sau: wire [5:0] A, B; wire C; assign C=^A; Nếu giá trị của A và B lần lượt là 5'b10011 và 5'b01110 thì giá trị của {A[3:1], 2{C}, B[2:0]} sẽ là bao nhiêu? Chọn một:",
+    "question": "Xem xét đoạn mã Verilog sau. Nếu A = 5'b10011 và B = 5'b01110 thì giá trị của {A[3:1], {2{C}}, B[2:0]} là bao nhiêu?",
     "options": [
       {
         "id": "A",
@@ -7403,7 +7463,13 @@ window.QUESTION_BANK = [
       "B"
     ],
     "type": "single",
-    "id": "main_205"
+    "id": "main_205",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "wire [5:0] A, B;\nwire C;\nassign C = ^A;"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7520,7 +7586,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 33",
-    "question": "Chọn phương án đúng với đoạn chương trình sau? module mydesign (a,b); input [1:0] b; output reg a; always @(b) begin if (b==2'b00) a = 1'b0; else if (b==2'b11) a = 1'b0; else a=1'b1; end end module",
+    "question": "Chọn phương án đúng với đoạn chương trình sau:",
     "options": [
       {
         "id": "A",
@@ -7547,7 +7613,13 @@ window.QUESTION_BANK = [
       "A"
     ],
     "type": "single",
-    "id": "main_209"
+    "id": "main_209",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "module mydesign (a, b);\n  input [1:0] b;\n  output reg a;\n\n  always @(b) begin\n    if (b == 2'b00)\n      a = 1'b0;\n    else if (b == 2'b11)\n      a = 1'b0;\n    else\n      a = 1'b1;\n  end\nendmodule"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7592,7 +7664,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 35",
-    "question": "Nếu \"clk\" và \"clear\" là hai đầu vào của mô-đun bộ đếm, biểu thức nào sau đây phải được thực hiện nếu chúng ta muốn thực hiện việc xóa một cách không đồng bộ (giả sử \"xóa\" ở mức thấp, cạnh lên của tín hiệu \"clk\" là được sử dụng để đếm và khối \"always\" duy nhất được sử dụng để triển khai)?",
+    "question": "Nếu \"clk\" và \"clear\" là hai đầu vào của mô-đun bộ đếm, biểu thức nào sau đây phải được dùng để xóa bất đồng bộ? Giả sử clear tác động mức thấp, clk đếm ở cạnh lên và chỉ dùng một khối always.",
     "options": [
       {
         "id": "A",
@@ -7664,7 +7736,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 37",
-    "question": "Chọn phương án đúng với đoạn chương trình sau? integer x, y initial begin x = 15; y = 10; end initial repeat (x) $display (\"x=%d\",x); initial while (y < 12) begin y = y + 1; X = X - 1; end",
+    "question": "Chọn phương án đúng với đoạn chương trình sau:",
     "options": [
       {
         "id": "A",
@@ -7691,7 +7763,14 @@ window.QUESTION_BANK = [
       "C"
     ],
     "type": "single",
-    "id": "main_213"
+    "id": "main_213",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "integer x, y;\n\ninitial begin\n  x = 15;\n  y = 10;\nend\n\ninitial\n  repeat (x) $display(\"x = %d\", x);\n\ninitial\n  while (y < 12) begin\n    y = y + 1;\n    x = x - 1;\n  end"
+      }
+    ],
+    "note": "Chuẩn hóa lại chữ X thành x trong đoạn cuối để thống nhất với khai báo integer x, y."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7700,7 +7779,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 38",
-    "question": "Đoạn chương trình sau cho biết điều gì? initial clk =1'b0; always #5 clk = ~clk;",
+    "question": "Đoạn chương trình sau cho biết điều gì?",
     "options": [
       {
         "id": "A",
@@ -7727,7 +7806,13 @@ window.QUESTION_BANK = [
       "C"
     ],
     "type": "single",
-    "id": "main_214"
+    "id": "main_214",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "initial clk = 1'b0;\nalways #5 clk = ~clk;"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7772,7 +7857,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 40",
-    "question": "Đoạn chương trình sau mô tả mạch điện gì với data0, 1, 2, 3 tương ứng ngõ vào các FF? always @(posedge clock) begin data3 = din; data2 = data3; data1 = data2; data0 = data1; end",
+    "question": "Đoạn chương trình sau mô tả mạch điện gì với data0, data1, data2, data3 tương ứng ngõ vào các FF?",
     "options": [
       {
         "id": "A",
@@ -7800,7 +7885,13 @@ window.QUESTION_BANK = [
     ],
     "type": "single",
     "id": "main_216",
-    "note": "Đáp án được bổ sung do trong PDF dòng đáp án không được in đậm rõ."
+    "note": "Đáp án được bổ sung do trong PDF dòng đáp án không được in đậm rõ.",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "always @(posedge clock) begin\n  data3 = din;\n  data2 = data3;\n  data1 = data2;\n  data0 = data1;\nend"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7881,7 +7972,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 43",
-    "question": "Cho đoạn chương trình, giá trị cuối cùng của biến “d” sẽ là... integer a, b, c, d; initial begin a = 25; b = 12; c = 5; d=17; a = b + c; b =a-15; c = a+d; d=c+d; end",
+    "question": "Cho đoạn chương trình sau, giá trị cuối cùng của biến d là bao nhiêu?",
     "options": [
       {
         "id": "A",
@@ -7908,7 +7999,13 @@ window.QUESTION_BANK = [
       "B"
     ],
     "type": "single",
-    "id": "main_219"
+    "id": "main_219",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "integer a, b, c, d;\n\ninitial begin\n  a = 25;\n  b = 12;\n  c = 5;\n  d = 17;\n  a = b + c;\n  b = a - 15;\n  c = a + d;\n  d = c + d;\nend"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7953,7 +8050,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 45",
-    "question": "Chọn phát biểu đúng khi tiến hành tổng hợp đoạn chương trình sau? always @(posedge clock) begin y = x; z = y; X = Z; End",
+    "question": "Chọn phát biểu đúng khi tiến hành tổng hợp đoạn chương trình sau:",
     "options": [
       {
         "id": "A",
@@ -7980,7 +8077,14 @@ window.QUESTION_BANK = [
       "D"
     ],
     "type": "single",
-    "id": "main_221"
+    "id": "main_221",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "always @(posedge clock) begin\n  y = x;\n  z = y;\n  x = z;\nend"
+      }
+    ],
+    "note": "Chuẩn hóa lại X/Z hoa trong OCR thành x/z thường để thống nhất với biến trong biểu thức."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -7989,7 +8093,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 46",
-    "question": "Chọn phát biểu đúng cho đoạn chương trình sau? module guess (data, cond, result); input [7:0] data; input [1:0] cond; output reg result; always @(data) begin if (cond == 2'600) result = | data; else result = data; end endmodule",
+    "question": "Chọn phát biểu đúng cho đoạn chương trình sau:",
     "options": [
       {
         "id": "A",
@@ -8016,7 +8120,14 @@ window.QUESTION_BANK = [
       "D"
     ],
     "type": "single",
-    "id": "main_222"
+    "id": "main_222",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "module guess (data, cond, result);\n  input [7:0] data;\n  input [1:0] cond;\n  output reg result;\n\n  always @(data) begin\n    if (cond == 2'b00)\n      result = |data;\n    else\n      result = data;\n  end\nendmodule"
+      }
+    ],
+    "note": "Chuẩn hóa lại “2'600” trong OCR thành “2'b00”."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -8025,7 +8136,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 47",
-    "question": "Chọn phát biểu đúng cho đoạn chương trình sau module mydesign (a,b,c); input c; output reg a, b; always @(c) begin if (c ==1'b0) begin b<=~a; a<=~(c|b); end else if (c == 1'b1) a <=~(b*c); end endmodule",
+    "question": "Chọn phát biểu đúng cho đoạn chương trình sau:",
     "options": [
       {
         "id": "A",
@@ -8052,7 +8163,13 @@ window.QUESTION_BANK = [
       "D"
     ],
     "type": "single",
-    "id": "main_223"
+    "id": "main_223",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "module mydesign (a, b, c);\n  input c;\n  output reg a, b;\n\n  always @(c) begin\n    if (c == 1'b0) begin\n      b <= ~a;\n      a <= ~(c | b);\n    end else if (c == 1'b1) begin\n      a <= ~(b * c);\n    end\n  end\nendmodule"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -8061,12 +8178,12 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 48",
-    "question": "Với giá trị ban đầu a=1, b=2. Kết quả của đoạn chương trình sau là? always @ (posedge clock) a=b; always @(posedge clock) b=a;",
+    "question": "Với giá trị ban đầu a = 1, b = 2. Kết quả của đoạn chương trình sau là gì?",
     "options": [
       {
         "id": "A",
         "text": "Tất cả đều sai",
-        "correct": false
+        "correct": true
       },
       {
         "id": "B",
@@ -8081,14 +8198,21 @@ window.QUESTION_BANK = [
       {
         "id": "D",
         "text": "Phụ thuộc vào trạng thái của xung đồng hồ",
-        "correct": true
+        "correct": false
       }
     ],
     "answers": [
-      "D"
+      "A"
     ],
     "type": "single",
-    "id": "main_224"
+    "id": "main_224",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "always @(posedge clock)\n  a = b;\n\nalways @(posedge clock)\n  b = a;"
+      }
+    ],
+    "note": "Đã sửa đáp án mặc định: dùng blocking assignment trong hai always cùng cạnh clock tạo race condition, kết quả không cố định theo các phương án B/C/D; phương án phù hợp là “Tất cả đều sai”."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -8097,7 +8221,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 49",
-    "question": "Đoạn chương trình sau thực hiện công việc gì? assign d = ~(c|b); assign c = ~(a | d);",
+    "question": "Đoạn chương trình sau thực hiện công việc gì?",
     "options": [
       {
         "id": "A",
@@ -8124,7 +8248,13 @@ window.QUESTION_BANK = [
       "C"
     ],
     "type": "single",
-    "id": "main_225"
+    "id": "main_225",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "assign d = ~(c | b);\nassign c = ~(a | d);"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -8174,7 +8304,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 51",
-    "question": "Chọn phát biểu đúng cho chương trình sau? output reg clk1, clk2; initial begin clk1 =1'b0; clk2 = 1'b1; forever clk1= !clk1; repeat (5) # 5 clk2 = ~clk2; #75 $finish; End",
+    "question": "Chọn phát biểu đúng cho chương trình sau:",
     "options": [
       {
         "id": "A",
@@ -8189,7 +8319,7 @@ window.QUESTION_BANK = [
       {
         "id": "C",
         "text": "Khối sẽ không bao giờ chấm dứt",
-        "correct": false
+        "correct": true
       },
       {
         "id": "D",
@@ -8199,14 +8329,21 @@ window.QUESTION_BANK = [
       {
         "id": "E",
         "text": "Cả B và D đều đúng.",
-        "correct": true
+        "correct": false
       }
     ],
     "answers": [
-      "E"
+      "C"
     ],
     "type": "single",
-    "id": "main_227"
+    "id": "main_227",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "output reg clk1, clk2;\n\ninitial begin\n  clk1 = 1'b0;\n  clk2 = 1'b1;\n  forever clk1 = !clk1;\n  repeat (5) #5 clk2 = ~clk2;\n  #75 $finish;\nend"
+      }
+    ],
+    "note": "Đã sửa đáp án mặc định: lệnh forever không có delay và đứng trước repeat/#75 nên khối initial không bao giờ đi tới các lệnh phía sau; đáp án đúng là khối sẽ không bao giờ chấm dứt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -12709,10 +12846,36 @@ function startExam(configOverride = null) {
 function renderQuestionMedia(q) {
   const images = q.images || (q.image ? [q.image] : []);
   if (!images.length) return "";
-  return images.map(img => `<figure>
-    <img src="${escapeAttr(img.src)}" alt="${escapeAttr(img.alt || 'Hình minh họa câu hỏi')}">
-    ${img.caption ? `<figcaption>${escapeHTML(img.caption)}</figcaption>` : ""}
+  return images.map((img, idx) => `<figure>
+    <a class="question-image-link" href="${escapeAttr(img.src)}" target="_blank" rel="noopener" title="Mở ảnh lớn trong tab mới">
+      <img src="${escapeAttr(img.src)}" alt="${escapeAttr(img.alt || 'Hình minh họa câu hỏi')}">
+    </a>
+    ${img.caption ? `<figcaption>${escapeHTML(img.caption)} • Bấm ảnh để mở ảnh lớn</figcaption>` : `<figcaption>Hình ${idx + 1} • Bấm ảnh để mở ảnh lớn</figcaption>`}
   </figure>`).join("");
+}
+
+function renderCodeBlocks(q) {
+  const blocks = q.codeBlocks || [];
+  if (!blocks.length) return "";
+  return blocks.map(block => `<div class="question-code-wrap">
+    ${block.title ? `<div class="code-title">${escapeHTML(block.title)}</div>` : ""}
+    <pre class="code-block"><code>${escapeHTML(block.code || "")}</code></pre>
+  </div>`).join("");
+}
+
+function renderQuestionPrompt(q, level = "h2") {
+  const tag = level === "h4" ? "h4" : "h2";
+  return `<${tag}>${escapeHTML(q.question || "")}</${tag}>${renderCodeBlocks(q)}`;
+}
+
+function isCodeLike(text) {
+  return /(`timescale|\bmodule\b|\balways\b|\binitial\b|\bassign\b|\bwire\b|\breg\b|\binteger\b|posedge|negedge|#\d|\{|\}|;|<[^>]+>)/i.test(String(text || ""));
+}
+
+function renderOptionContent(text) {
+  const t = String(text || "");
+  if (!isCodeLike(t) || t.length > 110) return escapeHTML(t);
+  return `<code class="inline-code">${escapeHTML(t)}</code>`;
 }
 
 function renderQuestion() {
@@ -12725,7 +12888,7 @@ function renderQuestion() {
     ? ` • Trang ${q.page || "?"}`
     : "";
   $("questionMeta").textContent = `${q.chapter || ""} • ${q.section || ""}${sourceLink}${q.type === "multi" ? " • Có thể chọn nhiều đáp án" : ""}`;
-  $("questionText").textContent = q.question;
+  $("questionText").innerHTML = renderQuestionPrompt(q, "h2");
   $("questionMedia").innerHTML = renderQuestionMedia(q);
 
   const selected = state.answers[q.id] || [];
@@ -12737,7 +12900,7 @@ function renderQuestion() {
     return `<label class="option ${checked ? "selected" : ""} ${locked ? "locked" : ""}" data-option-id="${escapeAttr(opt.id)}">
       <input type="${inputType}" name="q_${escapeAttr(q.id)}" value="${escapeAttr(opt.id)}" ${checked} ${disabled}>
       <span class="letter">${escapeHTML(opt.id)}</span>
-      <span>${escapeHTML(opt.text)}</span>
+      <span>${renderOptionContent(opt.text)}</span>
     </label>`;
   }).join("");
 
@@ -12867,11 +13030,12 @@ function renderReviewItem(q, i) {
       selected.includes(o.id) && !o.correct ? "bad" : ""
     ].join(" ");
     const mark = o.correct ? " ✓" : selected.includes(o.id) ? " ✗" : "";
-    return `<span class="${classes}">${escapeHTML(o.id)}. ${escapeHTML(o.text)}${mark}</span>`;
+    return `<span class="${classes}">${escapeHTML(o.id)}. ${renderOptionContent(o.text)}${mark}</span>`;
   }).join("");
   return `<div class="review-item ${ok ? "correct" : "wrong"}">
     <div class="review-meta">${escapeHTML(source)}</div>
     <h4>${i + 1}. ${escapeHTML(q.question)}</h4>
+    ${renderCodeBlocks(q)}
     ${renderQuestionMedia(q)}
     <div>${opts}</div>
     ${q.note ? `<p class="review-meta">Ghi chú: ${escapeHTML(q.note)}</p>` : ""}
@@ -12953,7 +13117,7 @@ function openAnswerEditor() {
     return `<label class="editor-option">
       <input type="checkbox" value="${escapeAttr(opt.id)}" ${checked}>
       <strong>${escapeHTML(opt.id)}</strong>
-      <span>${escapeHTML(opt.text)}</span>
+      <span>${renderOptionContent(opt.text)}</span>
     </label>`;
   }).join("");
   $("editAnswerNote").className = "edit-note hidden";
@@ -13373,8 +13537,9 @@ function renderBank(items) {
     return `<div class="review-item">
       <div class="review-meta">${escapeHTML(q.chapter || "")} • ${escapeHTML(q.section || "")} • trang ${q.page || "?"}</div>
       <h4>${escapeHTML(q.question_no || `Câu ${i+1}`)}: ${escapeHTML(q.question)}</h4>
+      ${renderCodeBlocks(q)}
       ${renderQuestionMedia(q)}
-      <div>${q.options.map(o => `<span class="answer-pill ${o.correct ? "good" : ""}">${escapeHTML(o.id)}. ${escapeHTML(o.text)}</span>`).join("")}</div>
+      <div>${q.options.map(o => `<span class="answer-pill ${o.correct ? "good" : ""}">${escapeHTML(o.id)}. ${renderOptionContent(o.text)}</span>`).join("")}</div>
       <p class="review-meta">Đáp án: ${escapeHTML(correct)}</p>
     </div>`;
   }).join("");
