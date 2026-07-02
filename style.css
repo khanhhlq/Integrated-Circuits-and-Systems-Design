@@ -195,6 +195,7 @@ select:focus, input:focus, .search:focus {
   border-radius: 14px;
   color: var(--text);
   font-weight: 650;
+  white-space: pre-line;
 }
 
 .actions, .result-actions, .question-actions {

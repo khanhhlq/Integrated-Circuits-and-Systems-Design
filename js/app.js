@@ -346,21 +346,138 @@ function showFeedback(q) {
 function renderAnswerExplanation(q) {
   const text = getQuestionExplanation(q);
   if (!text) return "";
-  return `<div class="answer-explanation"><b>Giải thích:</b> ${escapeHTML(text)}</div>`;
+  return `<div class="answer-explanation"><b>Giải thích chi tiết:</b> ${escapeHTML(text)}</div>`;
 }
 
 function getQuestionExplanation(q) {
-  if (q.explanation) return q.explanation;
-  const correctOptions = q.options.filter(o => o.correct).map(o => `${o.id}. ${o.text}`).join(" | ");
+  const correctOptions = q.options.filter(o => o.correct);
+  const wrongOptions = q.options.filter(o => !o.correct);
+  const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
+  const baseExplanation = (q.explanation || "").trim();
+  const autoReason = buildAutoExplanation(q, correctOptions);
+  const reason = baseExplanation
+    ? `${baseExplanation}\n${autoReason ? `Bổ sung: ${autoReason}` : ""}`.trim()
+    : autoReason;
+
+  const wrongText = wrongOptions.length
+    ? `\n\nVì sao không chọn các đáp án còn lại:\n${wrongOptions.map(o => `- ${o.id}. ${o.text}: ${buildWrongOptionReason(q, o, correctOptions)}`).join("\n")}`
+    : "";
+
+  return `Đáp án đúng là ${correctLabel}.\n\nPhân tích: ${reason}${wrongText}`;
+}
+
+function buildAutoExplanation(q, correctOptions) {
+  const qText = normalize([q.question, q.chapter, q.section, ...(q.codeBlocks || []).map(b => b.code || "")].join(" "));
+  const correctText = correctOptions.map(o => o.text).join("; ");
+  const correctTextNorm = normalize(correctText);
   const hasCode = (q.codeBlocks || []).length > 0;
-  const hasImage = (q.images || []).length > 0;
+  const hasImage = (q.images || []).length > 0 || q.image;
+
   if (hasCode) {
-    return `Dựa vào đoạn code trong đề, cần xét danh sách nhạy, kiểu gán và thứ tự thực thi của các câu lệnh. Phương án đúng là ${correctOptions}; các phương án còn lại không khớp với hành vi của đoạn code.`;
+    if (qText.includes("thieu") || qText.includes("sai") || qText.includes("loi")) {
+      return `Cần đọc trực tiếp cú pháp trong đoạn code. Thành phần đúng cần xác định là "${correctText}" vì vị trí đó trong chương trình phải đúng với quy tắc khai báo/cú pháp Verilog. Khi thiếu hoặc viết sai thành phần này, trình biên dịch sẽ báo lỗi hoặc mạch mô tả không đúng.`;
+    }
+    if (qText.includes("mach") || qText.includes("so do") || qText.includes("module")) {
+      return `Từ các phép gán, toán tử và tín hiệu vào/ra trong code có thể suy ra chức năng phần cứng. Code tạo ra đúng chức năng "${correctText}"; các lựa chọn khác không khớp với quan hệ logic được mô tả trong các câu lệnh assign/always.`;
+    }
+    if (qText.includes("ket qua") || qText.includes("gia tri") || qText.includes("xung") || qText.includes("chu ky")) {
+      return `Cần mô phỏng tuần tự các lệnh trong code: giá trị khởi tạo, độ trễ #, vòng lặp và kiểu gán quyết định kết quả cuối cùng. Sau khi lần theo đúng thứ tự thực thi, kết quả tương ứng với "${correctText}".`;
+    }
+    return `Đây là câu hỏi đọc hiểu code Verilog. Cần xét đúng cú pháp, danh sách tín hiệu, toán tử, thứ tự thực thi và kiểu gán. Khi đối chiếu với đoạn code, kết luận đúng là "${correctText}".`;
+  }
+
+  if (hasImage) {
+    return `Cần nhận dạng đặc điểm trong hình: số ngõ vào/ngõ ra, cổng logic, đường hồi tiếp, tín hiệu điều khiển hoặc cấu trúc khối. Những đặc điểm đó khớp với "${correctText}" nên đây là đáp án đúng.`;
+  }
+
+  if (qText.includes("viet tat")) {
+    return `Câu hỏi yêu cầu mở rộng tên viết tắt. "${correctText}" là cụm từ đầy đủ/đúng chuẩn của thuật ngữ được hỏi. Các cụm còn lại thường là viết sai chính tả, sai thuật ngữ hoặc không thuộc lĩnh vực thiết kế số.`;
+  }
+
+  if (qText.includes("cu phap") || qText.includes("khai bao") || qText.includes("dinh danh") || qText.includes("chu thich")) {
+    return `Câu hỏi kiểm tra quy tắc cú pháp. Phương án "${correctText}" đúng vì nó thỏa mãn đúng dạng viết, ký hiệu hoặc quy tắc đặt tên/khai báo trong Verilog. Chỉ cần sai dấu, sai thứ tự hoặc sai ký tự cho phép thì cú pháp sẽ không hợp lệ.`;
+  }
+
+  if (qText.includes("toan tu")) {
+    return `Cần phân biệt toán tử logic, toán tử theo bit và toán tử rút gọn trong Verilog. Phương án "${correctText}" mô tả đúng chức năng của toán tử được hỏi; các đáp án khác nhầm sang phép toán khác.`;
+  }
+
+  if (qText.includes("ket qua") || qText.includes("gia tri") || qText.includes("tinh") || qText.includes("phep")) {
+    return `Cần áp dụng đúng quy tắc tính toán/biểu diễn số. Sau khi xét hệ cơ số, số bit, bit x/z, phép so sánh hoặc phép logic theo đúng Verilog, kết quả thu được là "${correctText}".`;
+  }
+
+  if (qText.includes("bao nhieu") || qText.includes("may") || qText.includes("so luong") || qText.includes("nam nao")) {
+    return `Câu hỏi yêu cầu nhớ hoặc suy ra một số liệu cụ thể. Giá trị đúng là "${correctText}"; các số liệu khác không đúng với nội dung kiến thức của phần này.`;
+  }
+
+  if (qText.includes("nhiem vu") || qText.includes("cong viec") || qText.includes("buoc")) {
+    return `Câu hỏi yêu cầu ghép đúng nhiệm vụ với tầng/bước tương ứng trong quy trình thiết kế. Nội dung "${correctText}" mô tả đúng nhiệm vụ của tầng/bước được hỏi; các phương án khác thuộc bước khác hoặc không đúng thứ tự quy trình.`;
+  }
+
+  if (qText.includes("uu diem") || qText.includes("nhuoc diem") || qText.includes("han che") || qText.includes("dac trung") || qText.includes("dac diem")) {
+    return `Cần phân biệt đặc điểm của từng công nghệ/khái niệm. Phương án "${correctText}" nêu đúng bản chất được hỏi. Nếu đáp án đúng là dạng "cả ...", nghĩa là các ý thành phần đều đúng và phải chọn phương án tổng hợp đầy đủ nhất.`;
+  }
+
+  if (qText.includes("mach") || qText.includes("flip flop") || qText.includes("thanh ghi") || qText.includes("bo dem") || qText.includes("mux") || qText.includes("decoder") || qText.includes("encoder")) {
+    return `Cần nhận dạng chức năng mạch dựa vào quan hệ ngõ vào/ngõ ra hoặc mô tả logic. Nội dung "${correctText}" khớp với chức năng được mô tả, còn các loại mạch khác có cấu trúc hoặc cách hoạt động khác.`;
+  }
+
+  if (correctTextNorm.startsWith("ca ") || correctTextNorm.includes("deu dung") || correctTextNorm.includes("deu sai") || correctTextNorm.includes("khong sai")) {
+    return `Đây là câu dạng tổng hợp nhiều nhận định. Phải kiểm tra từng nhận định nhỏ trước. Kết luận đúng là "${correctText}" vì nó bao quát chính xác trạng thái đúng/sai của các nhận định trong câu.`;
+  }
+
+  return `Câu hỏi kiểm tra kiến thức lý thuyết/định nghĩa trong chương. Phương án "${correctText}" khớp trực tiếp với khái niệm hoặc nội dung cần nhớ, nên đây là đáp án đúng.`;
+}
+
+function buildWrongOptionReason(q, opt, correctOptions) {
+  const qText = normalize([q.question, q.chapter, q.section, ...(q.codeBlocks || []).map(b => b.code || "")].join(" "));
+  const optText = opt.text || "";
+  const optNorm = normalize(optText);
+  const correctText = correctOptions.map(o => o.text).join("; ");
+  const correctNorm = normalize(correctText);
+  const hasCode = (q.codeBlocks || []).length > 0;
+  const hasImage = (q.images || []).length > 0 || q.image;
+
+  if (correctOptions.length > 1) {
+    return "phương án này không thuộc nhóm đáp án đúng đầy đủ của câu hỏi.";
+  }
+  if (correctNorm.includes("ca ") || correctNorm.includes("deu dung") || correctNorm.includes("khong sai") || correctNorm.includes("khong the sai")) {
+    return "ý này có thể chỉ đúng một phần hoặc chưa bao quát hết các nhận định đúng, nên không phải lựa chọn đầy đủ nhất.";
+  }
+  if (optNorm.includes("ca ") || optNorm.includes("deu dung") || optNorm.includes("deu sai") || optNorm.includes("khong sai") || optNorm.includes("khong the sai")) {
+    return "phương án tổng hợp này không phù hợp vì không phải tất cả các nhận định liên quan đều đúng/sai như nội dung phương án nêu.";
+  }
+  if (hasCode) {
+    return "không khớp với cú pháp hoặc hành vi thực tế khi lần theo đoạn code trong đề.";
   }
   if (hasImage) {
-    return `Dựa vào sơ đồ/hình minh họa trong đề, ta nhận dạng theo cấu trúc cổng logic, tín hiệu điều khiển và đường hồi tiếp. Phương án đúng là ${correctOptions}; các phương án còn lại không đúng với cấu trúc được vẽ.`;
+    return "không khớp với cấu trúc/hình dạng/chức năng thể hiện trong hình minh họa.";
   }
-  return `Phương án đúng là ${correctOptions} vì nội dung phương án này khớp trực tiếp với khái niệm, định nghĩa hoặc kết quả tính toán được hỏi trong câu.`;
+  if (qText.includes("viet tat")) {
+    return "đây không phải cách viết đầy đủ đúng chuẩn của thuật ngữ được hỏi.";
+  }
+  if (qText.includes("cu phap") || qText.includes("khai bao") || qText.includes("dinh danh") || qText.includes("chu thich")) {
+    return "không đúng quy tắc cú pháp hoặc quy tắc định danh/khai báo trong Verilog.";
+  }
+  if (qText.includes("toan tu")) {
+    return "mô tả này là chức năng của toán tử khác, không phải toán tử đang được hỏi.";
+  }
+  if (qText.includes("ket qua") || qText.includes("gia tri") || qText.includes("tinh") || qText.includes("phep")) {
+    return "không phải kết quả thu được sau khi áp dụng đúng quy tắc tính toán/biểu diễn.";
+  }
+  if (qText.includes("bao nhieu") || qText.includes("may") || qText.includes("so luong") || qText.includes("nam nao")) {
+    return "số liệu này khác với giá trị chuẩn cần nhớ trong phần kiến thức đó.";
+  }
+  if (qText.includes("nhiem vu") || qText.includes("cong viec") || qText.includes("buoc")) {
+    return "mô tả này thuộc bước/tầng khác hoặc không đúng với nhiệm vụ của bước/tầng được hỏi.";
+  }
+  if (qText.includes("uu diem") || qText.includes("nhuoc diem") || qText.includes("han che") || qText.includes("dac trung") || qText.includes("dac diem")) {
+    return "nội dung này không đúng với nhóm đặc điểm/ưu nhược điểm mà câu hỏi đang yêu cầu.";
+  }
+  if (qText.includes("mach") || qText.includes("flip flop") || qText.includes("thanh ghi") || qText.includes("bo dem") || qText.includes("mux") || qText.includes("decoder") || qText.includes("encoder")) {
+    return "đây là loại mạch/chức năng khác, không đúng với quan hệ ngõ vào-ngõ ra hoặc mô tả logic trong câu.";
+  }
+  return "nội dung này không khớp với khái niệm, định nghĩa hoặc kết quả mà câu hỏi yêu cầu.";
 }
 
 function isCorrect(q) {
