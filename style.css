@@ -774,56 +774,85 @@ body.license-unlocked .license-view { display: none; }
 .contact-zalo strong { color: #dc2626; }
 
 
-/* Code blocks in questions */
+/* Hiển thị code được gõ lại từ ảnh đề */
 .question-code-wrap {
-  margin: -4px 0 18px;
+  margin: 14px 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #0f172a;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
 }
 .code-title {
-  display: inline-block;
-  margin-bottom: 8px;
-  padding: 5px 9px;
-  border-radius: 999px;
-  background: #eef2ff;
-  color: var(--primary);
-  font-size: 12px;
+  padding: 10px 14px;
+  background: #eaf2ff;
+  color: #1e40af;
   font-weight: 900;
+  border-bottom: 1px solid var(--line);
 }
 .code-block {
   margin: 0;
-  padding: 14px 16px;
-  border-radius: 16px;
-  border: 1px solid #cbd5e1;
+  padding: 16px 18px;
+  overflow: auto;
+  color: #e5eefc;
   background: #0f172a;
-  color: #e2e8f0;
-  overflow-x: auto;
-  font-family: "Cascadia Code", "Consolas", "Courier New", monospace;
+  font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
   font-size: 14px;
   line-height: 1.55;
   white-space: pre;
+  tab-size: 2;
 }
-.inline-code {
-  display: inline-block;
-  padding: 2px 6px;
-  border-radius: 8px;
-  background: #f1f5f9;
-  color: #0f172a;
-  font-family: "Cascadia Code", "Consolas", "Courier New", monospace;
-  font-size: .95em;
-  line-height: 1.45;
+.code-block code {
+  font-family: inherit;
 }
-.question-image-link {
+.question-media figure a {
   display: block;
-  cursor: zoom-in;
 }
 .question-media img {
-  max-height: none;
   width: auto;
-}
-@media (max-width: 720px) {
-  .code-block { font-size: 12px; }
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
-/* Hide source document box on public UI */
-.source-box { display: none !important; }
 
-.question-prompt h2 { margin: 0 0 18px; line-height: 1.45; font-size: clamp(20px, 3vw, 28px); white-space: pre-wrap; }
+.answer-explanation {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--primary);
+  background: #f8fbff;
+  border-radius: 12px;
+  color: #334155;
+  line-height: 1.55;
+  font-weight: 650;
+}
+
+.question-code-wrap {
+  margin: 12px 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+.code-title {
+  padding: 10px 14px;
+  color: #bfdbfe;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  font-weight: 800;
+}
+
+.code-block {
+  margin: 0;
+  padding: 15px 16px;
+  overflow-x: auto;
+  color: #e2e8f0;
+  background: #0f172a;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.code-block code {
+  font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
+  white-space: pre;
+}
