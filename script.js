@@ -571,19 +571,28 @@ function bindLicenseEvents() {
 }
 
 function getDeviceId() {
-  let id = localStorage.getItem(DEVICE_STORAGE_KEY);
+  let id = window.__LKQ_DEVICE_ID__ || localStorage.getItem(DEVICE_STORAGE_KEY);
   if (!id) {
-    const rand = Math.random().toString(36).slice(2, 10).toUpperCase();
-    const time = Date.now().toString(36).toUpperCase();
-    id = `LKQ-${time}-${rand}`;
+    let part = "";
+    try {
+      const arr = new Uint32Array(3);
+      crypto.getRandomValues(arr);
+      part = Array.from(arr).map(n => n.toString(36).toUpperCase().padStart(7, "0")).join("-");
+    } catch (_) {
+      const rand = Math.random().toString(36).slice(2, 10).toUpperCase();
+      const time = Date.now().toString(36).toUpperCase();
+      part = `${time}-${rand}`;
+    }
+    id = `LKQ-${part}`;
     localStorage.setItem(DEVICE_STORAGE_KEY, id);
   }
+  window.__LKQ_DEVICE_ID__ = id;
   return id;
 }
 
 function updateDeviceCodeDisplays() {
   const deviceId = getDeviceId();
-  ["deviceCode", "deviceCodeMain", "footerDeviceCode", "adminDeviceCode"].forEach(id => {
+  ["deviceCode", "footerDeviceCode"].forEach(id => {
     const el = $(id);
     if (el) el.textContent = deviceId;
   });
@@ -595,7 +604,7 @@ function getStoredUserToken() {
 }
 
 function getStoredAdminToken() {
-  return sessionStorage.getItem(ADMIN_SESSION_KEY) || "";
+  return sessionStorage.getItem(ADMIN_SESSION_KEY) || localStorage.getItem(ADMIN_SESSION_KEY) || "";
 }
 
 function getAccessToken() {
@@ -701,6 +710,7 @@ async function adminLogin() {
       body: JSON.stringify({ password, deviceId: getDeviceId() })
     });
     sessionStorage.setItem(ADMIN_SESSION_KEY, data.token);
+    localStorage.setItem(ADMIN_SESSION_KEY, data.token);
     isAdmin = true;
     CLIENT_ROLE = 'admin';
     showAdminMessage("Đăng nhập Admin thành công. Bạn có thể chỉnh đáp án.", "ok");
@@ -715,6 +725,7 @@ function adminLogout() {
   isAdmin = false;
   CLIENT_ROLE = 'guest';
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  localStorage.removeItem(ADMIN_SESSION_KEY);
   closeAnswerEditor();
   showAdminMessage("Đã đăng xuất Admin.", "");
   updateAdminUI();

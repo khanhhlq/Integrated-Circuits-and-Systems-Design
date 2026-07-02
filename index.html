@@ -43,11 +43,6 @@
         <button id="closeAdminDialogBtn" class="btn ghost" type="button">Đóng</button>
       </div>
       <p>Admin đăng nhập qua server. Mật khẩu admin không nằm trong file HTML/CSS/JS gửi cho học viên.</p>
-      <div class="admin-device-hint">
-        <span>Mã thiết bị hiện tại:</span>
-        <code id="adminDeviceCode">Đang tạo...</code>
-        <button id="copyDeviceBtnAdmin" class="btn small ghost" type="button">Copy</button>
-      </div>
       <label>
         Mật khẩu Admin
         <textarea id="adminKeyInput" class="admin-output" placeholder="Nhập mật khẩu admin server"></textarea>
@@ -72,18 +67,6 @@
         <span>câu hỏi</span>
       </div>
     </header>
-
-    <section class="device-inline" aria-label="Mã thiết bị hiện tại">
-      <div>
-        <span>Mã thiết bị hiện tại</span>
-        <code id="deviceCodeMain">Đang tạo...</code>
-        <small>Dùng mã này để xin key hoặc kiểm tra thiết bị đang đăng nhập.</small>
-      </div>
-      <div class="device-inline-actions">
-        <button id="copyDeviceBtnMain" class="btn ghost" type="button">Copy mã thiết bị</button>
-        <span id="deviceInlineMessage" class="device-inline-message"></span>
-      </div>
-    </section>
 
     <main>
       <section id="setupView" class="panel setup">
@@ -220,6 +203,40 @@
         </div>
       </footer>
   </div>
+  <script>
+    // Fallback hiển thị mã thiết bị ngay cả khi script.js chưa tải xong.
+    (function () {
+      const DEVICE_STORAGE_KEY = "lkq_device_id_v1";
+      function makeDeviceId() {
+        let id = localStorage.getItem(DEVICE_STORAGE_KEY);
+        if (!id) {
+          const arr = new Uint32Array(3);
+          if (window.crypto && crypto.getRandomValues) {
+            crypto.getRandomValues(arr);
+          } else {
+            arr[0] = Math.floor(Math.random() * 0xffffffff);
+            arr[1] = Date.now() & 0xffffffff;
+            arr[2] = Math.floor(Math.random() * 0xffffffff);
+          }
+          const part = Array.from(arr).map(n => n.toString(36).toUpperCase().padStart(7, "0")).join("-");
+          id = "LKQ-" + part;
+          localStorage.setItem(DEVICE_STORAGE_KEY, id);
+        }
+        window.__LKQ_DEVICE_ID__ = id;
+        return id;
+      }
+      function fillDeviceId() {
+        const id = makeDeviceId();
+        ["deviceCode", "footerDeviceCode"].forEach(function (domId) {
+          const el = document.getElementById(domId);
+          if (el) el.textContent = id;
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fillDeviceId);
+      else fillDeviceId();
+    })();
+  </script>
+
   <script>
     // Khi up GitHub Pages, đổi URL này thành URL backend của bạn.
     // Ví dụ: window.API_BASE_URL = "https://ten-app-cua-ban.onrender.com";
