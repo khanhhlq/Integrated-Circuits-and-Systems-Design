@@ -13022,8 +13022,7 @@ function resetCurrentAnswerEdit() {
 
 /* ===== License / Admin functions ===== */
 function initLicenseAndAdmin() {
-  const deviceId = getDeviceId();
-  if ($("deviceCode")) $("deviceCode").textContent = deviceId;
+  updateDeviceCodeUI();
   restoreAdminSession();
   updateAdminUI();
   if (canUseApp()) {
@@ -13036,6 +13035,7 @@ function initLicenseAndAdmin() {
 function bindLicenseEvents() {
   const binds = [
     ["copyDeviceBtn", "click", copyDeviceCode],
+    ["copyFooterDeviceBtn", "click", copyDeviceCode],
     ["activateBtn", "click", activateLicense],
     ["openAdminDialogBtn", "click", openAdminDialog],
     ["openAdminFooterBtn", "click", openAdminDialog],
@@ -13066,6 +13066,14 @@ function getDeviceId() {
     localStorage.setItem(DEVICE_STORAGE_KEY, id);
   }
   return id;
+}
+
+function updateDeviceCodeUI() {
+  const deviceId = getDeviceId();
+  ["deviceCode", "footerDeviceCode"].forEach(id => {
+    const el = $(id);
+    if (el) el.textContent = deviceId;
+  });
 }
 
 function canonicalKey(str) {
@@ -13243,8 +13251,7 @@ function showLicenseGate(message, isError = false) {
   document.body.classList.add("license-locked");
   document.body.classList.remove("license-unlocked");
   if (message) showLicenseMessage(message, isError ? "error" : "");
-  const deviceCode = $("deviceCode");
-  if (deviceCode) deviceCode.textContent = getDeviceId();
+  updateDeviceCodeUI();
   updateLicenseStatus("locked");
 }
 
@@ -13272,8 +13279,13 @@ function showLicenseMessage(message, type = "") {
 
 function copyDeviceCode() {
   const code = getDeviceId();
+  updateDeviceCodeUI();
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(code).then(() => showLicenseMessage("Đã copy mã thiết bị. Gửi mã này qua Zalo 0772998989 để mua key.", "ok"));
+    navigator.clipboard.writeText(code).then(() => {
+      showLicenseMessage("Đã copy mã thiết bị. Gửi mã này qua Zalo 0772998989 để mua key.", "ok");
+    }).catch(() => {
+      prompt("Copy mã thiết bị và gửi qua Zalo 0772998989:", code);
+    });
   } else {
     prompt("Copy mã thiết bị và gửi qua Zalo 0772998989:", code);
   }

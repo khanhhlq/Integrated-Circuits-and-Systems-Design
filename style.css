@@ -729,6 +729,25 @@ body.license-unlocked .license-view { display: none; }
   font-weight: 750;
 }
 .footer-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+.footer-device {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #f8fbff;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+.footer-device code {
+  color: #0f172a;
+  font-weight: 900;
+  letter-spacing: .02em;
+  overflow-wrap: anywhere;
+}
+
 .license-status {
   padding: 7px 10px;
   border-radius: 999px;
