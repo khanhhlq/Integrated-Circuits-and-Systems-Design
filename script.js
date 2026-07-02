@@ -3305,22 +3305,22 @@ window.QUESTION_BANK = [
     "options": [
       {
         "id": "A",
-        "text": "/* Nesting /* comments */ do NOT work /",
+        "text": "/* Nesting comments do not work */",
         "correct": false
       },
       {
         "id": "B",
-        "text": "*/ Nesting /* comments */ do NOT work */",
+        "text": "// Nesting comments do not work",
         "correct": false
       },
       {
         "id": "C",
-        "text": "/ Nesting /* comments */ do NOT work //",
+        "text": "/* Nesting comments do not work */",
         "correct": false
       },
       {
         "id": "D",
-        "text": "/* Nesting /* comments */ do NOT work */",
+        "text": "/* Nesting /* comments */ do not work */",
         "correct": true
       }
     ],
