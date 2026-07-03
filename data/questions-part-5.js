@@ -940,12 +940,12 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       {
         "id": "A",
         "text": "6",
-        "correct": false
+        "correct": true
       },
       {
         "id": "B",
         "text": "7",
-        "correct": true
+        "correct": false
       },
       {
         "id": "C",
@@ -959,7 +959,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       }
     ],
     "answers": [
-      "B"
+      "A"
     ],
     "type": "single",
     "id": "main_247",
@@ -970,7 +970,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       }
     ],
     "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là B. 7."
+    "explanation": "Theo cú pháp module trong Verilog, kết thúc module phải dùng đúng từ khóa `endmodule` và không đặt dấu chấm phẩy sau nó. Dòng (6) trong đề là `endmodule;`, nên lỗi nằm ở dòng 6. Dòng (7) `module ADDER_4B(A, B, S);` là một khai báo module hợp lệ."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
