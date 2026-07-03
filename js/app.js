@@ -409,43 +409,19 @@ function renderExplanationHTML(text) {
   `;
 }
 
+
 function getQuestionExplanation(q) {
   const correctOptions = q.options.filter(o => o.correct);
   const wrongOptions = q.options.filter(o => !o.correct);
   const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
   const baseExplanation = (q.explanation || "").trim();
-  const autoReason = buildAutoExplanation(q, correctOptions);
-  const reason = baseExplanation || autoReason;
+  const reason = baseExplanation || buildAutoExplanation(q, correctOptions);
 
   const wrongText = wrongOptions.length
     ? `\n\nVì sao không chọn các đáp án còn lại:\n${wrongOptions.map(o => `- ${o.id}. ${o.text}: ${buildWrongOptionReason(q, o, correctOptions)}`).join("\n")}`
     : "";
 
   return `Đáp án đúng là ${correctLabel}.\n\nPhân tích: ${reason}${wrongText}`;
-}
-
-const COURSE_REFERENCES = {
-  ch1: "Cơ sở Chương 1: quy trình thiết kế ASIC/FPGA gồm HDL coding, simulation, synthesis, placement & routing, timing analysis/verification; Front-End thuộc phía người thiết kế, Back-End thuộc phía nhà sản xuất; tapeout là kết quả cuối trước khi sản xuất.",
-  ch2: "Cơ sở Chương 2: Digital IC chia thành PLD và ASIC; PLD gồm SPLD/CPLD/FPGA; ASIC gồm Semi-Custom và Full-Custom. FPGA dễ lập trình, rẻ khi số lượng nhỏ, rủi ro thấp nhưng chậm/tốn điện/diện tích lớn hơn ASIC. ASIC nhanh, tiết kiệm điện và rẻ khi sản xuất số lượng lớn nhưng không lập trình lại được, lâu chế tạo và chi phí mask/NRE cao.",
-  ch3: "Cơ sở Chương 3: module là khối xây dựng cơ bản trong Verilog. Cú pháp chuẩn là `module <module_name> (<module_terminal_list>); ... endmodule`. Verilog phân biệt net/variable, wire/reg, vector/array, toán tử logic/toán tử bit và các khối `initial`/`always`.",
-  ch4: "Cơ sở Chương 4: mạch tổ hợp có ngõ ra phụ thuộc trực tiếp vào giá trị hiện tại của ngõ vào. MUX chọn một trong nhiều ngõ vào đưa ra một ngõ ra; DEMUX phân phối một ngõ vào tới một trong nhiều ngõ ra; Encoder mã hóa one-hot sang mã nhị phân; Decoder giải mã nhị phân sang one-hot.",
-  ch5: "Cơ sở Chương 5: latch là phần tử nhớ mức, ngõ ra có thể đổi khi tín hiệu cho phép/clock đang ở mức tác động; flip-flop là phần tử nhớ cạnh, chỉ cập nhật tại cạnh lên hoặc cạnh xuống của clock. RS/D latch, D/JK/T flip-flop được nhận dạng bằng tín hiệu vào, hồi tiếp và điều kiện cập nhật.",
-  ch6: "Cơ sở Chương 6: mạch tuần tự đồng bộ dùng clock để điều khiển phần tử nhớ. Continuous assignment `assign` gán liên tục, procedural assignment nằm trong `always/initial`. Blocking `=` thực thi theo thứ tự nên hợp với logic tổ hợp; non-blocking `<=` cập nhật song song nên hợp với thanh ghi/flip-flop."
-};
-
-function chapterKey(q) {
-  const ch = normalize(q.chapter || "");
-  if (ch.includes("chuong 1")) return "ch1";
-  if (ch.includes("chuong 2")) return "ch2";
-  if (ch.includes("chuong 3")) return "ch3";
-  if (ch.includes("chuong 4")) return "ch4";
-  if (ch.includes("chuong 5")) return "ch5";
-  if (ch.includes("chuong 6")) return "ch6";
-  return "";
-}
-
-function getCourseReference(q) {
-  return COURSE_REFERENCES[chapterKey(q)] || "Cơ sở lý thuyết: đối chiếu trực tiếp với định nghĩa, cú pháp hoặc quy tắc thiết kế số tương ứng trong tài liệu môn học.";
 }
 
 function optionText(correctOptions) {
@@ -456,6 +432,126 @@ function includesAny(text, keys) {
   return keys.some(k => text.includes(k));
 }
 
+function textOfQuestion(q) {
+  return normalize([q.question, q.chapter, q.section, ...(q.codeBlocks || []).map(b => b.code || ""), ...(q.options || []).map(o => o.text || "")].join(" "));
+}
+
+function buildAutoExplanation(q, correctOptions) {
+  const cid = q.id;
+  const qText = textOfQuestion(q);
+  const correctText = correctOptions.map(o => o.text).join("; ");
+  const correctNorm = normalize(correctText);
+  const code = ((q.codeBlocks || [])[0]?.code || "");
+  const hasCode = (q.codeBlocks || []).length > 0;
+  const hasImage = (q.images || []).length > 0 || q.image;
+
+  const direct = specificExplanation(q, correctOptions);
+  if (direct) return direct;
+
+  // Chương 1 - quy trình thiết kế ASIC/FPGA, lịch sử IC, phân loại mức tích hợp.
+  if (qText.includes("qua trinh thiet ke") && includesAny(qText, ["asis", "asic", "fgpa", "fpga"]) && qText.includes("bao nhieu tang")) {
+    return "Flow thiết kế ASIC/FPGA trong phần mở đầu được chia thành 7 tầng: viết HDL/testbench/thông số, mô phỏng, tổng hợp, floorplan/placement ban đầu, place & route, phân tích thời gian/điều chỉnh bố cục, kiểm tra logic và tapeout. Vì câu hỏi hỏi tổng số tầng nên chọn 7.";
+  }
+  if (qText.includes("front") && qText.includes("bao nhieu tang")) {
+    return "Front-End là phần việc của người thiết kế: mô tả phần cứng bằng HDL, mô phỏng/kiểm chứng chức năng và tổng hợp logic. Ba việc này tương ứng 3 tầng đầu của flow, nên đáp án là 3.";
+  }
+  if (qText.includes("back") && qText.includes("bao nhieu tang")) {
+    return "Back-End là phần việc đưa thiết kế đã tổng hợp sang bố cục vật lý: placement/floorplan, routing, phân tích thời gian sau bố cục và kiểm tra/tapeout. Phần này chiếm 4 tầng còn lại của flow, nên đáp án là 4.";
+  }
+  if (qText.includes("tang thu nhat") && qText.includes("nhiem vu")) return "Tầng 1 là bước tạo mô tả thiết kế ban đầu: viết chương trình hệ thống/HDL, testbench mô phỏng và các thông số cần dùng. Vì vậy đáp án đúng là phần mô tả việc viết chương trình và thông số.";
+  if (qText.includes("tang thu hai") && qText.includes("nhiem vu")) return "Sau khi có mô tả HDL/testbench, bước tiếp theo là chạy mô phỏng để kiểm tra chức năng và đánh giá thiết kế. Do đó tầng 2 là mô phỏng và đánh giá.";
+  if (qText.includes("tang thu ba") && qText.includes("nhiem vu")) return "Tầng 3 là tổng hợp: công cụ chuyển mô tả HDL cùng ràng buộc thời gian thành cấu trúc logic/netlist và gắn với thư viện phần tử. Vì vậy đáp án liên quan đến tổng hợp chương trình/ràng buộc/vị trí ô là đúng.";
+  if (qText.includes("tang thu tu") && qText.includes("nhiem vu")) return "Tầng 4 bắt đầu phần Back-End: xác định bố cục ban đầu trước khi phân tích sâu các yếu tố thời gian. Đây là bước floorplan/placement sơ bộ, chưa phải routing hay kiểm tra logic cuối.";
+  if (qText.includes("tang thu nam") && qText.includes("nhiem vu")) return "Sau bố cục ban đầu, công cụ thực hiện place & route, tức sắp xếp và đi dây các kết nối trong thiết kế. Vì vậy tầng 5 là đi dây tự động cho hệ thống.";
+  if (qText.includes("tang thu sau") && qText.includes("nhiem vu")) return "Tầng 6 dùng kết quả đi dây để phân tích thời gian sau bố cục; nếu chưa đạt timing thì cần điều chỉnh lại bố cục. Do đó đáp án nói về xác định bố cục cuối cùng sau phân tích thời gian là đúng.";
+  if (qText.includes("tang thu bay") && qText.includes("nhiem vu")) return "Tầng cuối là kiểm tra hoạt động logic và tạo kết quả cuối để tapeout. Ở bước này thiết kế đã qua mô phỏng, tổng hợp, layout/timing nên nhiệm vụ chính là xác nhận logic cuối cùng.";
+  if (qText.includes("front") && qText.includes("cong viec")) return "Front-End gồm các công việc ở mức mô tả và kiểm chứng logic: viết chương trình mô tả phần cứng, mô phỏng và tổng hợp. Vì cả ba mục đều thuộc Front-End nên đáp án gộp cả ba là đúng.";
+  if (qText.includes("back") && qText.includes("cong viec")) return "Back-End gồm sắp xếp bố cục/đi dây và phân tích thời gian/kiểm tra sau bố cục. Vì cả hai nhóm A và B đều là công việc Back-End, lựa chọn phủ định phương án C là lựa chọn đúng trong đề.";
+  if (qText.includes("tapeout")) return "Tapeout là kết quả cuối của quá trình thiết kế IC/PCB trước khi gửi đi chế tạo. Nó không phải file luật thiết kế hay chỉ là kết quả chú thích mô phỏng; nó là gói dữ liệu cuối để sản xuất.";
+  if (qText.includes("mach roi rac") && qText.includes("han che")) return "Mạch rời rạc thường chiếm diện tích lớn, tiêu thụ điện năng cao, tốc độ chỉ ở mức vừa phải và bị giới hạn ứng dụng so với IC. Do đó nếu đề dùng phương án phủ định 'phương án C sai' thì nó tương đương với việc A và B đều là hạn chế đúng.";
+  if (qText.includes("mach tich hop") && qText.includes("uu diem")) return "Mạch tích hợp có nhiều ưu điểm so với mạch rời rạc: diện tích nhỏ, tốc độ cao, tiêu thụ nguồn thấp và ứng dụng rộng hơn. Vì cả A và B đều nêu ưu điểm đúng nên đáp án gộp cả hai là đúng.";
+  if (qText.includes("bong ban dan dau tien")) return "Cột mốc transistor đầu tiên thường được ghi nhận năm 1947, mở đầu kỷ nguyên transistor. Các năm khác không phải mốc ra đời transistor đầu tiên.";
+  if (qText.includes("tiep giap dau tien")) return "Bóng bán dẫn tiếp giáp được sản xuất hàng loạt vào khoảng năm 1951. Các năm 1940, 1945, 1947 không đúng với mốc sản xuất hàng loạt của transistor tiếp giáp.";
+  if (qText.includes("moore")) return "Định luật Moore mô tả xu hướng mật độ/số lượng transistor tăng nhanh theo thời gian, thường được diễn giải là số transistor tăng gấp đôi sau khoảng 18 tháng đến 2 năm. Trong bộ đáp án của đề, lựa chọn đúng là phát biểu gộp theo cách thầy đã đưa trong ngân hàng câu hỏi.";
+  if (qText.includes("ssi") || qText.includes("msi") || qText.includes("lsi") || qText.includes("vlsi")) return `Câu này kiểm tra mức độ tích hợp IC theo số transistor. Đáp án đúng là ${correctText} vì nó khớp mức tích hợp được nêu trong bảng phân loại của đề; các số còn lại thuộc mức tích hợp khác.`;
+  if (qText.includes("san xuat ic") || qText.includes("silic")) return "Quy trình sản xuất IC đi từ vật liệu silicon, tạo silicon wafer, tạo mẫu mạch trên wafer, tách die chưa đóng gói, đóng gói die rồi kiểm tra. Đáp án đúng giữ đúng thứ tự công nghệ đó.";
+
+  // Chương 2 - PLD/ASIC/FPGA.
+  if (qText.includes("ic so") && qText.includes("nen tang")) return "Digital IC trong chương PLD được chia thành hai hướng chính: các thiết bị logic lập trình được (PLD) và mạch tích hợp chuyên dụng (ASIC). Vì vậy đáp án đúng là PLDs và ASIC.";
+  if (qText.includes("fpga") && qText.includes("thuoc nen tang")) return "FPGA là Field Programmable Gate Array, thuộc nhóm PLD vì người dùng có thể lập trình cấu trúc logic sau khi chế tạo. ASIC thì cố định theo ứng dụng, còn SPLD chỉ là một nhánh nhỏ hơn trong PLD.";
+  if (qText.includes("pld viet tat")) return "PLD viết đầy đủ là Programmable Logic Device(s): thiết bị logic lập trình được. Các lựa chọn khác không phải thuật ngữ chuẩn hoặc viết sai chính tả.";
+  if (qText.includes("asic viet tat")) return "ASIC là Application-Specific Integrated Circuit, tức mạch tích hợp chuyên dụng cho một ứng dụng cụ thể. Các phương án khác không đúng thuật ngữ chuyên ngành.";
+  if (qText.includes("fgpa viet tat") || qText.includes("fpga viet tat")) return "FPGA viết đúng là Field Programmable Gate Array. Đây là mảng cổng logic có thể lập trình ngoài hiện trường; các phương án khác chỉ là cụm từ sai hoặc không tồn tại.";
+  if (qText.includes("nen tang cac thiet bi lap trinh duoc pld")) return "PLD gồm SPLD, CPLD và FPGA. SPLD là loại đơn giản, CPLD phức tạp hơn, còn FPGA có cấu trúc mảng logic/routing lập trình được lớn hơn.";
+  if (qText.includes("nen tang cac mach tich hop voi mot ung dung cu the")) return "ASIC là mạch tích hợp cho ứng dụng cụ thể, gồm hai hướng chính: Semi-Custom và Full-Custom. Các nhóm SPLD/CPLD/FPGA thuộc PLD nên không phải câu trả lời cho ASIC.";
+  if (qText.includes("uu diem") && qText.includes("fpga")) return "Ưu điểm FPGA là lập trình nhanh, dễ thử nghiệm, rẻ khi số lượng nhỏ, rủi ro tài chính thấp và có thể sửa thiết kế. Vì vậy các ý về giá rẻ số lượng nhỏ và rủi ro thấp đều đúng.";
+  if (qText.includes("nhuoc diem") && qText.includes("fpga")) return "Nhược điểm FPGA so với ASIC là chậm hơn, tiêu thụ điện/diện tích lớn hơn và dùng nhiều transistor hơn cho mỗi chức năng logic. Do cả ba nhận định đều không sai, đáp án tổng hợp là đúng.";
+  if (qText.includes("uu diem") && qText.includes("asic")) return "ASIC có ưu điểm nhanh hơn, tiêu thụ điện thấp hơn, dùng ít transistor hơn và rẻ khi sản xuất số lượng lớn. Vì vậy phương án gộp các ưu điểm này là đúng.";
+  if (qText.includes("nhuoc diem") && qText.includes("asic")) return "ASIC bị cố định theo thiết kế, thời gian chế tạo dài và chi phí công cụ/mask/NRE cao. Vì cả ba ý đều là nhược điểm nên phương án gộp là đúng.";
+  if (qText.includes("dac trung") && qText.includes("asic")) return "Đặc trưng ASIC là hiệu suất cao, công suất thấp và chi phí trên chip rẻ khi sản xuất khối lượng lớn. Những đặc điểm như lập trình lại nhanh hoặc rẻ ở số lượng nhỏ là của FPGA hơn là ASIC.";
+  if (qText.includes("dac trung") && qText.includes("fpga")) return "Đặc trưng FPGA là lập trình lại được, thời gian thử nghiệm nhanh, chi phí ban đầu thấp và phù hợp nguyên mẫu/số lượng nhỏ. Những đặc điểm như tối ưu diện tích/công suất tuyệt đối lại nghiêng về ASIC.";
+  if (qText.includes("sop")) return "Dạng Sum of Products lấy các minterm ứng với các hàng có F=1 rồi OR các tích lại. Đáp án đúng là biểu thức có các tích tương ứng đúng với những tổ hợp đầu vào tạo ngõ ra 1.";
+  if (qText.includes("pos")) return "Dạng Product of Sums lấy các maxterm ứng với các hàng có F=0 rồi AND các tổng lại. Đáp án đúng là biểu thức POS khớp các hàng F=0 của bảng chân trị.";
+  if (qText.includes("pal") || qText.includes("gal") || qText.includes("pla") || qText.includes("cpld")) return `Đáp án ${correctText} đúng vì nó khớp cấu trúc/thuật ngữ PLD được hỏi: PAL/PLA/SPLD/CPLD khác nhau ở mảng AND/OR lập trình được, độ phức tạp và công nghệ lưu cấu hình.`;
+
+  // Chương 3 - Verilog.
+  if (qText.includes("verilog") && qText.includes("la gi")) return "Verilog là ngôn ngữ mô tả phần cứng (HDL), dùng để mô tả, mô phỏng và tổng hợp mạch số. Nó không phải ngôn ngữ lập trình phần mềm thông thường.";
+  if (qText.includes("nguoi phat trien verilog")) return "Verilog ban đầu do Phil Moorby phát triển tại Gateway Design Automation. Các tên khác không phải người khởi tạo Verilog theo lịch sử HDL.";
+  if (qText.includes("module") && includesAny(qText, ["co dang", "cu phap", "khai bao", "thieu", "sai", "ten module"])) {
+    return "Trong Verilog, `module` là khối thiết kế cơ bản. Cú pháp chuẩn phải là `module ten_module (danh_sach_cong); ... endmodule`. Tên module đứng ngay sau từ khóa `module`; danh sách cổng đặt trong ngoặc; các khai báo/kết nối bên trong phải đúng cú pháp.";
+  }
+  if (qText.includes("instance") || qText.includes("noi day giua cac module")) return "Khi dùng lại một module con, Verilog tạo instance. Có thể nối port theo thứ tự hoặc nối theo tên. Nối theo tên rõ ràng hơn vì `.port(signal)` tránh nhầm thứ tự cổng.";
+  if (qText.includes("dinh danh")) return "Định danh người dùng trong Verilog dùng để đặt tên module, tín hiệu, instance... Tên hợp lệ không được bắt đầu bằng số, không chứa ký tự đặc biệt không cho phép và không trùng từ khóa hệ thống.";
+  if (qText.includes("chu thich") || qText.includes("comment")) return "Verilog có chú thích một dòng bằng `//` và chú thích nhiều dòng bằng `/* ... */`. Chú thích nhiều dòng không được lồng nhau; nếu lồng comment, trình biên dịch sẽ hiểu sai vị trí kết thúc comment.";
+  if (qText.includes("wire") || qText.includes("reg") || qText.includes("net")) return "`wire` là net dùng cho kết nối mạch hoặc continuous assignment. `reg` là biến lưu giá trị trong khối thủ tục `always/initial`; tên `reg` không nhất thiết luôn tổng hợp thành thanh ghi, mà tùy cách mô tả logic.";
+  if (qText.includes("vector") || qText.includes("array") || qText.includes("bus") || qText.includes("string")) return "Vector là một tín hiệu nhiều bit như `[7:0]`, còn array là nhiều phần tử được đánh chỉ số. Chuỗi trong Verilog thường được lưu trong biến `reg` nhiều bit, mỗi ký tự ASCII chiếm 8 bit.";
+  if (qText.includes("so nhi phan") || qText.includes("he 2") || qText.includes("he 16") || qText.includes("number") || qText.includes("'b") || qText.includes("'h")) return "Số Verilog có dạng `<độ_rộng>'<cơ_số><giá_trị>`, ví dụ `4'b1010` là số 4 bit hệ nhị phân. Nếu không ghi đúng độ rộng/cơ số hoặc dùng ký tự không hợp lệ thì giá trị sẽ sai.";
+  if (qText.includes("toan tu logic")) return "Toán tử logic như `&&`, `||`, `!` xét toàn bộ biểu thức theo đúng/sai và thường cho kết quả 1 bit. Nó khác bitwise vì không xử lý từng bit độc lập.";
+  if (qText.includes("toan tu bit") || qText.includes("bitwise")) return "Toán tử bitwise như `&`, `|`, `^`, `~` tác động từng bit của toán hạng. Vì vậy với vector nhiều bit, kết quả được tính bit tương ứng với bit.";
+  if (qText.includes("conditional") || qText.includes("?:")) return "Toán tử điều kiện `condition ? value1 : value2` chọn `value1` khi điều kiện đúng và chọn `value2` khi điều kiện sai, thường dùng mô tả MUX.";
+  if (qText.includes("assign") || qText.includes("continuous")) return "`assign` là gán liên tục: vế trái luôn được cập nhật theo vế phải khi các tín hiệu liên quan thay đổi. Vì vậy nó phù hợp mô tả logic tổ hợp dạng biểu thức.";
+  if (qText.includes("initial")) return "Khối `initial` chạy một lần từ thời điểm mô phỏng 0, thường dùng trong testbench để khởi tạo tín hiệu, tạo kích thích và kết thúc mô phỏng. Nó không chạy lặp mãi như `always`.";
+  if (qText.includes("always")) return "Khối `always` là khối thủ tục chạy lại mỗi khi điều kiện trong sensitivity list xảy ra, hoặc chạy lặp để tạo clock/testbench. Trong logic tổ hợp cần liệt kê đủ tín hiệu nhạy hoặc dùng `always @*`; trong logic tuần tự thường dùng cạnh clock.";
+  if (qText.includes("blocking") || qText.includes("non-blocking") || qText.includes("nonblocking")) return "Blocking `=` thực hiện tuần tự: câu sau dùng giá trị đã gán ở câu trước. Non-blocking `<=` lấy giá trị vế phải trước rồi cập nhật đồng thời ở cuối bước thời gian, nên phù hợp mô tả flip-flop/thanh ghi.";
+  if (hasCode && includesAny(qText, ["forever", "repeat", "finish", "#75", "clk"])) return "Cần lần theo dòng lệnh mô phỏng: `#` tạo trễ, `repeat(n)` lặp hữu hạn, `$finish` dừng mô phỏng, còn `forever` lặp vô hạn nếu không có lệnh dừng bên trong. Nếu `forever` đứng trước các lệnh sau trong cùng luồng, các lệnh sau có thể không bao giờ được thực thi.";
+  if (hasCode) return `Cần đọc code theo thứ tự: khai báo module/port, kiểu dữ liệu, toán tử, khối thủ tục và giá trị gán. Khi áp dụng đúng cú pháp và hành vi Verilog, kết luận phù hợp với đáp án ${correctText}.`;
+
+  // Chương 4 - mạch tổ hợp.
+  if (qText.includes("mux") || qText.includes("multiplexer") || qText.includes("bo chon kenh")) return "MUX có nhiều ngõ vào dữ liệu, một ngõ ra và tín hiệu chọn. Giá trị của tín hiệu chọn quyết định ngõ vào nào được đưa ra output.";
+  if (qText.includes("demux") || qText.includes("demultiplexer") || qText.includes("phan kenh")) return "DEMUX có một ngõ vào dữ liệu, nhiều ngõ ra và tín hiệu chọn. Dữ liệu vào được đưa tới đúng một ngõ ra tùy mã chọn.";
+  if (qText.includes("encoder")) return "Encoder mã hóa nhiều đường vào dạng one-hot hoặc ưu tiên thành mã nhị phân ít bit hơn. Nếu 4 ngõ vào thành 2 bit ra thì đó là encoder 4-to-2.";
+  if (qText.includes("decoder")) return "Decoder giải mã mã nhị phân ít bit thành nhiều ngõ ra one-hot. Nếu 2 bit vào tạo 4 đường ra thì đó là decoder 2-to-4.";
+  if (qText.includes("half") || qText.includes("bo cong ban")) return "Half adder có hai ngõ vào và tạo tổng `S = A xor B`, nhớ `C = A and B`. Nó không có ngõ vào carry-in.";
+  if (qText.includes("full") || qText.includes("bo cong toan")) return "Full adder có ba ngõ vào A, B, Cin; tổng là XOR ba biến và carry-out bằng tổng các tích đôi. Vì có carry-in nên khác half adder.";
+  if (hasImage && includesAny(qText, ["mach to hop", "so do", "mach dien nao"])) return "Mạch tổ hợp được nhận dạng bằng quan hệ ngõ vào/ngõ ra hiện tại, không có phần tử nhớ. Nếu hình có đường chọn thì xét MUX/DEMUX; nếu đổi số bit vào/ra thì xét Encoder/Decoder; nếu là cổng logic thì đọc theo ký hiệu AND/OR/NOT/XOR.";
+
+  // Chương 5 - latch/flip-flop/thanh ghi.
+  if (qText.includes("latch") || qText.includes("mach chot") || qText.includes("chot")) return "Latch là phần tử nhớ tác động theo mức: khi tín hiệu cho phép/clock ở mức tác động, ngõ ra có thể thay đổi theo ngõ vào; khi không cho phép, nó giữ trạng thái cũ. Đó là điểm khác flip-flop.";
+  if (qText.includes("flip flop") || qText.includes("flip-flop")) return "Flip-flop là phần tử nhớ tác động theo cạnh clock. Nó chỉ cập nhật trạng thái ở cạnh lên hoặc cạnh xuống nên ổn định hơn trong mạch tuần tự đồng bộ so với latch mức.";
+  if (qText.includes("sr") || qText.includes("rs")) return "SR/RS latch có hai tín hiệu Set và Reset cùng hồi tiếp chéo. Khi Set tác động thì Q được đặt 1, khi Reset tác động thì Q về 0; trường hợp cùng tác động có thể bị cấm/không xác định tùy cấu trúc.";
+  if (qText.includes("d latch")) return "D latch lấy một dữ liệu D và tín hiệu enable/clock mức. Khi enable tác động, Q theo D; khi enable không tác động, Q giữ giá trị trước.";
+  if (qText.includes("d flip")) return "D flip-flop lấy mẫu D tại cạnh clock và đưa ra Q. Vì cập nhật theo cạnh, nó dùng phổ biến làm thanh ghi trong mạch tuần tự đồng bộ.";
+  if (qText.includes("jk")) return "JK flip-flop có hai ngõ J,K; 00 giữ, 01 reset, 10 set, 11 đảo trạng thái. Vì trạng thái 11 toggle nên JK khắc phục trạng thái cấm của SR.";
+  if (qText.includes("t flip") || qText.includes("toggle")) return "T flip-flop giữ trạng thái khi T=0 và đảo trạng thái khi T=1 tại cạnh clock. Vì vậy nó thường dùng tạo bộ đếm hoặc chia tần.";
+  if (qText.includes("thanh ghi") || qText.includes("shift") || qText.includes("siso") || qText.includes("sipo")) return "Thanh ghi là tập hợp nhiều flip-flop dùng chung clock. Thanh ghi dịch chuyển dữ liệu qua từng tầng theo mỗi xung clock; kiểu vào/ra nối tiếp hay song song phụ thuộc cách lấy dữ liệu.";
+
+  // Chương 6 - mạch tuần tự đồng bộ.
+  if (qText.includes("mach tuan tu dong bo") || qText.includes("synchronous")) return "Mạch tuần tự đồng bộ dùng clock chung để điều khiển phần tử nhớ. Ngõ ra phụ thuộc cả ngõ vào hiện tại và trạng thái đã lưu trước đó, khác mạch tổ hợp chỉ phụ thuộc ngõ vào hiện tại.";
+  if (qText.includes("state register") || qText.includes("next-state") || qText.includes("output logic")) return "Mạch tuần tự đồng bộ thường tách thành thanh ghi trạng thái, logic trạng thái kế tiếp và logic ngõ ra. Thanh ghi lưu trạng thái ở cạnh clock, logic tổ hợp tính trạng thái kế tiếp/ngõ ra.";
+  if (qText.includes("counter") || qText.includes("bo dem")) return "Bộ đếm đồng bộ dùng các flip-flop cập nhật cùng cạnh clock. Giá trị kế tiếp thường bằng trạng thái hiện tại cộng/trừ 1 hoặc theo hàm trạng thái kế tiếp đã thiết kế.";
+  if (qText.includes("blocking") || qText.includes("non-blocking") || qText.includes("nonblocking")) return "Trong thiết kế tuần tự, non-blocking `<=` giúp các thanh ghi cập nhật song song tại cạnh clock. Blocking `=` phù hợp hơn cho logic tổ hợp trong `always @*` vì nó giữ đúng dòng chảy tính toán tuần tự.";
+
+  // Chương 8/VLSI - kiến thức CMOS cơ bản.
+  if (includesAny(qText, ["nmos", "pmos", "cmos", "not", "nand", "nor", "transmission", "pass transistor", "mux", "logic gate"])) {
+    return `Câu này nhận dạng mạch CMOS/VLSI. NMOS dẫn tốt mức 0 khi gate ở 1, PMOS dẫn tốt mức 1 khi gate ở 0; cổng NOT/NAND/NOR được nhận dạng bằng mạng kéo lên PMOS và kéo xuống NMOS. Đặc điểm mạch trong câu khớp với đáp án ${correctText}.`;
+  }
+
+  // Fallback: vẫn giải thích theo câu, không ghi "dựa vào chương" chung chung.
+  if (hasImage) return `Quan sát hình và so sánh với định nghĩa mạch: loại mạch đúng phải khớp số ngõ vào/ngõ ra, tín hiệu điều khiển, hồi tiếp và cách cập nhật trạng thái. Các dấu hiệu trong hình phù hợp với đáp án ${correctText}.`;
+  if (includesAny(qText, ["bao nhieu", "may", "so luong", "nam nao"])) return `Câu hỏi kiểm tra một số liệu/thuật ngữ cụ thể. Đáp án ${correctText} đúng vì khớp giá trị được học; các giá trị khác lệch số lượng, mốc thời gian hoặc mức phân loại.`;
+  return `Đáp án ${correctText} đúng vì khớp trực tiếp với khái niệm hoặc quy tắc được hỏi. Khi làm dạng này, cần xác định từ khóa chính trong câu hỏi rồi đối chiếu với định nghĩa tương ứng để loại các lựa chọn sai.`;
+}
+
 function specificExplanation(q, correctOptions) {
   const cid = q.id;
   const ans = optionText(correctOptions);
@@ -463,122 +559,49 @@ function specificExplanation(q, correctOptions) {
   const qText = normalize([q.question, q.chapter, q.section, code].join(" "));
 
   const lineErrors = {
-    main_245: "Dòng (1) sai vì tên module `F_(ADDER)` chứa dấu ngoặc. Theo quy tắc định danh Verilog, tên module phải là một identifier hợp lệ, không được viết thêm cặp ngoặc trong tên. Cách đúng có thể là `module F_ADDER(a, b, s, ci, co);`.",
-    main_246: "Dòng (3) sai vì khai báo `output co, s` thiếu dấu chấm phẩy ở cuối dòng. Trong Verilog, mỗi khai báo port/signal như `input`, `output`, `wire`, `reg` phải kết thúc bằng dấu `;`.",
-    main_247: "Dòng (6) sai vì viết `endmodule;`. Theo cú pháp module, kết thúc module dùng từ khóa `endmodule` và không thêm dấu chấm phẩy sau nó. Dòng (7) là khai báo module `ADDER_4B(A, B, S);` nên không phải lỗi chính.",
-    main_248: "Dòng (9) sai theo quy ước bài học vì khai báo vector `input [3:-1] B;` dùng biên âm `-1`, làm kích thước/đánh chỉ số của bus không phù hợp với cách khai báo bus thông thường trong bài. Với bus 4 bit nên dùng dạng `[3:0]`.",
-    main_249: "Dòng (10) sai về kiểu biến. `S` là ngõ ra được nối với output của các module con và bit `S[4]`, nên trong mô tả cấu trúc nên là net/wire để được driver bên ngoài gán. Khai báo `output reg [4:0] S;` làm sai kiểu trong ngữ cảnh nối module.",
-    main_250: "Dòng (15) sai ở phần định danh instance: `F_ADDER ADDER_4B(...)` dùng tên instance trùng với tên module cấp trên `ADDER_4B`, dễ gây lỗi/nhầm định danh trong mô tả cấu trúc. Nên đặt instance khác như `fad3`.",
-    main_251: "Dòng (16) sai vì Verilog phân biệt chữ hoa chữ thường. Từ khóa phải viết là `endmodule`, không phải `Endmodule`.",
-    main_252: "Dòng (10) sai do kiểu biến: `S` đang là tín hiệu được các instance `F_ADDER` điều khiển qua port output nên phải là net/wire, không nên khai báo `reg` trong mô tả cấu trúc.",
-    main_253: "Dòng (16) sai về từ khóa vì `Endmodule` viết hoa chữ E. Verilog là ngôn ngữ phân biệt chữ hoa/thường, từ khóa kết thúc module bắt buộc là `endmodule`.",
-    main_254: "Dòng (15) sai ở tên định danh instance. Trong lời gọi module, phần sau tên module là tên instance; dùng `ADDER_4B` trùng tên module cấp trên làm định danh không phù hợp, nên đặt tên instance riêng như `fad3`."
+    main_245: "Dòng (1) sai vì tên module `F_(ADDER)` chứa dấu ngoặc. Tên module trong Verilog phải là định danh hợp lệ: bắt đầu bằng chữ hoặc dấu gạch dưới, sau đó là chữ/số/gạch dưới/ký tự `$`; không được chèn dấu ngoặc vào giữa tên. Cách đúng có thể là `module F_ADDER(a, b, s, ci, co);`.",
+    main_246: "Dòng (3) sai vì khai báo `output co, s` thiếu dấu chấm phẩy ở cuối dòng. Trong Verilog, khai báo `input`, `output`, `wire`, `reg` là một statement và phải kết thúc bằng dấu `;`.",
+    main_247: "Dòng (6) sai vì viết `endmodule;`. `endmodule` là từ khóa kết thúc module, không phải một statement khai báo nên không thêm dấu chấm phẩy sau nó.",
+    main_248: "Dòng (9) sai theo cách dùng bus trong bài vì `input [3:-1] B;` dùng biên âm `-1`. Với bus 4 bit thông thường phải khai báo `[3:0]`; dùng `[3:-1]` làm độ rộng và chỉ số không khớp yêu cầu mạch 4 bit trong đề.",
+    main_249: "Dòng (10) sai về kiểu dữ liệu. `S` được điều khiển bởi các instance `F_ADDER` và bởi phép gán nối mạch nên trong mô tả cấu trúc nó phải là net/wire, không nên khai báo `output reg [4:0] S;`.",
+    main_250: "Dòng (15) sai ở tên instance. Cú pháp instance là `<module_name> <instance_name>(...)`; dùng `ADDER_4B` làm instance trong chính module `ADDER_4B` gây trùng/tối nghĩa định danh. Nên đặt instance riêng như `fa3` hoặc `u3`.",
+    main_251: "Dòng (16) sai vì từ khóa kết thúc module phải viết chính xác là `endmodule`. Verilog phân biệt chữ hoa/thường nên `Endmodule` không phải từ khóa hợp lệ.",
+    main_252: "Lỗi dòng 10 là khai báo biến không đúng kiểu: tín hiệu output được các module con lái trong mô tả cấu trúc cần là net/wire. Khai báo `reg` chỉ phù hợp khi tín hiệu được gán trong khối `always/initial`.",
+    main_253: "Lỗi dòng 16 là sai từ khóa do viết `Endmodule`. Verilog phân biệt hoa/thường nên chỉ `endmodule` mới đúng cú pháp.",
+    main_254: "Lỗi dòng 15 nằm ở định danh instance. Tên instance không nên trùng với tên module cấp trên; trong mô tả cấu trúc cần đặt tên instance riêng để công cụ hiểu đây là một phần tử con cụ thể."
   };
   if (lineErrors[cid]) return lineErrors[cid];
 
-  if (cid === "main_233") {
-    return "Đoạn code bắt đầu bằng `module (a, b, ci, r, co);`. Theo cú pháp Chương 3, sau từ khóa `module` bắt buộc phải có tên module rồi mới đến danh sách cổng, ví dụ `module FULL_ADDER(a, b, ci, r, co);`. Vì thiếu tên module nên đáp án đúng là C. Tên module. Lưu ý dòng cuối còn dùng `cin` trong khi đã khai báo `ci`, nhưng lỗi chính khớp với lựa chọn của đề là thiếu tên module.";
-  }
-  if (cid === "main_234") return "Code tạo 4 instance `FullAdder` liên tiếp cho các bit A[0]..A[3] và B[0]..B[3]. Carry đi từ `c1`, `c2`, `c3` tới bit cao hơn, còn `R[4]` là carry cuối. Đây là cấu trúc ripple-carry adder 4 bit, không phải một full adder đơn lẻ.";
-  if (cid === "main_235") return "Dòng `assign Y = A & B;` dùng toán tử `&` theo bit giữa A và B. Với hai tín hiệu 1 bit, toán tử này mô tả đúng cổng AND. NAND/NOR/OR sẽ cần toán tử hoặc dấu đảo khác.";
-  if (cid === "main_236") return "Ngõ vào `I` có 4 bit dạng one-hot, còn ngõ ra `O` chỉ có 2 bit. Các nhánh `0001→00`, `0010→01`, `0100→10`, `1000→11` chính là quá trình mã hóa 4 trạng thái đầu vào thành 2 bit đầu ra, nên là Encoder.";
-  if (cid === "main_237") return "Ngõ vào `I` là 2 bit, còn ngõ ra `O` là 4 bit one-hot. Mỗi giá trị nhị phân của `I` chỉ bật một bit của `O`, đúng bản chất Decoder 2-to-4.";
-  if (cid === "main_238") return "Vì `EN=1`, code không vào nhánh vô hiệu hóa `temp=0000`. Với `I=2'b10`, `temp=0100`. Do `HL=0`, ngõ ra bị đảo nên `O = ~0100 = 1011`. Vì vậy chọn 1011.";
-  if (cid === "main_239") return "Trong module, `I` được khai báo `input [1:0] I`, tức chỉ rộng 2 bit. Đề cho `I=3'b001` là giá trị 3 bit nên không đúng kích thước tín hiệu mà chương trình định nghĩa; vì vậy kết quả theo đề là không tồn tại.";
-  if (cid === "main_240") return "Điều kiện đầu tiên là `if (EN == 0) temp = 4'b0000;`. Khi EN bằng 0, các giá trị HL và I phía sau không còn quyết định kết quả. Vì vậy ngõ ra cần xét là 0000.";
-  if (cid === "main_241") return "Tín hiệu `sel` chọn một trong bốn bit `I[0]`, `I[1]`, `I[2]`, `I[3]` đưa ra `O`. Một mạch nhiều ngõ vào, một ngõ ra và có đường chọn chính là MUX.";
-  if (cid === "main_242") return "Tín hiệu một bit `I` được đặt vào một trong bốn vị trí của vector `O` tùy `sel`: `000I`, `00I0`, `0I00`, hoặc `I000`. Một ngõ vào được phân phối ra nhiều ngõ ra là DEMUX.";
-  if (cid === "main_243") return "Half-adder có hai ngõ vào A, B; tổng `S = A ^ B` và nhớ `C = A & B`. Code trong đề đúng hai công thức này nên là bộ cộng bán phần.";
-  if (cid === "main_244") return "Full-adder có ba ngõ vào A, B, CI; tổng `S = A ^ B ^ CI`, nhớ ra CO bằng tổng các tích đôi `(A&B)`, `(B&CI)`, `(A&CI)`. Code đúng công thức full-adder nên là bộ cộng toàn phần.";
+  if (cid === "main_233") return "Đoạn code bắt đầu bằng `module (a, b, ci, r, co);`, tức sau từ khóa `module` là dấu ngoặc mở ngay. Cú pháp Verilog bắt buộc phải có tên module trước danh sách cổng, ví dụ `module FULL_ADDER(a, b, ci, r, co);`. Vì thiếu tên module nên đáp án đúng là C. Tên module. Dòng `cin`/`ci` cũng có vấn đề định danh, nhưng lỗi mà câu hỏi nhắm tới theo đáp án là thiếu tên module ở dòng khai báo.";
+  if (cid === "main_234") return "Code tạo 4 module `FullAdder` nối tiếp nhau: carry từ bit thấp truyền sang bit cao qua `c1`, `c2`, `c3`, còn `R[4]` là carry cuối. Đây là cấu trúc bộ cộng 4 bit kiểu ripple-carry, không phải một full adder đơn hay half adder.";
+  if (cid === "main_235") return "Dòng `assign Y = A & B;` dùng toán tử bitwise AND. Nếu A và B là tín hiệu 1 bit, ngõ ra Y đúng bằng phép AND của hai ngõ vào. Muốn OR phải dùng `|`, NAND phải đảo kết quả `~(A&B)`, NOR phải `~(A|B)`.";
+  if (cid === "main_236") return "Ngõ vào `I` là 4 bit, ngõ ra `O` là 2 bit. Các trường hợp `0001`, `0010`, `0100`, `1000` được đổi thành `00`, `01`, `10`, `11`. Đó là mã hóa one-hot 4 đường vào thành mã nhị phân 2 bit, nên là Encoder.";
+  if (cid === "main_237") return "Ngõ vào `I` là 2 bit, ngõ ra `O` là 4 bit one-hot. Mỗi giá trị của I chỉ bật một bit của O: `00→0001`, `01→0010`, `10→0100`, `11→1000`. Đây là Decoder 2-to-4.";
+  if (cid === "main_238") return "Với EN=1, mạch không bị vô hiệu hóa. I=2'b10 làm biến trung gian `temp = 4'b0100`. Vì HL=0 nên ngõ ra bị đảo mức, do đó kết quả là `~0100 = 1011`.";
+  if (cid === "main_239") return "Trong chương trình, I được khai báo là `input [1:0] I`, nghĩa là chỉ nhận giá trị 2 bit. Đề lại cho I=3'b001 là giá trị 3 bit, không khớp độ rộng tín hiệu nên kết quả theo lựa chọn của đề là không tồn tại/không hợp lệ.";
+  if (cid === "main_240") return "Khi EN=0, chương trình đi vào nhánh vô hiệu hóa và gán `temp = 4'b0000`. Lúc này HL và I không còn ảnh hưởng đến kết quả trung gian. Vì vậy kết quả cần chọn là `0000`.";
+  if (cid === "main_241") return "Tín hiệu `sel` quyết định chọn một trong bốn bit `I[0]`, `I[1]`, `I[2]`, `I[3]` đưa ra một ngõ ra `O`. Nhiều ngõ vào, một ngõ ra và có tín hiệu chọn là đặc trưng của MUX.";
+  if (cid === "main_242") return "Tín hiệu một bit `I` được đưa tới một trong bốn vị trí của vector `O` tùy `sel`. Một ngõ vào được phân phối ra nhiều ngõ ra là đặc trưng của DEMUX.";
+  if (cid === "main_243") return "Half adder có hai input A,B; tổng `S = A ^ B`, nhớ `C = A & B`. Đoạn code đúng hai công thức này nên nó mô tả bộ cộng bán phần.";
+  if (cid === "main_244") return "Full adder có ba input A, B, CI; tổng `S = A ^ B ^ CI`, carry-out bằng `(A&B) | (B&CI) | (A&CI)`. Đoạn code có đủ carry-in và carry-out nên là bộ cộng toàn phần.";
 
-  if (cid === "main_260") return "Module có hai tín hiệu điều khiển R, S và CLK; khi CLK=1, tổ hợp S/R quyết định Q và Qb. Đây là mạch chốt SR có enable/clock mức, không phải flip-flop vì sensitivity list là `(R, S, CLK)` chứ không phải `posedge`/`negedge`.";
-  if (cid === "main_262") return "Code `always @(clk, D) if (clk) q = D;` làm Q bám theo D khi clk đang ở mức 1. Đây là đặc trưng của D latch: tác động theo mức, không phải theo cạnh clock.";
-  if (cid === "main_263") return "Code dùng `always @(posedge clk)`, nghĩa là Q chỉ nhận D tại cạnh lên của clock. Theo Chương 5, flip-flop là edge-triggered nên đây là D Flip-Flop.";
-  if (cid === "main_264") return "Trong `always @(posedge CLK)`, nếu T=1 thì Q và QB bị đảo trạng thái. Flip-flop T có đặc trưng toggle khi T=1 tại cạnh clock, nên đáp án đúng là Flip Flop T.";
-  if (cid === "main_265") return "Code mắc nhiều DFF nối tiếp: output của tầng trước đi vào input của tầng sau và chỉ có một ngõ vào dữ liệu nối tiếp. Vì vậy đây là thanh ghi dịch 4 bit vào nối tiếp, ra nối tiếp.";
-  if (cid === "main_266") return "Code dùng 4 DFF mắc nối tiếp, dữ liệu `in` đi vào q[0], rồi lan sang q[1], q[2], q[3]; đồng thời ngõ ra là vector `[3:0] q`. Đây là thanh ghi dịch 4 bit vào nối tiếp, ra song song.";
+  if (cid === "main_260") return "Module dùng R, S và CLK. Khi CLK ở mức cho phép, các tổ hợp S/R làm Q và Qb set/reset. Vì nhạy theo mức `R,S,CLK` chứ không theo cạnh `posedge/negedge`, đây là chốt SR, không phải flip-flop.";
+  if (cid === "main_262") return "Đoạn `always @(clk, D) if (clk) q = D;` làm Q đi theo D khi clk đang ở mức 1. Đó là latch tác động theo mức; nếu là D flip-flop thì phải dùng `always @(posedge clk)` hoặc `negedge clk`.";
+  if (cid === "main_263") return "Đoạn code dùng `always @(posedge clk)`, tức Q chỉ nhận D tại cạnh lên clock. Cập nhật theo cạnh là đặc trưng của flip-flop, nên đây là D Flip-Flop.";
+  if (cid === "main_264") return "Trong `always @(posedge CLK)`, khi T=1 thì Q/QB đảo trạng thái. T flip-flop có chức năng toggle ở mỗi cạnh clock khi T=1, nên đáp án là Flip Flop T.";
+  if (cid === "main_265") return "Các DFF được nối nối tiếp: ngõ ra tầng trước đưa sang ngõ vào tầng sau. Dữ liệu đi vào từng bit theo mỗi xung clock và lấy ra nối tiếp ở cuối, nên là thanh ghi dịch SISO 4 bit.";
+  if (cid === "main_266") return "Dữ liệu `in` đi vào q[0], rồi dịch sang q[1], q[2], q[3] qua các DFF cùng clock; đồng thời ngõ ra là vector song song `[3:0] q`. Vì vậy đây là thanh ghi dịch vào nối tiếp, ra song song.";
 
-  if (qText.includes("blocking") || qText.includes("non-blocking") || qText.includes("nonblocking")) {
-    return "Theo Chương 6, blocking `=` thực hiện theo thứ tự câu lệnh trong `always`, còn non-blocking `<=` lấy giá trị vế phải trước rồi cập nhật đồng thời. Vì vậy cần lần theo loại phép gán để xác định giá trị cuối.";
-  }
+  if (includesAny(qText, ["forever clk1", "repeat (5)", "#75", "finish"])) return "Khối `initial` thực thi tuần tự. Khi gặp `forever clk1 = !clk1;`, nó lặp vô hạn ngay trong luồng đó, nên các lệnh phía sau như `repeat(5)` và `#75 $finish` không bao giờ được thực hiện. Vì vậy mô phỏng/khối này không tự chấm dứt theo các dòng sau.";
+  if (qText.includes("blocking") || qText.includes("non-blocking") || qText.includes("nonblocking")) return "Blocking `=` cập nhật ngay và câu lệnh sau thấy giá trị mới; non-blocking `<=` lấy giá trị cũ ở vế phải rồi cập nhật đồng thời. Vì vậy kết quả phải được tính theo đúng loại phép gán đang dùng.";
 
   return "";
-}
-
-function buildAutoExplanation(q, correctOptions) {
-  const qText = normalize([q.question, q.chapter, q.section, ...(q.codeBlocks || []).map(b => b.code || "")].join(" "));
-  const correctText = correctOptions.map(o => o.text).join("; ");
-  const correctTextNorm = normalize(correctText);
-  const hasCode = (q.codeBlocks || []).length > 0;
-  const hasImage = (q.images || []).length > 0 || q.image;
-  const ref = getCourseReference(q);
-  const spec = specificExplanation(q, correctOptions);
-  if (spec) return `${spec}\n\nDựa trên tài liệu: ${ref}`;
-
-  if (qText.includes("module")) {
-    return `Trong Verilog, module là khối xây dựng cơ bản và cú pháp khai báo phải có dạng \`module <module_name> (<module_terminal_list>);\`, kết thúc bằng \`endmodule\`. Đáp án "${correctText}" khớp với quy tắc này.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (hasCode) {
-    if (qText.includes("thieu") || qText.includes("sai") || qText.includes("loi")) {
-      return `Cần đọc đúng từng dòng code theo cú pháp Verilog: tên module/instance phải là định danh hợp lệ, khai báo phải kết thúc bằng dấu chấm phẩy, port phải có kiểu phù hợp, và từ khóa phải viết đúng chữ thường. Thành phần đúng cần xác định là "${correctText}".\n\nDựa trên tài liệu: ${ref}`;
-    }
-    if (includesAny(qText, ["mux", "demux", "encoder", "decoder", "cong", "mach", "so do"])) {
-      return `Đối chiếu code với chức năng mạch tổ hợp: xem số ngõ vào/ngõ ra, tín hiệu chọn, phép toán logic và quan hệ gán ở các lệnh \`assign\`/\`always\`. Các dấu hiệu trong code khớp với "${correctText}".\n\nDựa trên tài liệu: ${ref}`;
-    }
-    if (includesAny(qText, ["ket qua", "gia tri", "xung", "chu ky", "repeat", "forever", "finish", "initial", "always"])) {
-      return `Cần mô phỏng thứ tự thực thi trong Verilog: \`initial\` chạy một lần từ thời điểm 0, \`always\` chạy lặp theo điều kiện kích hoạt, \`#\` tạo trễ thời gian, \`repeat\` lặp số lần hữu hạn, còn \`forever\` lặp vô hạn nếu không có cơ chế dừng. Lần theo đúng các lệnh sẽ ra "${correctText}".\n\nDựa trên tài liệu: ${ref}`;
-    }
-    return `Đây là câu đọc hiểu code Verilog. Cần xét cú pháp module, kiểu dữ liệu wire/reg, toán tử, sensitivity list và kiểu gán. Khi đối chiếu với tài liệu và đoạn code, kết luận đúng là "${correctText}".\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (hasImage) {
-    return `Quan sát hình để nhận dạng chức năng: mạch latch thường có hồi tiếp chéo và tác động theo mức; flip-flop tác động theo cạnh clock; MUX/DEMUX có đường chọn; encoder/decoder thay đổi số bit giữa ngõ vào và ngõ ra. Đặc điểm trong hình khớp với "${correctText}".\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (qText.includes("viet tat")) {
-    return `Câu hỏi yêu cầu nhớ đúng tên đầy đủ của thuật ngữ. "${correctText}" là cách viết đúng theo tài liệu môn học; các lựa chọn còn lại là sai thuật ngữ hoặc viết sai.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (includesAny(qText, ["cu phap", "khai bao", "dinh danh", "chu thich", "reg", "wire", "array", "vector", "string"])) {
-    return `Đây là phần quy tắc ngôn ngữ Verilog. Cần phân biệt \`wire\` là net để nối mạch/continuous assignment, \`reg\` là biến lưu giá trị trong procedural block hoặc khai báo vector lưu dữ liệu, vector là dãy bit còn array là tập nhiều phần tử. Đáp án "${correctText}" phù hợp với quy tắc được hỏi.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (qText.includes("toan tu")) {
-    return `Verilog có nhóm toán tử khác nhau: logic (\`&&\`, \`||\`, \`!\`) cho điều kiện đúng/sai, bitwise (\`&\`, \`|\`, \`^\`, \`~\`) tác động từng bit, reduction rút gọn vector về 1 bit, và conditional \`?:\` chọn giá trị theo điều kiện. Đáp án "${correctText}" đúng với loại toán tử được hỏi.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (includesAny(qText, ["ket qua", "gia tri", "tinh", "phep", "bao nhieu bit", "so bit"])) {
-    return `Cần áp dụng đúng quy tắc biểu diễn số trong Verilog: dạng \`<size>'<base><value>\`, số bit quyết định độ rộng, các bit x/z ảnh hưởng phép so sánh/logic, và toán tử quyết định cách tính. Sau khi tính đúng, kết quả là "${correctText}".\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (includesAny(qText, ["bao nhieu", "may", "so luong", "nam nao", "tang thu", "cong doan"])) {
-    return `Câu hỏi kiểm tra số liệu hoặc thứ tự trong quy trình/tài liệu. Giá trị đúng là "${correctText}" vì khớp với bảng/quy trình trong nội dung học; các số khác lệch thứ tự hoặc không đúng số lượng.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (includesAny(qText, ["nhiem vu", "cong viec", "buoc", "front", "back", "tapeout"])) {
-    return `Trong quy trình thiết kế, các bước front-end tập trung vào đặc tả, RTL/HDL, mô phỏng và tổng hợp; back-end tập trung vào placement/routing, timing, verification và tapeout. Nội dung "${correctText}" đúng với bước/tầng đang hỏi.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (includesAny(qText, ["fpga", "asic", "pld", "spld", "cpld", "semi", "full", "uu diem", "nhuoc diem", "han che", "dac trung", "dac diem"])) {
-    return `Cần phân biệt đúng nền tảng thiết kế số. PLD gồm SPLD/CPLD/FPGA; ASIC gồm Semi-Custom/Full-Custom. FPGA linh hoạt, rẻ khi số lượng nhỏ nhưng chậm/tốn tài nguyên hơn; ASIC nhanh, ít điện, rẻ khi sản lượng lớn nhưng chi phí ban đầu cao và không lập trình lại. Đáp án "${correctText}" phù hợp với đặc điểm đang hỏi.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (includesAny(qText, ["mach", "flip flop", "latch", "chot", "thanh ghi", "bo dem", "mux", "demux", "decoder", "encoder"])) {
-    return `Cần nhận dạng mạch theo chức năng. Mạch tổ hợp phụ thuộc vào ngõ vào hiện tại; mạch tuần tự có nhớ. Latch tác động theo mức, flip-flop tác động theo cạnh; MUX chọn ngõ vào, DEMUX phân phối ngõ vào, Encoder/Decoder đổi dạng mã. Đáp án "${correctText}" khớp với chức năng được mô tả.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  if (correctTextNorm.startsWith("ca ") || correctTextNorm.includes("deu dung") || correctTextNorm.includes("deu sai") || correctTextNorm.includes("khong sai")) {
-    return `Đây là câu tổng hợp. Cần kiểm tra từng nhận định nhỏ; đáp án "${correctText}" đúng vì nó bao quát đầy đủ trạng thái đúng/sai của các nhận định trong câu.\n\nDựa trên tài liệu: ${ref}`;
-  }
-
-  return `Đáp án "${correctText}" khớp với khái niệm hoặc quy tắc trong tài liệu môn học. Khi học dạng câu này, nên xác định từ khóa chính của câu hỏi rồi đối chiếu với định nghĩa tương ứng trong chương.\n\nDựa trên tài liệu: ${ref}`;
 }
 
 function buildWrongOptionReason(q, opt, correctOptions) {
   if (q.wrongExplanations && q.wrongExplanations[opt.id]) return q.wrongExplanations[opt.id];
 
-  const qText = normalize([q.question, q.chapter, q.section, ...(q.codeBlocks || []).map(b => b.code || "")].join(" "));
+  const qText = textOfQuestion(q);
   const optText = opt.text || "";
   const optNorm = normalize(optText);
   const correctText = correctOptions.map(o => o.text).join("; ");
@@ -586,29 +609,57 @@ function buildWrongOptionReason(q, opt, correctOptions) {
   const hasCode = (q.codeBlocks || []).length > 0;
   const hasImage = (q.images || []).length > 0 || q.image;
 
-  if (correctOptions.length > 1) return "câu này có nhiều đáp án đúng; phương án này thiếu hoặc không nằm trong tập đáp án đúng đầy đủ.";
+  const missingModuleName = q.id === "main_233";
+  if (missingModuleName) {
+    if (optNorm.includes("ten chuong trinh")) return "Verilog không gọi phần này là tên chương trình; cú pháp yêu cầu cụ thể là tên module sau từ khóa `module`.";
+    if (optNorm.includes("dinh danh")) return "Các tín hiệu như `a`, `b`, `ci`, `r`, `co` vẫn là định danh. Lỗi chính không phải thiếu định danh nói chung mà là thiếu tên module ở vị trí bắt buộc.";
+    if (optNorm.includes("chinh ta")) return "Đoạn code không sai do gõ nhầm từ khóa; từ khóa `module` và `endmodule` vẫn đúng. Lỗi nằm ở cấu trúc khai báo module.";
+  }
+
+  if (correctOptions.length > 1) return "câu này yêu cầu chọn đủ tập đáp án đúng; phương án này không nằm trong tập đáp án đúng hoặc chỉ đúng một phần nên chưa đầy đủ.";
   if (correctNorm.includes("ca ") || correctNorm.includes("deu dung") || correctNorm.includes("khong sai") || correctNorm.includes("khong the sai")) {
-    return "ý này có thể đúng một phần nhưng chưa bao quát đủ tất cả nhận định đúng, nên không phải lựa chọn đầy đủ nhất.";
+    return "ý này có thể đúng một phần, nhưng câu hỏi yêu cầu lựa chọn bao quát đầy đủ. Đáp án đúng là phương án tổng hợp vì các nhận định liên quan đều đúng/đều không sai.";
   }
   if (optNorm.includes("ca ") || optNorm.includes("deu dung") || optNorm.includes("deu sai") || optNorm.includes("khong sai") || optNorm.includes("khong the sai")) {
-    return "phương án tổng hợp này sai vì không phải toàn bộ các ý trong câu đều có trạng thái đúng/sai như phương án nêu.";
+    return "phương án tổng hợp này không đúng vì không phải toàn bộ các ý trong câu đều thỏa điều kiện như nó nêu.";
   }
+
   if (hasCode) {
-    if (includesAny(qText, ["thieu", "sai", "loi"])) return "không chỉ đúng dòng/thành phần gây lỗi trong code; cần đối chiếu đúng cú pháp module, dấu chấm phẩy, định danh, kiểu biến và từ khóa.";
-    return "không khớp với hành vi thực tế của đoạn code khi xét tín hiệu, toán tử, sensitivity list và kiểu gán.";
+    if (includesAny(qText, ["thieu", "sai", "loi", "dong nao"])) return "không chỉ đúng vị trí/thành phần gây lỗi. Cần đọc đúng dòng code, kiểm tra tên module/instance, dấu `;`, kiểu `wire/reg`, độ rộng bus và từ khóa Verilog.";
+    if (optNorm.includes("mux")) return "mạch MUX phải có nhiều ngõ vào dữ liệu và một ngõ ra được điều khiển bởi tín hiệu chọn; đoạn code/hình trong câu không có dấu hiệu đó.";
+    if (optNorm.includes("demux")) return "DEMUX phải có một ngõ vào được phân phối ra nhiều ngõ ra; đoạn code không thể hiện đúng hướng phân phối này.";
+    if (optNorm.includes("encoder")) return "Encoder phải mã hóa nhiều đường vào thành số bit ít hơn; đoạn code không có quan hệ mã hóa đó.";
+    if (optNorm.includes("decoder")) return "Decoder phải giải mã mã nhị phân thành one-hot nhiều bit; đoạn code không khớp mẫu này.";
+    if (optNorm.includes("nand")) return "NAND là AND rồi đảo kết quả; nếu code không có phép đảo `~` hoặc cổng NAND thì không phải NAND.";
+    if (optNorm.includes("nor")) return "NOR là OR rồi đảo kết quả; nếu code không có OR kèm đảo thì không phải NOR.";
+    if (optNorm.includes("or")) return "OR dùng toán tử `|`; nếu code dùng `&` hoặc logic khác thì không phải OR.";
+    return "không khớp hành vi thực tế của đoạn code khi xét toán tử, tín hiệu điều khiển, sensitivity list và kiểu gán.";
   }
-  if (hasImage) return "không khớp với đặc điểm thấy trong hình như hồi tiếp, clock/enable, số ngõ vào-ngõ ra hoặc đường chọn.";
-  if (qText.includes("viet tat")) return "không phải cách viết đầy đủ đúng chuẩn của thuật ngữ trong tài liệu.";
-  if (includesAny(qText, ["cu phap", "khai bao", "dinh danh", "chu thich", "reg", "wire", "array", "vector", "string"])) {
-    return "nhầm quy tắc cú pháp/khai báo; lựa chọn này không thỏa điều kiện của định danh, kiểu dữ liệu hoặc cấu trúc Verilog đang hỏi.";
+
+  if (hasImage) {
+    if (optNorm.includes("latch") || optNorm.includes("chot")) return "latch có đặc trưng tác động theo mức và thường có hồi tiếp giữ trạng thái; hình/câu hỏi không khớp đặc trưng latch của lựa chọn này.";
+    if (optNorm.includes("flip flop") || optNorm.includes("flip-flop")) return "flip-flop phải cập nhật theo cạnh clock; nếu hình/câu không thể hiện tác động theo cạnh hoặc không đúng loại input thì không chọn phương án này.";
+    if (optNorm.includes("mux")) return "MUX cần tín hiệu chọn để đưa một trong nhiều ngõ vào ra output; hình không khớp dấu hiệu đó.";
+    if (optNorm.includes("decoder")) return "Decoder có ít ngõ vào mã hóa và nhiều ngõ ra one-hot; hình không thể hiện đúng cấu trúc đó.";
+    return "không khớp dấu hiệu trong hình như số ngõ vào/ngõ ra, hồi tiếp, clock/enable hoặc đường chọn.";
   }
-  if (qText.includes("toan tu")) return "mô tả này thuộc loại toán tử khác hoặc không đúng tác dụng của toán tử đang hỏi.";
-  if (includesAny(qText, ["ket qua", "gia tri", "tinh", "phep"])) return "không phải kết quả thu được sau khi tính đúng theo số bit, hệ cơ số và toán tử Verilog.";
-  if (includesAny(qText, ["bao nhieu", "may", "so luong", "nam nao", "tang thu"])) return "số liệu/thứ tự này không khớp với bảng hoặc quy trình trong tài liệu.";
+
+  if (qText.includes("viet tat")) return "không phải cách viết đầy đủ chuẩn của thuật ngữ, hoặc là cụm từ không tồn tại trong nội dung môn học.";
+  if (includesAny(qText, ["cu phap", "khai bao", "dinh danh", "chu thich", "comment"])) return "vi phạm hoặc nhầm quy tắc cú pháp/định danh/chú thích được hỏi; phương án đúng phải khớp chính xác quy tắc Verilog.";
+  if (includesAny(qText, ["reg", "wire", "net", "array", "vector", "bus", "string"])) {
+    if (optNorm.includes("wire")) return "`wire` là net dùng để nối mạch/gán liên tục, không phải lựa chọn đúng trong ngữ cảnh cần biến lưu giá trị hoặc kiểu được hỏi.";
+    if (optNorm.includes("reg")) return "`reg` là biến dùng trong procedural block; trong câu này ngữ cảnh không yêu cầu kiểu `reg` hoặc đáp án đúng chỉ ra loại khác.";
+    if (optNorm.includes("array")) return "array là tập nhiều phần tử, khác với vector/bus nhiều bit hoặc chuỗi đang được hỏi.";
+    if (optNorm.includes("bus")) return "bus chỉ mô tả đường nhiều bit, không phải kiểu/khái niệm chính xác mà câu hỏi yêu cầu.";
+    return "nhầm giữa kiểu net/variable hoặc giữa vector và array.";
+  }
+  if (qText.includes("toan tu")) return "đây là nhóm toán tử khác hoặc tác dụng khác; cần phân biệt logic, bitwise, reduction và conditional.";
+  if (includesAny(qText, ["ket qua", "gia tri", "tinh", "phep", "output", "tempt"])) return "không phải kết quả sau khi lần đúng biểu thức, độ rộng bit, điều kiện nhánh hoặc thứ tự thực thi của chương trình.";
+  if (includesAny(qText, ["bao nhieu", "may", "so luong", "nam nao", "tang thu"])) return "số liệu/thứ tự này không khớp mốc hoặc bảng phân loại được học.";
   if (includesAny(qText, ["nhiem vu", "cong viec", "buoc", "front", "back", "tapeout"])) return "mô tả này thuộc bước khác trong flow thiết kế hoặc không đúng nhiệm vụ của tầng đang hỏi.";
-  if (includesAny(qText, ["fpga", "asic", "pld", "spld", "cpld", "uu diem", "nhuoc diem", "han che", "dac trung", "dac diem"])) return "đặc điểm này bị gán nhầm cho công nghệ/nhóm mạch khác hoặc chưa đủ ý so với đáp án đúng.";
+  if (includesAny(qText, ["fpga", "asic", "pld", "spld", "cpld", "uu diem", "nhuoc diem", "dac trung", "dac diem"])) return "đặc điểm này bị gán nhầm cho nền tảng khác hoặc chưa đủ ý so với đáp án đúng.";
   if (includesAny(qText, ["mach", "flip flop", "latch", "chot", "thanh ghi", "bo dem", "mux", "demux", "decoder", "encoder"])) return "đây là loại mạch khác; dấu hiệu chức năng/ngõ vào-ngõ ra trong câu không phù hợp với lựa chọn này.";
-  return "nội dung này không khớp trực tiếp với định nghĩa, quy tắc hoặc kết quả mà câu hỏi yêu cầu.";
+  return "nội dung này không trả lời đúng trọng tâm câu hỏi hoặc không khớp định nghĩa/quy tắc đang được kiểm tra.";
 }
 
 function isCorrect(q) {
