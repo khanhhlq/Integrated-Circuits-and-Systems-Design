@@ -2245,7 +2245,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       {
         "id": "B",
         "text": "=",
-        "correct": true
+        "correct": false
       },
       {
         "id": "C",
