@@ -373,17 +373,17 @@ function renderExplanationHTML(text) {
 
   const rejectItems = rejectText
     ? rejectText.split(/\n+/).map(line => line.trim()).filter(Boolean).map(line => {
-        const clean = line.replace(/^-\s*/, "");
+        const clean = line.replace(/^[-•]\s*/, "");
         const m = clean.match(/^([A-D]\.\s*[^:]+):\s*([\s\S]*)$/);
         if (m) {
-          return `<li><strong>${escapeHTML(m[1])}</strong><span>${escapeHTML(m[2])}</span></li>`;
+          return `<li><strong>${escapeHTML(m[1])}</strong><span>${renderRichExplanationText(m[2])}</span></li>`;
         }
-        return `<li><span>${escapeHTML(clean)}</span></li>`;
+        return `<li><span>${renderRichExplanationText(clean)}</span></li>`;
       }).join("")
     : "";
 
   const fallback = (!answerText && !analysisText && !rejectItems)
-    ? `<div class="explain-section"><p>${escapeHTML(raw).replace(/\n/g, "<br>")}</p></div>`
+    ? `<div class="explain-section">${renderRichExplanationText(raw)}</div>`
     : "";
 
   return `
@@ -392,12 +392,12 @@ function renderExplanationHTML(text) {
       ${answerText ? `
         <div class="explain-answer">
           <span class="explain-label">Đáp án đúng</span>
-          <strong>${escapeHTML(answerText)}</strong>
+          <strong>${renderInlineExplanation(answerText)}</strong>
         </div>` : ""}
       ${analysisText ? `
         <div class="explain-section">
           <h4>Phân tích</h4>
-          <p>${escapeHTML(analysisText).replace(/\n/g, "<br>")}</p>
+          ${renderRichExplanationText(analysisText)}
         </div>` : ""}
       ${rejectItems ? `
         <div class="explain-section">
@@ -409,12 +409,64 @@ function renderExplanationHTML(text) {
   `;
 }
 
+function renderInlineExplanation(text) {
+  return escapeHTML(String(text || "")).replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+}
+
+function renderRichExplanationText(text) {
+  const src = String(text || "").trim();
+  if (!src) return "";
+  const parts = [];
+  let rest = src;
+  const fenceRe = /```(\w+)?\n([\s\S]*?)```/m;
+  while (rest) {
+    const m = rest.match(fenceRe);
+    if (!m) {
+      parts.push({ type: "text", value: rest });
+      break;
+    }
+    if (m.index > 0) parts.push({ type: "text", value: rest.slice(0, m.index) });
+    parts.push({ type: "code", lang: m[1] || "verilog", value: m[2].trimEnd() });
+    rest = rest.slice(m.index + m[0].length);
+  }
+  return parts.map(part => {
+    if (part.type === "code") {
+      return `<div class="explain-code-wrap"><div class="explain-code-title">${escapeHTML(part.lang)}</div><pre class="explain-code"><code>${escapeHTML(part.value)}</code></pre></div>`;
+    }
+    return renderExplanationParagraphs(part.value);
+  }).join("");
+}
+
+function renderExplanationParagraphs(text) {
+  const lines = String(text || "").split(/\n/).map(x => x.trim()).filter(Boolean);
+  if (!lines.length) return "";
+  const blocks = [];
+  let list = [];
+  const flushList = () => {
+    if (list.length) {
+      blocks.push(`<ul class="explain-mini-list">${list.map(item => `<li>${renderInlineExplanation(item)}</li>`).join("")}</ul>`);
+      list = [];
+    }
+  };
+  lines.forEach(line => {
+    if (/^[-•]\s+/.test(line)) {
+      list.push(line.replace(/^[-•]\s+/, ""));
+    } else {
+      flushList();
+      blocks.push(`<p>${renderInlineExplanation(line)}</p>`);
+    }
+  });
+  flushList();
+  return blocks.join("");
+}
+
 
 function getQuestionExplanation(q) {
   const correctOptions = q.options.filter(o => o.correct);
   const wrongOptions = q.options.filter(o => !o.correct);
   const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
-  const baseExplanation = (q.explanation || "").trim();
+  let baseExplanation = (q.explanation || "").trim();
+  if (/^Cần đọc đoạn code theo thứ tự thực thi/i.test(baseExplanation)) baseExplanation = "";
   const reason = baseExplanation || buildAutoExplanation(q, correctOptions);
 
   const wrongText = wrongOptions.length
@@ -546,10 +598,47 @@ function buildAutoExplanation(q, correctOptions) {
     return `Câu này nhận dạng mạch CMOS/VLSI. NMOS dẫn tốt mức 0 khi gate ở 1, PMOS dẫn tốt mức 1 khi gate ở 0; cổng NOT/NAND/NOR được nhận dạng bằng mạng kéo lên PMOS và kéo xuống NMOS. Đặc điểm mạch trong câu khớp với đáp án ${correctText}.`;
   }
 
-  // Fallback: vẫn giải thích theo câu, không ghi "dựa vào chương" chung chung.
-  if (hasImage) return `Quan sát hình và so sánh với định nghĩa mạch: loại mạch đúng phải khớp số ngõ vào/ngõ ra, tín hiệu điều khiển, hồi tiếp và cách cập nhật trạng thái. Các dấu hiệu trong hình phù hợp với đáp án ${correctText}.`;
-  if (includesAny(qText, ["bao nhieu", "may", "so luong", "nam nao"])) return `Câu hỏi kiểm tra một số liệu/thuật ngữ cụ thể. Đáp án ${correctText} đúng vì khớp giá trị được học; các giá trị khác lệch số lượng, mốc thời gian hoặc mức phân loại.`;
-  return `Đáp án ${correctText} đúng vì khớp trực tiếp với khái niệm hoặc quy tắc được hỏi. Khi làm dạng này, cần xác định từ khóa chính trong câu hỏi rồi đối chiếu với định nghĩa tương ứng để loại các lựa chọn sai.`;
+  // Fallback: giải thích trực tiếp theo cách học, không ghi chung chung "dựa vào chương".
+  if (hasImage) return `Cách làm là đọc hình theo dấu hiệu chức năng: số ngõ vào/ngõ ra, có tín hiệu chọn hay không, có hồi tiếp giữ trạng thái hay không, và cập nhật theo mức hay theo cạnh clock. Lựa chọn đúng phải khớp các dấu hiệu đó. Trong câu này, dấu hiệu của hình khớp với ${correctText}.`;
+  if (includesAny(qText, ["bao nhieu", "may", "so luong", "nam nao"])) return `Đây là câu hỏi kiểm tra giá trị hoặc mốc kiến thức. Khi gặp dạng này cần xác định đại lượng đang hỏi rồi đối chiếu đúng đơn vị: số tầng, số ngõ vào/ngõ ra, số bit, tần số hoặc mốc năm. Giá trị ${correctText} là giá trị khớp yêu cầu câu hỏi; các giá trị khác bị lệch về số lượng, đơn vị hoặc mốc phân loại.`;
+  return `Câu hỏi đang kiểm tra một định nghĩa hoặc quy tắc cụ thể. Đáp án ${correctText} đúng vì khớp đúng từ khóa chính trong đề. Các lựa chọn còn lại thường sai do nhầm sang khái niệm gần giống, nhầm tên gọi, hoặc chỉ đúng một phần nhưng không trả lời chính xác điều được hỏi.`;
+}
+
+
+function richSpecificExplanation(q, correctOptions) {
+  const id = q.id;
+  const map = {
+    main_246: "Dòng (3) viết `output co, s` nhưng thiếu dấu chấm phẩy kết thúc câu lệnh. Trong Verilog, các khai báo như `input`, `output`, `wire`, `reg` đều là statement nên phải kết thúc bằng `;`. Dòng đúng phải là:\n```verilog\noutput co, s;\n```\nDòng (2) chỉ khai báo input nên đúng. Dòng (4) là phép gán liên tục hợp lệ. Dòng (5) tuy biểu thức carry có vấn đề về biến dùng trong công thức, nhưng lựa chọn của câu này đang hỏi trong các dòng 2–5 thì lỗi cú pháp rõ nhất là dòng 3 thiếu `;`.",
+    main_248: "Dòng (9) khai báo `input [3:-1] B;`. Với một vector 4 bit thông thường, chỉ số phải là `[3:0]`, tương ứng các bit B[3], B[2], B[1], B[0]. Viết `[3:-1]` làm dải chỉ số đi xuống tới -1, tạo vector 5 vị trí và không khớp với cách truy cập B[0] đến B[3] trong các dòng instance phía dưới. Sửa nên là:\n```verilog\ninput [3:0] B;\n```\nDòng (8) `input wire [3:0] A;` hợp lệ. Dòng (11) `wire c1, c2, c3;` hợp lệ. Dòng (12) là một instance theo tên cổng, về hình thức kết nối là đúng.",
+    main_249: "Dòng (10) viết `output reg [4:0] S;` trong khi `S` được nối trực tiếp với ngõ ra của các module con `F_ADDER` tại các dòng instance. Tín hiệu được module con hoặc continuous assignment lái nên phải là net, thường khai báo là `wire`, không phải `reg`. Cách sửa:\n```verilog\noutput wire [4:0] S;\n```\nDòng (11) khai báo các dây carry trung gian là đúng. Dòng (12), (13) là kết nối instance theo tên cổng nên không phải lỗi chính của câu này.",
+    main_250: "Dòng (15) dùng `ADDER_4B` làm tên instance:\n```verilog\nF_ADDER ADDER_4B(...);\n```\nTrong khi `ADDER_4B` cũng là tên module cha ở dòng (7). Cú pháp instance là `<tên_module_con> <tên_instance>(...)`; tên instance nên là tên riêng như `fad3`, không nên trùng tên module tổng thể vì gây nhầm định danh và không đúng cách đặt instance. Cách sửa:\n```verilog\nF_ADDER fad3(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n```\nCác dòng 12, 13, 14 đều là các instance của `F_ADDER` với tên riêng `fad0`, `fad1`, `fad2` nên không sai theo lỗi mà câu hỏi nhắm tới.",
+    main_251: "Dòng (16) viết `Endmodule` với chữ E in hoa. Verilog phân biệt chữ hoa/thường, nên từ khóa kết thúc module phải viết đúng là `endmodule`. Vì vậy lỗi nằm ở từ khóa dòng 16. Cách sửa:\n```verilog\nendmodule\n```\nDòng (2) khai báo input hợp lệ. Dòng (8) khai báo input wire vector hợp lệ. Dòng (12) là instance theo tên cổng nên không phải lỗi dòng này.",
+    main_252: "Dòng (10) sai ở kiểu biến: `S` là output của module tổng thể nhưng lại được các module con `F_ADDER` lái qua các cổng `.s(S[0])`, `.co(S[4])`. Trong mô tả cấu trúc, tín hiệu nối giữa các module phải là net/wire. `reg` chỉ dùng khi tín hiệu được gán trong khối thủ tục như `always` hoặc `initial`. Vì vậy lỗi là kiểu biến. Sửa:\n```verilog\noutput wire [4:0] S;\n```",
+    main_253: "Dòng (16) sai ở từ khóa. Verilog yêu cầu từ khóa kết thúc module là `endmodule` viết thường toàn bộ. `Endmodule` không được hiểu là từ khóa vì Verilog phân biệt hoa/thường. Đây không phải lỗi biến trùng lặp hay lỗi ngữ nghĩa mạch, mà là viết sai từ khóa.",
+    main_254: "Dòng (15) sai ở tên định danh instance. Câu lệnh instance có dạng:\n```verilog\nF_ADDER ten_instance(...);\n```\nỞ đây lại đặt tên instance là `ADDER_4B`, trùng với tên module cha. Tên instance cần là một định danh riêng để chỉ phần tử con cụ thể, ví dụ `fad3`. Do đó lỗi phù hợp nhất là tên định danh, không phải từ khóa hay cú pháp dấu câu.",
+    main_260: "Module có hai ngõ vào điều khiển trạng thái là `S` và `R`, thêm tín hiệu cho phép `CLK`. Trong `always @(R, S, CLK)`, mạch phản ứng theo mức của các tín hiệu, không đợi cạnh `posedge` hay `negedge`. Khi `CLK=1, S=1, R=0` thì Q được set lên 1; khi `CLK=1, S=0, R=1` thì Q reset về 0. Đây đúng là chốt SR có clock/enable.\n\nKhông phải flip-flop vì flip-flop phải cập nhật theo cạnh clock. Không phải chốt D vì chốt D chỉ có một đường dữ liệu D, còn mạch này có hai đường S và R.",
+    main_262: "Điểm quyết định là dòng:\n```verilog\nalways @(clk, D)\n  if (clk) q = D;\n```\nQ nhận D khi `clk` đang ở mức 1. Nghĩa là trong suốt thời gian clock ở mức cho phép, D thay đổi thì Q cũng có thể đổi theo. Đây là chốt D tác động theo mức.\n\nNếu là D Flip-Flop thì phải có `always @(posedge clk)` hoặc `always @(negedge clk)`, tức chỉ lấy mẫu tại cạnh clock. Không phải chốt SR vì không có hai input S/R. Không phải JK vì không có J/K và không có chế độ toggle.",
+    main_263: "Dòng quan trọng là:\n```verilog\nalways @(posedge clk) begin\n  q = D;\nend\n```\n`posedge clk` nghĩa là Q chỉ nhận giá trị D tại cạnh lên của clock. Phần lý thuyết phân biệt rõ: latch tác động theo mức, còn flip-flop tác động theo cạnh. Vì vậy đây là D Flip-Flop.\n\nKhông chọn chốt D vì chốt D dùng điều kiện mức `if(clk)`. Không chọn chốt SR hoặc JK vì code không có cặp tín hiệu S/R hoặc J/K.",
+    main_264: "Trong mỗi cạnh lên `posedge CLK`, nếu `T == 1` thì:\n```verilog\nQ  = ~Q;\nQB = ~QB;\n```\nTín hiệu Q đảo trạng thái ở mỗi cạnh clock khi T=1. Chức năng đảo/toggle này chính là đặc trưng của T Flip-Flop.\n\nKhông phải mạch chốt vì mạch chốt tác động theo mức. Không phải D Flip-Flop vì D-FF nhận dữ liệu D trực tiếp, không tự đảo Q. Không phải chốt T vì code dùng cạnh clock `posedge`.",
+    main_265: "Mạch gồm 4 D Flip-Flop mắc nối tiếp. Đường dữ liệu đi theo chuỗi:\n```verilog\nin -> q1 -> q2 -> q3 -> out\n```\nMỗi cạnh lên của `clk`, dữ liệu được chốt qua một tầng DFF. Sau 4 xung, bit đưa vào ở `in` sẽ đi ra ở `out`. Vì chỉ có một input nối tiếp `in` và một output nối tiếp `out`, đây là thanh ghi dịch 4 bit SISO: Serial In – Serial Out.\n\nLưu ý nhỏ: code trong đề có lỗi hoa/thường ở cổng D. Module khai báo cổng là `D`:\n```verilog\nmodule DFF(clk, D, q);\n```\nnhưng instance lại gọi `.d(in)`. Verilog phân biệt chữ hoa/thường, nên để biên dịch đúng cần sửa thành:\n```verilog\nDFF dff1(.clk(clk), .D(in), .q(q1));\n```\nhoặc đổi tên cổng trong module từ `D` thành `d`. Tuy vậy, về ý tưởng mạch mà câu hỏi muốn nhận dạng thì vẫn là thanh ghi dịch SISO 4 bit.",
+    main_266: "Mạch cũng dùng 4 DFF nối tiếp, dữ liệu đi từ `in` sang `q[0]`, rồi `q[1]`, `q[2]`, `q[3]` qua từng cạnh clock:\n```verilog\nin -> q[0] -> q[1] -> q[2] -> q[3]\n```\nĐiểm khác với SISO là output của module là toàn bộ vector `q[3:0]`, nghĩa là người học có thể quan sát đồng thời cả 4 trạng thái lưu trong thanh ghi. Vì vào một bit nối tiếp nhưng ra 4 bit song song, đây là thanh ghi dịch 4 bit vào nối tiếp ra song song.",
+    main_267: "Biến `count` là thanh ghi 4 bit nên đây là bộ đếm 4 bit. Khi `rst == 1`, count reset về `0000`. Khi `sp == 1`, mạch mới cho phép đếm. Tín hiệu `ud` quyết định chiều đếm: nếu `ud == 1` thì `count = count + 1`; ngược lại `count = count - 1`. Vì có tín hiệu điều khiển chiều lên/xuống nên đáp án là mạch đếm lên xuống 4 bit có điều khiển.\n\nKhông phải chỉ đếm lên hoặc chỉ đếm xuống vì code có cả hai nhánh `+1` và `-1`. Không phải tự động vì chiều đếm phụ thuộc input `ud`.",
+    main_268: "Ba T Flip-Flop đều có `T=1`, nên mỗi tầng sẽ đảo trạng thái khi nhận cạnh clock. Tầng đầu nhận clock ngoài `clk`; tầng sau không nhận cùng clock ngoài mà nhận clock từ ngõ ra đảo của tầng trước (`qb1`, `qb2`). Vì clock truyền gợn từ tầng này sang tầng sau nên đây là bộ đếm không đồng bộ/ripple counter. Với 3 ngõ ra `q[2:0]`, mạch là bộ đếm 3 bit. Cách nối này tạo chiều đếm lên theo đáp án của đề.",
+    main_270: "Ban đầu reset làm `led = 1000_0000`, tức chỉ LED bên trái sáng. Mỗi xung clock, nếu chưa về 0 thì `led = led >> 1`, bit 1 dịch dần sang phải:\n```verilog\n1000_0000 -> 0100_0000 -> 0010_0000 -> ... -> 0000_0001\n```\nSau khi dịch hết về 0, code nạp lại `1000_0000`. Vì chỉ có một điểm sáng chạy từ trái sang phải nên đây là sáng dịch từ trái sang phải, không phải sáng dần hay sáng dồn.",
+    main_271: "Reset nạp `led = 1000_0001`, tức hai LED ngoài cùng sáng. Sau đó nửa thấp `led[3:0]` dịch trái, nửa cao `led[7:4]` dịch phải. Hai điểm sáng vì vậy đi từ hai mép ngoài vào giữa. Mẫu đặc trưng là:\n```verilog\n1000_0001 -> 0100_0010 -> 0010_0100 -> 0001_1000\n```\nVì chỉ có các điểm sáng dịch vị trí, không tích lũy thêm bit sáng, nên là sáng dịch từ ngoài vào trong.",
+    main_272: "Reset nạp `1000_0000`. Mỗi xung clock, code vừa dịch phải vừa cộng thêm `1000_0000`:\n```verilog\nled = (led >> 1) + 8'b1000_0000;\n```\nDo luôn thêm lại bit trái cùng, số LED sáng tăng dần từ trái sang phải:\n```verilog\n1000_0000 -> 1100_0000 -> 1110_0000 -> ... -> 1111_1111\n```\nVì số bit sáng tăng dần nên là sáng dần từ trái sang phải, không phải chỉ một LED dịch.",
+    main_273: "Code xử lý riêng hai nửa LED. Nửa thấp dịch trái rồi thêm bit `0001`; nửa cao dịch phải rồi thêm bit `1000`. Kết quả là các LED sáng được tích lũy dần từ hai mép ngoài tiến vào giữa, ví dụ dạng ý tưởng:\n```verilog\n1000_0001 -> 1100_0011 -> 1110_0111 -> 1111_1111\n```\nVì số LED sáng tăng thêm từ ngoài vào trong nên đáp án là sáng dần từ ngoài vào trong.",
+    main_295: "Clock vào là 50 MHz, tức 50.000.000 cạnh clock mỗi giây. Biến `count` đếm đến 25.000.000 thì đảo `clkout` một lần. Một lần đảo chỉ là nửa chu kỳ của `clkout`; muốn đủ một chu kỳ cần hai lần đảo:\n```verilog\n25.000.000 + 25.000.000 = 50.000.000 xung\n```\nVì 50.000.000 xung ứng với 1 giây, tần số ngõ ra là 1 Hz.",
+    main_296: "Muốn chia clock 50 MHz xuống 2 Hz, trước hết đổi tần số thành chu kỳ. Clock 50 MHz nghĩa là mỗi giây có 50.000.000 xung. Tần số 2 Hz nghĩa là ngõ ra có 2 chu kỳ trong 1 giây, nên một chu kỳ ngõ ra dài 0,5 giây.\n\nTrong mạch chia xung dạng bộ đếm, `clkout` thường được đảo trạng thái khi `count` đạt giá trị so sánh. Một lần đảo chỉ tạo nửa chu kỳ, muốn đủ một chu kỳ phải đảo 2 lần:\n```verilog\nT_out = 1 / 2 Hz = 0,5 s\nT_nửa_chu_kỳ = 0,5 / 2 = 0,25 s\nSố xung cần đếm = 50.000.000 × 0,25 = 12.500.000\n```\nVì vậy hệ số so sánh đúng là 12.500.000.\n\nNếu chọn 25.000.000 thì `clkout` đảo mỗi 0,5 giây, một chu kỳ đầy đủ là 1 giây nên chỉ ra 1 Hz. Nếu chọn 50.000.000 thì còn chậm hơn. Nếu chọn 12.000.000 thì chỉ là gần đúng và tạo khoảng 2,08 Hz, không đúng chính xác yêu cầu 2 Hz.",
+    main_297: "Hệ thống trên có hai khối chức năng chính: module chia xung `CK_DIV` tạo clock chậm từ 50 MHz, và module bộ đếm/hiển thị dùng clock chậm đó để tạo trạng thái đếm. Khi vẽ sơ đồ khối tổng thể, ta gom theo chức năng nên có 2 module chính, không đếm các thanh ghi nội bộ như `count` thành module riêng.",
+    main_298: "Khi `speed = 1`, code dùng nhánh đếm đến 12.500.000 rồi đảo `clkout` một lần. Một chu kỳ đầy đủ của `clkout` cần hai lần đảo, nên số xung clock 50 MHz cho một chu kỳ là:\n```verilog\n12.500.000 × 2 = 25.000.000 xung\n```\nTần số ra bằng `50.000.000 / 25.000.000 = 2 Hz`. Vì vậy xung nhịp đếm là 2 Hz.",
+    main_299: "Chương trình 1 là khối chia xung `CK_DIV` có cấu trúc hợp lệ. Hai chương trình còn lại trong đề có lỗi khi tổng hợp/khai báo, chủ yếu liên quan kiểu tín hiệu hoặc cách nối module. Vì vậy đáp án là chương trình 2 và chương trình 3. Khi kiểm tra lỗi Verilog, cần phân biệt: lỗi cú pháp là sai cấu trúc câu lệnh; lỗi kiểu biến là dùng `reg/wire` không đúng cách; lỗi định danh là gọi sai tên cổng/tín hiệu.",
+    main_300: "Lỗi được hỏi thuộc kiểu biến. Trong Verilog, tín hiệu được gán bên trong `always` phải khai báo `reg`; tín hiệu được nối giữa module hoặc được lái bởi `assign`/instance thường là `wire`. Nếu chương trình dùng sai `reg`/`wire` so với cách tín hiệu được lái thì lỗi đúng nhất là kiểu biến, không phải lỗi cú pháp dấu câu hay tên định danh.",
+    main_301: "Câu hỏi hỏi khi `rst = 0`, nhưng đoạn code chia xung hiển thị ở câu này không có tín hiệu `rst`; nó chỉ có `clk50m`, `clkout` và `speed`. Vì dữ kiện `rst` không thuộc module đang xét nên không thể suy ra xung nhịp đếm từ điều kiện này. Do đó đáp án là chưa thể xác định.",
+    main_302: "Module tổng thể sau khi ghép hệ thống cần các tín hiệu vào từ bên ngoài gồm clock 50 MHz, reset, điều khiển dừng/chạy hoặc cho phép, điều khiển chiều đếm và chọn tốc độ. Tổng cộng là 5 ngõ vào. Các dây nội bộ như clock đã chia hoặc bus trạng thái không tính là ngõ vào hoàn chỉnh từ bên ngoài module tổng thể.",
+    main_303: "Ngõ ra hoàn chỉnh của module tổng thể là bus hiển thị/trạng thái đưa ra ngoài. Dù bus có nhiều bit, trong câu hỏi số ngõ ra được tính theo cổng output tổng thể, không phải đếm từng bit riêng lẻ. Vì vậy module có 1 ngõ ra hoàn chỉnh."
+  };
+  return map[id] || "";
 }
 
 function specificExplanation(q, correctOptions) {
@@ -557,6 +646,8 @@ function specificExplanation(q, correctOptions) {
   const ans = optionText(correctOptions);
   const code = ((q.codeBlocks || [])[0]?.code || "");
   const qText = normalize([q.question, q.chapter, q.section, code].join(" "));
+  const rich = richSpecificExplanation(q, correctOptions);
+  if (rich) return rich;
 
   const lineErrors = {
     main_245: "Dòng (1) sai vì tên module `F_(ADDER)` chứa dấu ngoặc. Tên module trong Verilog phải là định danh hợp lệ: bắt đầu bằng chữ hoặc dấu gạch dưới, sau đó là chữ/số/gạch dưới/ký tự `$`; không được chèn dấu ngoặc vào giữa tên. Cách đúng có thể là `module F_ADDER(a, b, s, ci, co);`.",
@@ -608,6 +699,12 @@ function buildWrongOptionReason(q, opt, correctOptions) {
   const correctNorm = normalize(correctText);
   const hasCode = (q.codeBlocks || []).length > 0;
   const hasImage = (q.images || []).length > 0 || q.image;
+
+  if (q.id === "main_296") {
+    if (opt.id === "A") return "50.000.000 là số xung clock gốc trong 1 giây, không phải số đếm để đảo `clkout` cho tần số 2 Hz.";
+    if (opt.id === "B") return "25.000.000 là giá trị làm `clkout` đảo mỗi nửa giây; vì cần hai lần đảo cho một chu kỳ nên ngõ ra chỉ khoảng 1 Hz.";
+    if (opt.id === "D") return "12.000.000 chỉ là giá trị gần đúng; tính ra khoảng 2,08 Hz nên không đúng chính xác yêu cầu 2 Hz.";
+  }
 
   const missingModuleName = q.id === "main_233";
   if (missingModuleName) {

@@ -575,7 +575,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       },
       {
         "id": "D",
-        "text": "12.000.000 Cho đoạn chương trình sau trả lời các câu hỏi từ câu 4 đến",
+        "text": "12.000.000",
         "correct": false
       }
     ],
@@ -583,7 +583,13 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       "C"
     ],
     "type": "single",
-    "id": "main_296"
+    "id": "main_296",
+    "explanation": "Clock vào 50 MHz nghĩa là có 50.000.000 xung trong 1 giây. Nếu muốn tạo xung ra 2 Hz thì chu kỳ ngõ ra là 0,5 giây. Trong mạch chia xung kiểu đảo `clkout` khi bộ đếm đạt giá trị so sánh, mỗi lần đảo chỉ tạo nửa chu kỳ. Vì vậy số xung cần đếm cho mỗi lần đảo là 50.000.000 / (2 × 2) = 12.500.000.",
+    "wrongExplanations": {
+      "A": "50.000.000 là số xung của clock gốc trong 1 giây. Nếu dùng giá trị này để đảo `clkout` thì chu kỳ ngõ ra sẽ bị chậm hơn rất nhiều, không phải 2 Hz.",
+      "B": "25.000.000 là số xung tương ứng nửa giây. Nếu đảo `clkout` mỗi 25.000.000 xung thì một chu kỳ đầy đủ cần 50.000.000 xung, tức ngõ ra khoảng 1 Hz chứ không phải 2 Hz.",
+      "D": "12.000.000 chỉ là giá trị gần đúng. Nếu dùng giá trị này thì tần số ra xấp xỉ 50.000.000 / (2 × 12.000.000) ≈ 2,08 Hz, không đúng yêu cầu 2 Hz."
+    }
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",

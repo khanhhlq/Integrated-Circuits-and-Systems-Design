@@ -930,3 +930,61 @@ body.license-unlocked .license-view { display: none; }
   font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
   white-space: pre;
 }
+
+/* Rich explanation formatting v2 */
+.explain-section p {
+  margin: 0 0 10px;
+}
+.explain-section p:last-child {
+  margin-bottom: 0;
+}
+.explain-mini-list {
+  margin: 8px 0 10px 18px;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.inline-code {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: #e2e8f0;
+  color: #0f172a;
+  font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
+  font-size: .92em;
+}
+.explain-code-wrap {
+  margin: 10px 0 12px;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0f172a;
+  box-shadow: 0 8px 18px rgba(15,23,42,.10);
+}
+.explain-code-title {
+  padding: 8px 12px;
+  color: #bfdbfe;
+  background: rgba(255,255,255,.04);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  font-weight: 900;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.explain-code {
+  margin: 0;
+  padding: 12px 14px;
+  overflow-x: auto;
+  color: #eef2ff;
+  line-height: 1.55;
+  font-size: 14px;
+}
+.explain-code code {
+  font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
+  white-space: pre;
+}
+.explain-list li span p {
+  margin: 0 0 6px;
+}
+.explain-list li span p:last-child {
+  margin-bottom: 0;
+}
