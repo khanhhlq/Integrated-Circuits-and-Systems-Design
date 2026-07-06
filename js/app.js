@@ -3,6 +3,7 @@ const LICENSE_STORAGE_KEY = "lkq_license_v2_signed";
 const DEVICE_STORAGE_KEY = "lkq_device_id_v1";
 const ADMIN_SESSION_KEY = "lkq_admin_session_v2";
 const ANSWER_CORRECTION_KEY = "tkhts_answer_corrections_v1";
+const UPDATE_NOTICE_STORAGE_KEY = "lkq_update_notice_explanation_v1";
 // Chỉ chứa PUBLIC KEY để xác thực chữ ký license. Không chứa mật khẩu admin, private key hoặc thuật toán tạo key.
 const PUBLIC_KEY_N = BigInt("0xab4c9775518e19d7f56d6e38a8e6f9c529181ff464964689e46a6babc525daef59ac4039399c8c70dd213d3cc9c71323caf31d9a4d3c0fafbde074f72c09e9231621fc7436bcb6facc80b1265da5d8b955167f4f26ec68167858e06f7fbcb1c5abc1d27482576c6c7baf1e3f52cb225d298d22b9310a8c52011d54a4051f4fd587712b276732b45a95d61865dfd18162c4a81a4d715ed1e35f5ec73e2acff30eeb73ffeabb57db44ce80c1aa1e16427f46f92aa6ee8a82ce737fd0b6513dccbb0957baa6d66b3e2c1293b12bb887a66b6f1a817857c17c09cc15851d74c2b297683c31b527f94a612ed792025b4a878c9e29204647e55e662c8821ab68e1e533");
 const PUBLIC_KEY_E = BigInt(65537);
@@ -73,7 +74,25 @@ function init() {
   populateFilters();
   updateSelectedCount();
   bindEvents();
+  initUpdateNotice();
   renderBank(QUESTIONS.slice(0, 60));
+}
+
+
+function initUpdateNotice() {
+  const notice = $("updateNotice");
+  const closeBtn = $("closeUpdateNoticeBtn");
+  if (!notice || !closeBtn) return;
+
+  if (localStorage.getItem(UPDATE_NOTICE_STORAGE_KEY) === "hidden") {
+    notice.classList.add("hidden");
+    return;
+  }
+
+  closeBtn.addEventListener("click", () => {
+    notice.classList.add("hidden");
+    localStorage.setItem(UPDATE_NOTICE_STORAGE_KEY, "hidden");
+  });
 }
 
 function bindEvents() {
@@ -1572,4 +1591,203 @@ function normalize(str) {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+/* ==========================================================
+   LKQ update: ChatGPT-style explanations for every question
+   This block intentionally overrides getQuestionExplanation and
+   buildWrongOptionReason above so every feedback is detailed.
+   ========================================================== */
+function getQuestionExplanation(q) {
+  const correctOptions = q.options.filter(o => o.correct);
+  const wrongOptions = q.options.filter(o => !o.correct);
+  const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
+
+  const intro = buildChatGPTTheoryIntro(q, correctOptions);
+  const howToRead = buildChatGPTHowToRead(q, correctOptions);
+  let baseExplanation = String(q.explanation || "").trim();
+  if (/^Cần đọc đoạn code theo thứ tự thực thi/i.test(baseExplanation)) baseExplanation = "";
+
+  let autoReason = "";
+  try { autoReason = String(buildAutoExplanation(q, correctOptions) || "").trim(); } catch (err) { autoReason = ""; }
+
+  const parts = [];
+  if (intro) parts.push(intro);
+  if (howToRead) parts.push(howToRead);
+  if (autoReason && !parts.some(p => p.includes(autoReason.slice(0, 60)))) parts.push(autoReason);
+  if (baseExplanation && !/^Đáp án đúng là/i.test(baseExplanation) && !parts.some(p => p.includes(baseExplanation.slice(0, 60)))) {
+    parts.push(`Ghi chú thêm: ${baseExplanation}`);
+  }
+  if (!parts.length) parts.push(`Câu này cần đối chiếu trực tiếp định nghĩa trong lý thuyết với từng lựa chọn. Lựa chọn đúng là ${correctLabel} vì nó trả lời đúng trọng tâm câu hỏi, không bị nhầm sang khái niệm gần giống.`);
+
+  const wrongText = wrongOptions.length
+    ? `\n\nVì sao không chọn các đáp án còn lại:\n${wrongOptions.map(o => `- ${o.id}. ${o.text}: ${buildWrongOptionReason(q, o, correctOptions)}`).join("\n")}`
+    : "";
+
+  return `Đáp án đúng là ${correctLabel}.\n\nPhân tích: ${parts.join("\n\n")}${wrongText}`;
+}
+
+function buildChatGPTTheoryIntro(q, correctOptions) {
+  const t = textOfQuestion(q);
+  const correct = correctOptions.map(o => o.text).join("; ");
+  const code = (q.codeBlocks || []).map(b => b.code || "").join("\n");
+  const codeNorm = normalize(code);
+
+  if ((q.codeBlocks || []).length) {
+    const notes = ["Đây là câu đọc code Verilog, nên không chỉ nhìn tên đáp án mà phải kiểm tra đúng cú pháp và hành vi mô phỏng/tổng hợp."];
+    if (codeNorm.includes("module")) notes.push("Một module hợp lệ phải có tên module, danh sách port, khai báo input/output/wire/reg phù hợp và kết thúc bằng `endmodule`.");
+    if (codeNorm.includes("assign")) notes.push("`assign` là gán liên tục, phù hợp với mạch tổ hợp và thường lái tín hiệu kiểu `wire/net`.");
+    if (codeNorm.includes("always")) notes.push("`always` là khối thủ tục; mạch tổ hợp thường dùng `always @*`, còn flip-flop/thanh ghi dùng `always @(posedge clk)` hoặc `negedge clk`.");
+    if (codeNorm.includes("initial")) notes.push("`initial` thường dùng trong mô phỏng/testbench, chạy một lần từ thời điểm 0.");
+    if (codeNorm.includes("posedge") || codeNorm.includes("negedge")) notes.push("`posedge/negedge` cho biết mạch cập nhật theo cạnh xung clock, đây là dấu hiệu của phần tử tuần tự như DFF/thanh ghi/bộ đếm.");
+    if (code.includes("<=")) notes.push("Phép gán `<=` là non-blocking: đọc giá trị cũ trước, rồi cập nhật đồng thời ở cuối bước thời gian.");
+    if (code.includes("=") && !code.includes("<=")) notes.push("Phép gán `=` trong procedural block là blocking: thực hiện tuần tự từ trên xuống.");
+    return notes.join("\n");
+  }
+
+  if (t.includes("pld") || t.includes("spld") || t.includes("cpld") || t.includes("fpga") || t.includes("asic") || t.includes("lut") || t.includes("clb")) {
+    return "Câu này thuộc phần nền tảng thiết kế số. Cần phân biệt: PLD là nhóm thiết bị logic lập trình được; SPLD, CPLD và FPGA là các nhánh của PLD; còn ASIC là mạch tích hợp chuyên dụng, thiết kế cho một ứng dụng cụ thể.";
+  }
+  if (t.includes("front") || t.includes("back") || t.includes("tapeout") || t.includes("quy trinh") || t.includes("tang thu")) {
+    return "Câu này thuộc flow thiết kế ASIC/FPGA. Front-End xử lý mô tả HDL, mô phỏng và tổng hợp logic; Back-End xử lý bố cục vật lý, placement/routing, timing và tapeout.";
+  }
+  if (t.includes("wire") || t.includes("reg") || t.includes("net") || t.includes("z") || t.includes("x") || t.includes("array") || t.includes("vector") || t.includes("bus") || t.includes("verilog")) {
+    return "Câu này kiểm tra nền tảng Verilog. Cần nhớ: `wire/net` biểu diễn dây nối, thường dùng với `assign`; `reg` là biến lưu giá trị trong khối thủ tục; `X` là không xác định, `Z` là tổng trở cao; vector là nhiều bit của một tín hiệu, còn array là nhiều phần tử.";
+  }
+  if (t.includes("blocking") || t.includes("non-blocking") || t.includes("nonblocking") || t.includes("<=")) {
+    return "Câu này kiểm tra khác nhau giữa blocking và non-blocking. Blocking `=` chạy theo thứ tự từng dòng; non-blocking `<=` lấy giá trị vế phải trước rồi cập nhật song song, nên kết quả có thể khác nhau dù nhìn code gần giống.";
+  }
+  if (t.includes("mux") || t.includes("demux") || t.includes("decoder") || t.includes("encoder") || t.includes("cong and") || t.includes("cong or") || t.includes("cong nor") || t.includes("cong nand") || t.includes("mach to hop")) {
+    return "Câu này thuộc mạch tổ hợp. Mạch tổ hợp có ngõ ra phụ thuộc trực tiếp vào ngõ vào hiện tại: AND chỉ lên 1 khi tất cả ngõ vào là 1, OR lên 1 khi có ít nhất một ngõ vào là 1, NOR là OR đảo, NAND là AND đảo, MUX chọn một ngõ vào, DEMUX phân phối một ngõ vào.";
+  }
+  if (t.includes("latch") || t.includes("chot") || t.includes("flip flop") || t.includes("flip-flop") || t.includes("thanh ghi") || t.includes("bo dem") || t.includes("counter") || t.includes("fsm") || t.includes("moore") || t.includes("mealy") || t.includes("tuan tu") || t.includes("clock") || t.includes("xung clock")) {
+    return "Câu này thuộc mạch tuần tự. Mạch tuần tự có bộ nhớ trạng thái; latch tác động theo mức, flip-flop tác động theo cạnh xung clock; thanh ghi là tập hợp nhiều DFF; bộ đếm cập nhật giá trị theo clock; FSM gồm thanh ghi trạng thái, logic trạng thái kế tiếp và logic ngõ ra.";
+  }
+  if (t.includes("tan so") || t.includes("chia tan") || t.includes("mhz") || t.includes("hz")) {
+    return "Câu này là bài tính chia tần. Khi tạo clock ra bằng cách đảo trạng thái, một chu kỳ ngõ ra cần hai lần đảo, nên hệ số đếm thường tính theo công thức `K = f_in / (2 × f_out)` nếu mỗi lần đủ K xung thì đảo ngõ ra.";
+  }
+  if (t.includes("nhi phan") || t.includes("signed") || t.includes("unsigned") || t.includes("2's complement") || t.includes("bit")) {
+    return "Câu này kiểm tra biểu diễn số nhị phân. Cần xét đúng số bit, có dấu/không dấu, bù 2 và sự lan truyền của bit `x/z` nếu có trong phép toán.";
+  }
+  return "Câu này cần đọc đúng từ khóa trong đề, xác định khái niệm đang hỏi rồi so sánh từng đáp án với định nghĩa. Đáp án đúng là lựa chọn khớp đầy đủ nhất, không chỉ đúng một phần.";
+}
+
+function buildChatGPTHowToRead(q, correctOptions) {
+  const t = textOfQuestion(q);
+  const correctText = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
+  const qRaw = String(q.question || "");
+  const code = (q.codeBlocks || []).map(b => b.code || "").join("\n");
+  const codeNorm = normalize(code);
+
+  if ((q.codeBlocks || []).length) {
+    if (codeNorm.includes("module") && codeNorm.includes("endmodule")) {
+      if (t.includes("thieu") || t.includes("sai") || t.includes("loi") || t.includes("hop le")) {
+        return `Cách làm: đọc từ dòng khai báo module trước, vì lỗi cú pháp thường xuất hiện ở tên module, danh sách port, dấu chấm phẩy, kiểu \`wire/reg\`, hoặc gọi instance. Với đoạn này, đáp án ${correctText} đúng vì nó chỉ đúng thành phần làm đoạn code hợp lệ/không hợp lệ.`;
+      }
+      return `Cách làm: xác định module này mô tả loại phần cứng nào bằng cách nhìn port, khối \`assign/always\`, điều kiện chọn, cạnh clock và ngõ ra. Đáp án ${correctText} đúng vì hành vi của code khớp với chức năng đó.`;
+    }
+    if (codeNorm.includes("forever")) return `Cách làm: trong khối thủ tục, lệnh được chạy tuần tự. Khi gặp \`forever\`, nếu không có điều kiện dừng phù hợp, chương trình sẽ mắc trong vòng lặp đó. Vì vậy đáp án ${correctText} đúng.`;
+    if (codeNorm.includes("repeat")) return `Cách làm: tính số lần lặp và tổng thời gian delay. \`repeat(n) #t\` nghĩa là thực hiện n lần, mỗi lần chờ t đơn vị thời gian. Vì vậy đáp án ${correctText} đúng.`;
+    if (codeNorm.includes("assign")) return `Cách làm: với \`assign\`, đọc biểu thức logic vế phải rồi ánh xạ ra cổng logic hoặc hàm tổ hợp. Đáp án ${correctText} đúng vì biểu thức đó tạo đúng hàm được hỏi.`;
+    if (codeNorm.includes("always")) return `Cách làm: xem sensitivity list. Nếu có \`posedge/negedge clk\` thì là mạch tuần tự theo cạnh; nếu là \`always @*\` hoặc liệt kê input thì thường là mạch tổ hợp. Đáp án ${correctText} đúng vì khối \`always\` có đúng dấu hiệu này.`;
+    return `Cách làm: lần theo code từ trên xuống, kiểm tra kiểu dữ liệu và thời điểm cập nhật. Đáp án ${correctText} đúng vì phù hợp với kết quả sau khi thực hiện đúng quy tắc Verilog.`;
+  }
+
+  if ((q.images || []).length || q.image) {
+    return `Cách làm: nhìn sơ đồ để nhận dạng số ngõ vào/ngõ ra, có đường hồi tiếp hay không, có clock/enable hay đường chọn hay không. Đáp án ${correctText} đúng vì hình có đúng dấu hiệu của loại mạch đó.`;
+  }
+
+  if (t.includes("pld") || t.includes("spld") || t.includes("cpld") || t.includes("fpga") || t.includes("asic")) {
+    return `Trong câu này, đáp án ${correctText} đúng vì nó đặt đúng đối tượng vào đúng nhóm: PLD là nhóm lập trình được, còn ASIC/Semi-Custom/Full-Custom là hướng thiết kế mạch chuyên dụng.`;
+  }
+  if (t.includes("ket qua") || t.includes("gia tri") || t.includes("tinh") || t.includes("bao nhieu")) {
+    return `Cách làm: không chọn theo cảm tính mà phải tính/lần đúng quy tắc. Sau khi áp dụng đúng công thức, độ rộng bit hoặc thứ tự thực thi, kết quả thu được là ${correctText}.`;
+  }
+  return `Vì vậy chọn ${correctText}: lựa chọn này khớp trực tiếp với định nghĩa/hành vi được hỏi, còn các lựa chọn còn lại hoặc nhầm khái niệm hoặc thiếu điều kiện quan trọng.`;
+}
+
+function buildWrongOptionReason(q, opt, correctOptions) {
+  if (q.wrongExplanations && q.wrongExplanations[opt.id]) return q.wrongExplanations[opt.id];
+
+  const t = textOfQuestion(q);
+  const optText = String(opt.text || "");
+  const o = normalize(optText);
+  const correctText = correctOptions.map(x => x.text).join("; ");
+  const c = normalize(correctText);
+  const hasCode = (q.codeBlocks || []).length > 0;
+  const code = (q.codeBlocks || []).map(b => b.code || "").join("\n");
+  const codeNorm = normalize(code);
+
+  if (correctOptions.length > 1) {
+    return "câu này yêu cầu chọn đủ nhiều đáp án đúng; lựa chọn này không nằm trong tập đáp án đúng hoặc chỉ đúng một phần nên chưa đạt trọn điểm.";
+  }
+
+  // Very common Verilog syntax mistakes in options.
+  if (o.includes("asign") || o.includes("alwayss")) return "từ khóa bị viết sai chính tả; Verilog yêu cầu đúng `assign` hoặc `always`, viết sai là lỗi cú pháp.";
+  if (o.includes("port map")) return "`port map` là cách viết quen thuộc trong VHDL, không phải cú pháp instance chuẩn của Verilog.";
+  if (/\balways\s*\(/.test(optText) && !optText.includes("@")) return "thiếu ký hiệu `@` trong sensitivity list; Verilog phải viết dạng `always @(...)`.";
+  if (o.includes("posedge ,") || o.includes("negedge ,")) return "cú pháp cạnh clock sai vì không có dấu phẩy giữa `posedge` và tên tín hiệu; phải viết `posedge clk`.";
+  if (o.includes("negedge") && (t.includes("canh len") || t.includes("cạnh lên") || t.includes("posedge"))) return "`negedge` là cạnh xuống, trong khi đề yêu cầu cạnh lên/xung clock cạnh lên.";
+  if (o.includes("posedge") && (t.includes("canh xuong") || t.includes("cạnh xuống") || t.includes("negedge"))) return "`posedge` là cạnh lên, trong khi đề yêu cầu cạnh xuống.";
+  if (o.includes(" and ") && !o.includes("and (")) return "Verilog không dùng chữ `and` như toán tử trong biểu thức kiểu C; phải dùng toán tử bitwise `&` hoặc cổng primitive `and(out, in1, in2, ...)`.";
+  if (o.includes(" or ") && !o.includes("or (")) return "Verilog không dùng chữ `or` như toán tử biểu thức thông thường; phải dùng `|` hoặc primitive `or(...)`.";
+  if (o.includes("/")) return "dấu `/` là phép chia, không phải phép OR/ghép logic để mô tả DEMUX/MUX trong câu này.";
+  if (o.includes(";") && o.includes("endmodule;")) return "`endmodule` là từ khóa kết thúc module và không viết thêm dấu chấm phẩy sau nó.";
+
+  if (t.includes("pld") || t.includes("spld") || t.includes("cpld") || t.includes("fpga") || t.includes("asic") || t.includes("lut") || t.includes("clb")) {
+    if (o.includes("asic")) return "ASIC là mạch tích hợp chuyên dụng, không phải thiết bị logic lập trình được thuộc PLD.";
+    if (o.includes("semi") || o.includes("full")) return "Semi-Custom và Full-Custom là phương pháp thiết kế ASIC, không phải họ thiết bị PLD.";
+    if (o.includes("spld") && !c.includes("spld")) return "SPLD chỉ là loại PLD đơn giản, không phải đối tượng cụ thể mà câu hỏi đang hỏi.";
+    if (o.includes("cpld") && !c.includes("cpld")) return "CPLD là một họ PLD riêng; nếu câu hỏi hỏi FPGA/LUT/CLB thì CPLD không thay thế được.";
+    if (o.includes("fpga") && !c.includes("fpga")) return "FPGA là một họ PLD riêng; trong câu này đáp án đúng đang hỏi khái niệm khác hoặc cấp phân loại khác.";
+    if (o.includes("lut") && !c.includes("lut")) return "LUT là bảng tra cứu nằm trong khối logic FPGA, không phải toàn bộ nhóm thiết bị nếu câu hỏi hỏi nền tảng.";
+    if (o.includes("clb") && !c.includes("clb")) return "CLB là khối logic cấu hình được bên trong FPGA, không phải một nền tảng độc lập như PLD/ASIC.";
+  }
+
+  if (hasCode) {
+    if (o.includes("wire") && (t.includes("always") || codeNorm.includes("always"))) return "tín hiệu được gán bên trong khối `always` phải là biến kiểu `reg/logic`, không phải `wire` trong Verilog cổ điển.";
+    if (o.includes("reg") && (t.includes("assign") || codeNorm.includes("assign"))) return "`assign` là gán liên tục cho net/wire; nếu câu đang hỏi vế trái của `assign` thì chọn `reg` là sai trong Verilog cổ điển.";
+    if (o.includes("mux")) return "MUX phải chọn một trong nhiều ngõ vào đưa ra một ngõ ra bằng tín hiệu chọn; đoạn code/câu hỏi không thể hiện đúng chức năng đó.";
+    if (o.includes("demux")) return "DEMUX phân phối một ngõ vào ra nhiều ngõ ra; đoạn code/câu hỏi không có đúng hướng phân phối này.";
+    if (o.includes("decoder")) return "Decoder giải mã ít bit thành nhiều đường ra one-hot; code/câu hỏi không có cấu trúc giải mã đó.";
+    if (o.includes("encoder")) return "Encoder mã hóa nhiều đường vào thành ít bit hơn; code/câu hỏi không có quan hệ mã hóa đó.";
+    if (o.includes("latch") || o.includes("chot")) return "Latch tác động theo mức và giữ trạng thái bằng hồi tiếp; nếu code dùng cạnh `posedge/negedge` hoặc không có hồi tiếp thì không phải latch.";
+    if (o.includes("flip flop") || o.includes("flip-flop")) return "Flip-flop cập nhật theo cạnh clock; nếu code chỉ tác động theo mức hoặc là mạch tổ hợp thì không phải flip-flop.";
+    if (o.includes("counter") || o.includes("bo dem")) return "Bộ đếm phải có trạng thái tăng/giảm theo clock; nếu code chỉ dịch dữ liệu hoặc chọn tín hiệu thì không phải bộ đếm.";
+    if (o.includes("thanh ghi dich")) return "Thanh ghi dịch phải có chuỗi FF và dữ liệu dịch qua từng tầng; nếu code không tạo đường dịch nối tiếp thì không phải thanh ghi dịch.";
+    return "không khớp với cú pháp hoặc hành vi thực tế của đoạn code khi xét kiểu tín hiệu, toán tử, sensitivity list và thứ tự thực thi.";
+  }
+
+  if (t.includes("wire") || t.includes("reg") || t.includes("net") || t.includes("array") || t.includes("vector") || t.includes("bus")) {
+    if (o.includes("wire")) return "`wire` là dây nối/net, không lưu giá trị trong procedural block; nó chỉ đúng khi ngữ cảnh yêu cầu net/gán liên tục.";
+    if (o.includes("reg")) return "`reg` là biến lưu giá trị trong khối thủ tục; nếu câu đang hỏi dây nối/vector/net thì `reg` không đúng trọng tâm.";
+    if (o.includes("array")) return "array là nhiều phần tử riêng biệt, khác với vector/bus là một tín hiệu nhiều bit.";
+    if (o.includes("bus")) return "bus là cách gọi đường nhiều bit, không phải kiểu dữ liệu Verilog cần chọn trong câu này.";
+  }
+
+  if (t.includes("x") || t.includes("z") || t.includes("logic level") || t.includes("muc logic")) {
+    if (o === "u" || o.includes(" u")) return "Verilog chuẩn dùng các mức 0, 1, X và Z; `U` không phải mức logic chuẩn của Verilog như trong VHDL.";
+    if (o === "x" || o.includes(" x")) return "`X` biểu diễn không xác định/unknown, không phải tổng trở cao hoặc trạng thái dây không được lái.";
+    if (o === "z" || o.includes(" z")) return "`Z` là tổng trở cao/high impedance; chỉ đúng khi câu hỏi hỏi dây không được lái hoặc tristate.";
+  }
+
+  if (t.includes("mux") || t.includes("da hop")) {
+    return "mô tả này không tạo đúng quan hệ MUX: ngõ ra phải chọn giữa các ngõ vào dựa trên tín hiệu chọn `s/sel`, thường viết bằng toán tử `?:` hoặc if-else hợp lệ.";
+  }
+  if (t.includes("demux") || t.includes("giai da hop")) {
+    return "mô tả này không tạo đúng DEMUX: một input phải được đưa tới một trong nhiều output theo tín hiệu chọn; các output còn lại phải không được chọn/đưa về 0 tùy mô hình.";
+  }
+  if (t.includes("and")) return "AND nhiều ngõ vào chỉ cho 1 khi tất cả ngõ vào bằng 1; lựa chọn này không đúng điều kiện hoặc sai cú pháp mô tả AND trong Verilog.";
+  if (t.includes("nor")) return "NOR là OR rồi đảo nên chỉ bằng 1 khi tất cả ngõ vào bằng 0; lựa chọn này không đúng điều kiện đó.";
+
+  if (t.includes("tan so") || t.includes("chia tan") || t.includes("mhz") || t.includes("hz")) return "giá trị này sai do chưa xét việc một chu kỳ xung ra cần hai lần đảo trạng thái, hoặc tính sai từ tần số vào/tần số ra.";
+  if (t.includes("blocking") || t.includes("non-blocking") || t.includes("<=")) return "lựa chọn này nhầm giữa cập nhật tuần tự của `=` và cập nhật song song/cuối bước thời gian của `<=`.";
+  if (t.includes("latch") || t.includes("chot")) return "lựa chọn này nhầm với flip-flop hoặc mạch khác; latch tác động theo mức và có khả năng giữ trạng thái.";
+  if (t.includes("flip flop") || t.includes("flip-flop")) return "lựa chọn này không đúng loại flip-flop hoặc không có đặc điểm cập nhật theo cạnh clock như đề yêu cầu.";
+  if (t.includes("thanh ghi") || t.includes("shift")) return "lựa chọn này sai hướng vào/ra hoặc không đúng cách dữ liệu dịch qua các FF theo từng xung clock.";
+  if (t.includes("counter") || t.includes("bo dem")) return "lựa chọn này không mô tả thao tác cập nhật trạng thái đếm theo xung clock/reset.";
+  if (t.includes("fsm") || t.includes("moore") || t.includes("mealy")) return "lựa chọn này nhầm quan hệ giữa output, trạng thái hiện tại và input; Moore phụ thuộc trạng thái, Mealy phụ thuộc cả trạng thái và input.";
+
+  if (c.includes("ca ") || c.includes("deu dung") || c.includes("khong sai") || c.includes("khong the sai")) return "ý này chỉ đúng một phần; đáp án đúng là phương án tổng hợp vì nhiều nhận định trong câu đều đúng.";
+  if (o.includes("ca ") || o.includes("deu dung") || o.includes("deu sai")) return "phương án tổng hợp này sai vì không phải tất cả các ý được nêu đều đúng/sai như nó nói.";
+  return "không đúng trọng tâm câu hỏi hoặc chỉ đúng trong một trường hợp khác, nên không phải đáp án cần chọn.";
 }

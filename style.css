@@ -1029,3 +1029,54 @@ body.license-unlocked .license-view { display: none; }
   min-width: 0;
   line-height: 1.55;
 }
+
+
+.update-notice {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  margin: 0 0 18px;
+  padding: 16px 18px;
+  border: 1px solid #bfdbfe;
+  border-left: 6px solid var(--primary);
+  border-radius: 20px;
+  background: linear-gradient(135deg, #eff6ff, #f8fbff);
+  box-shadow: 0 12px 30px rgba(37, 99, 235, .10);
+}
+
+.update-notice-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #dbeafe;
+  font-size: 22px;
+}
+
+.update-notice-content strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.update-notice-content p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+  font-weight: 650;
+}
+
+.btn.small {
+  padding: 8px 11px;
+  border-radius: 11px;
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .update-notice {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}
