@@ -2131,7 +2131,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "options": [
       {
         "id": "A",
-        "text": "Xung đồng hồ",
+        "text": "Xung clock",
         "correct": true
       },
       {
@@ -2177,7 +2177,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       },
       {
         "id": "C",
-        "text": "Tín hiệu xung đồng hồ điều khiển hoạt động toàn mạch, dữ liệu được lấy mẫu tại cạnh lên hay xuống của xung đồng hồ",
+        "text": "Tín hiệu xung clock điều khiển hoạt động toàn mạch, dữ liệu được lấy mẫu tại cạnh lên hay xuống của xung clock",
         "correct": false
       },
       {

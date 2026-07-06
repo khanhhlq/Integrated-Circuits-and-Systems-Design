@@ -191,7 +191,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "options": [
       {
         "id": "A",
-        "text": "Tập hợp các FF D được điều khiển bởi một tín hiệu xung đồng hồ",
+        "text": "Tập hợp các FF D được điều khiển bởi một tín hiệu xung clock",
         "correct": true
       },
       {
@@ -227,7 +227,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "options": [
       {
         "id": "A",
-        "text": "Tập hợp các FF D được điều khiển bởi một tín hiệu xung đồng hồ",
+        "text": "Tập hợp các FF D được điều khiển bởi một tín hiệu xung clock",
         "correct": false
       },
       {
@@ -263,7 +263,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "options": [
       {
         "id": "A",
-        "text": "Tập hợp các FF D được điều khiển bởi một tín hiệu xung đồng hồ",
+        "text": "Tập hợp các FF D được điều khiển bởi một tín hiệu xung clock",
         "correct": false
       },
       {

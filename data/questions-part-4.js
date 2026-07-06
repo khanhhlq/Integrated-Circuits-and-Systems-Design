@@ -1672,17 +1672,17 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       },
       {
         "id": "B",
-        "text": "Các cạnh lên của xung đồng hồ xuất hiện vào các thời điểm 5, 10, 15, 20...",
+        "text": "Các cạnh lên của xung clock xuất hiện vào các thời điểm 5, 10, 15, 20...",
         "correct": false
       },
       {
         "id": "C",
-        "text": "Các cạnh lên của xung đồng hồ xuất hiện vào các thời điểm 5, 15, 25, 35,..",
+        "text": "Các cạnh lên của xung clock xuất hiện vào các thời điểm 5, 15, 25, 35,..",
         "correct": true
       },
       {
         "id": "D",
-        "text": "Các cạnh lên của xung đồng hồ xuất hiện vào các thời điểm 10, 20, 30,...",
+        "text": "Các cạnh lên của xung clock xuất hiện vào các thời điểm 10, 20, 30,...",
         "correct": false
       }
     ],
@@ -2085,7 +2085,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       },
       {
         "id": "D",
-        "text": "Phụ thuộc vào trạng thái của xung đồng hồ",
+        "text": "Phụ thuộc vào trạng thái của xung clock",
         "correct": true
       }
     ],

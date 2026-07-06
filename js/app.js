@@ -1,4 +1,4 @@
-const QUESTIONS = window.QUESTION_BANK || [];
+let QUESTIONS = window.QUESTION_BANK || [];
 const LICENSE_STORAGE_KEY = "lkq_license_v2_signed";
 const DEVICE_STORAGE_KEY = "lkq_device_id_v1";
 const ADMIN_SESSION_KEY = "lkq_admin_session_v2";
@@ -35,6 +35,15 @@ const CHAPTER_1_TO_6 = [
   "CHƯƠNG 5:",
   "CHƯƠNG 6:"
 ];
+
+function isAllowedBankQuestion(q) {
+  const ch = String(q?.chapter || "");
+  return CHAPTER_1_TO_6.some(p => ch.startsWith(p))
+    || ch.startsWith("ĐỀ")
+    || ch.startsWith("KIỂM TRA ONLINE");
+}
+
+QUESTIONS = QUESTIONS.filter(isAllowedBankQuestion);
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", safeInit);
@@ -133,16 +142,14 @@ function renderChapterStats() {
 }
 
 function populateFilters() {
-  const includeAll = $("includeAllChapters")?.checked;
   const chapters = unique(QUESTIONS.map(q => q.chapter)).filter(Boolean);
-  const allowed = includeAll ? chapters : chapters.filter(ch => CHAPTER_1_TO_6.some(p => ch.startsWith(p)));
   const opts = [
     `<option value="CHAPTER_1_6">Tất cả chương 1–6</option>`,
     `<option value="ALL">Tất cả câu trong ngân hàng</option>`,
-    ...allowed.map(ch => `<option value="${escapeAttr(ch)}">${escapeHTML(shortChapter(ch))}</option>`)
+    ...chapters.map(ch => `<option value="${escapeAttr(ch)}">${escapeHTML(shortChapter(ch))}</option>`)
   ];
   $("chapterSelect").innerHTML = opts.join("");
-  if (!includeAll) $("chapterSelect").value = "CHAPTER_1_6";
+  $("chapterSelect").value = "CHAPTER_1_6";
 }
 
 function updateSelectedCount() {
@@ -153,7 +160,7 @@ function updateSelectedCount() {
 
 function getFilteredPool(options = {}) {
   const chapter = $("chapterSelect").value;
-  let pool = QUESTIONS.slice();
+  let pool = QUESTIONS.filter(isAllowedBankQuestion);
 
   if (chapter === "CHAPTER_1_6") {
     pool = pool.filter(q => CHAPTER_1_TO_6.some(p => (q.chapter || "").startsWith(p)));
@@ -260,6 +267,27 @@ function renderQuestion() {
     });
   });
 
+  if (q.type === "multi" && !state.submitted && !state.locked[q.id]) {
+    const multiHelp = document.createElement("div");
+    multiHelp.className = "multi-answer-help";
+    multiHelp.innerHTML = `Câu này có thể có nhiều đáp án đúng. Hãy tick đủ đáp án rồi bấm <b>Chốt đáp án</b>.`;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn primary multi-lock-btn";
+    btn.textContent = "Chốt đáp án";
+    btn.addEventListener("click", () => {
+      if (!(state.answers[q.id]?.length)) {
+        alert("Bạn cần chọn ít nhất một đáp án.");
+        return;
+      }
+      state.checked[q.id] = true;
+      state.locked[q.id] = true;
+      renderQuestion();
+    });
+    $("optionList").appendChild(multiHelp);
+    $("optionList").appendChild(btn);
+  }
+
   closeAnswerEditor(false);
   $("feedbackBox").className = "feedback hidden";
   $("feedbackBox").textContent = "";
@@ -276,14 +304,16 @@ function toggleAnswer(q, optId) {
   const current = state.answers[q.id] || [];
 
   if (q.type === "multi") {
-    // Câu nhiều đáp án: chọn 1 đáp án sẽ chấm ngay và khóa theo yêu cầu.
-    // Nếu muốn chọn nhiều đáp án trước khi chấm, hãy dùng nút Chỉnh đáp án để sửa khóa đáp án của câu.
-    state.answers[q.id] = current.includes(optId) ? current : [optId];
-  } else {
-    state.answers[q.id] = [optId];
+    if (current.includes(optId)) {
+      state.answers[q.id] = current.filter(x => x !== optId);
+    } else {
+      state.answers[q.id] = [...current, optId];
+    }
+    renderQuestion();
+    return;
   }
 
-  // Chế độ v5: bấm đáp án là tự động kiểm tra và khóa, không cho chọn lại.
+  state.answers[q.id] = [optId];
   state.checked[q.id] = true;
   state.locked[q.id] = true;
   renderQuestion();
@@ -467,6 +497,7 @@ function getQuestionExplanation(q) {
   const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
   let baseExplanation = (q.explanation || "").trim();
   if (/^Cần đọc đoạn code theo thứ tự thực thi/i.test(baseExplanation)) baseExplanation = "";
+  if (/^Đáp án đúng là/i.test(baseExplanation)) return baseExplanation;
   const reason = baseExplanation || buildAutoExplanation(q, correctOptions);
 
   const wrongText = wrongOptions.length

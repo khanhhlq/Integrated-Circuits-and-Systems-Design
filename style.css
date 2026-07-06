@@ -988,3 +988,17 @@ body.license-unlocked .license-view { display: none; }
 .explain-list li span p:last-child {
   margin-bottom: 0;
 }
+
+
+.multi-answer-help {
+  padding: 12px 14px;
+  border: 1px dashed var(--primary);
+  background: #eff6ff;
+  color: #1e3a8a;
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.multi-lock-btn {
+  width: fit-content;
+}
