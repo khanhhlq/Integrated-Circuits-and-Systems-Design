@@ -3,7 +3,6 @@ const LICENSE_STORAGE_KEY = "lkq_license_v2_signed";
 const DEVICE_STORAGE_KEY = "lkq_device_id_v1";
 const ADMIN_SESSION_KEY = "lkq_admin_session_v2";
 const ANSWER_CORRECTION_KEY = "tkhts_answer_corrections_v1";
-const UPDATE_NOTICE_STORAGE_KEY = "lkq_update_notice_explanation_v1";
 // Chỉ chứa PUBLIC KEY để xác thực chữ ký license. Không chứa mật khẩu admin, private key hoặc thuật toán tạo key.
 const PUBLIC_KEY_N = BigInt("0xab4c9775518e19d7f56d6e38a8e6f9c529181ff464964689e46a6babc525daef59ac4039399c8c70dd213d3cc9c71323caf31d9a4d3c0fafbde074f72c09e9231621fc7436bcb6facc80b1265da5d8b955167f4f26ec68167858e06f7fbcb1c5abc1d27482576c6c7baf1e3f52cb225d298d22b9310a8c52011d54a4051f4fd587712b276732b45a95d61865dfd18162c4a81a4d715ed1e35f5ec73e2acff30eeb73ffeabb57db44ce80c1aa1e16427f46f92aa6ee8a82ce737fd0b6513dccbb0957baa6d66b3e2c1293b12bb887a66b6f1a817857c17c09cc15851d74c2b297683c31b527f94a612ed792025b4a878c9e29204647e55e662c8821ab68e1e533");
 const PUBLIC_KEY_E = BigInt(65537);
@@ -66,81 +65,15 @@ window.addEventListener("error", (event) => {
   console.error(event.error || event.message);
 });
 
-function normalizeOptionIds(q) {
-  if (!q || !Array.isArray(q.options)) return;
-  const standardIds = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const seen = new Set();
-  const needsFix = q.options.some((o, idx) => {
-    const id = String(o.id || "").trim();
-    if (!/^[A-Z]$/.test(id) || seen.has(id)) return true;
-    seen.add(id);
-    return false;
-  });
-  if (!needsFix) return;
-
-  const oldToNew = {};
-  q.options.forEach((o, idx) => {
-    const oldId = String(o.id || "").trim();
-    const newId = standardIds[idx] || String(idx + 1);
-    oldToNew[oldId] = newId;
-    o.id = newId;
-  });
-  if (Array.isArray(q.answers)) {
-    q.answers = q.answers.map(id => oldToNew[String(id).trim()] || String(id).trim());
-  }
-}
-
-function normalizeAllQuestionTypes() {
-  QUESTIONS.forEach(q => {
-    if (!q || !Array.isArray(q.options)) return;
-    normalizeOptionIds(q);
-    const optionCorrect = q.options.filter(o => o.correct).map(o => String(o.id));
-    let ids = [];
-    // Ưu tiên cờ correct trong từng đáp án vì một số câu cũ còn sót answers=[...] làm web hiểu nhầm là nhiều đáp án.
-    if (optionCorrect.length) {
-      ids = optionCorrect;
-    } else if (Array.isArray(q.answers) && q.answers.length) {
-      ids = q.answers.map(String).map(x => x.trim()).filter(Boolean);
-    }
-    if (ids.length) {
-      const idSet = new Set(ids);
-      q.options.forEach(o => { o.correct = idSet.has(String(o.id)); });
-      q.answers = ids.slice();
-    }
-    const correctCount = q.options.filter(o => o.correct).length;
-    q.type = correctCount > 1 ? "multi" : "single";
-  });
-}
-
 function init() {
-  normalizeAllQuestionTypes();
   captureDefaultAnswers();
   applySavedAnswerCorrections();
-  normalizeAllQuestionTypes();
   $("totalQuestions").textContent = QUESTIONS.length;
   renderChapterStats();
   populateFilters();
   updateSelectedCount();
   bindEvents();
-  initUpdateNotice();
   renderBank(QUESTIONS.slice(0, 60));
-}
-
-
-function initUpdateNotice() {
-  const notice = $("updateNotice");
-  const closeBtn = $("closeUpdateNoticeBtn");
-  if (!notice || !closeBtn) return;
-
-  if (localStorage.getItem(UPDATE_NOTICE_STORAGE_KEY) === "hidden") {
-    notice.classList.add("hidden");
-    return;
-  }
-
-  closeBtn.addEventListener("click", () => {
-    notice.classList.add("hidden");
-    localStorage.setItem(UPDATE_NOTICE_STORAGE_KEY, "hidden");
-  });
 }
 
 function bindEvents() {
@@ -283,142 +216,10 @@ function startExam(configOverride = null) {
   startTimer();
 }
 
-
-function isLikelyVerilogCode(text) {
-  const s = String(text || "").trim();
-  if (!s) return false;
-  const keyword = /\b(module|endmodule|input|output|wire|reg|assign|always|initial|begin|end|posedge|negedge|case|if|else|parameter|forever|repeat|wait|integer|real|time)\b/i.test(s);
-  const syntax = /(;|\{|\}|@|#|<=|>=|≤|≥|==|===|!==|!=|\[[^\]]+\]|\d+'[bdh][0-9a-fxz_]+|[~&|^]|>>|<<)/i.test(s);
-  const assignment = /\b[a-zA-Z_][\w$]*(\[[^\]]+\])?\s*(<=|≥|≤|=)\s*[^,.;?]+;?/.test(s);
-  const instantiation = /^\s*[a-zA-Z_]\w*\s+[a-zA-Z_]\w*\s*\(/.test(s);
-  return (keyword && syntax) || assignment || instantiation;
-}
-
-function extractInlineCodeSnippets(text) {
-  const s = String(text || "");
-  const snippets = [];
-  const patterns = [
-    /\b(?:module|always|initial|assign|wire|reg|input|output|parameter)\b[^\n?。]*(?:;|\))/gi,
-    /\b[a-zA-Z_]\w*\s*(?:<=|≤|=)\s*[^\n?。;]+;/g,
-    /\{\s*[^{};]*\b[a-zA-Z_]\w*(?:\[[^\]]+\])?[^{};]*\}/g,
-    /\b\d+'[bdh][0-9a-fA-F_xzXZ]+\b/g,
-    /#\d+\s*[^,.;?]*/g
-  ];
-  for (const re of patterns) {
-    let m;
-    while ((m = re.exec(s)) !== null) {
-      const t = m[0].trim().replace(/[,:。]+$/g, "");
-      if (t.length >= 4 && isLikelyVerilogCode(t) && !snippets.includes(t)) snippets.push(t);
-    }
-  }
-  return snippets.slice(0, 4);
-}
-
-function getAutoCodeBlocks(q) {
-  if ((q.codeBlocks || []).length) return [];
-  const blocks = [];
-  const question = String(q.question || "");
-  const lines = question.split(/\n+/).map(x => x.trim()).filter(Boolean);
-  const codeLines = lines.filter(isLikelyVerilogCode);
-
-  // Chỉ tự tạo khung code khi trong đề thật sự có nhiều dòng code.
-  // Với các biểu thức ngắn nằm ngay trong câu hỏi như `a = 1`, `A === B`, `{4{a}}`,
-  // hệ thống sẽ tô xanh inline ngay trong tiêu đề và KHÔNG lặp lại thành khung code bên dưới.
-  if (codeLines.length >= 2) {
-    blocks.push({ title: "Đoạn code/cú pháp trong đề", code: codeLines.join("\n") });
-  }
-  return blocks;
-}
-
-function compactCodeText(text) {
-  return normalizeVerilogDisplayToken(String(text || ""))
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/[.,:：?？]/g, "");
-}
-
-function shouldHideDuplicatedCodeBlock(q, block) {
-  const code = String(block?.code || "").trim();
-  if (!code) return true;
-  const question = String(q?.question || "").trim();
-  if (!question) return false;
-
-  const codeCompact = compactCodeText(code);
-  const questionCompact = compactCodeText(question);
-  if (!codeCompact || !questionCompact.includes(codeCompact)) return false;
-
-  const lines = code.split(/\n+/).map(x => x.trim()).filter(Boolean);
-  const statementCount = (code.match(/;/g) || []).length;
-
-  // Nếu đoạn code chỉ là biểu thức/cú pháp ngắn đã nằm trên tiêu đề câu hỏi,
-  // không cần hiện thêm khung code phía dưới để tránh rối giao diện.
-  if (lines.length <= 1) return true;
-  if (lines.length <= 2 && statementCount <= 2) return true;
-
-  return false;
-}
-
-function getQuestionCodeBlocks(q, options = {}) {
-  const blocks = [...(q.codeBlocks || []), ...getAutoCodeBlocks(q)];
-  if (!options.forDisplay) return blocks;
-  return blocks.filter(block => !shouldHideDuplicatedCodeBlock(q, block));
-}
-
-function renderQuestionStem(q) {
-  return renderTextWithInlineCode(q.question || "");
-}
-
-function normalizeVerilogDisplayToken(token) {
-  let t = String(token || "").trim();
-  if (!t) return t;
-  t = t.replace(/[’‘`]/g, "'");
-  t = t.replace(/≤/g, "<=").replace(/≥/g, ">=");
-  t = t.replace(/\b(\d+)\s*'\s*([bdhBDH])\s*/g, "$1'$2");
-  t = t.replace(/\b(\d+)([bdhBDH])\s*'\s*/g, "$1'$2");
-  const ops = ["===", "!==", "<=", ">=", "==", "!=", ">>", "<<", "=", "+", "-", "*", "/", "&", "|", "^"];
-  for (const op of ops) {
-    const esc = op.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    t = t.replace(new RegExp(`\\s*${esc}\\s*`, "g"), ` ${op} `);
-  }
-  t = t.replace(/\s+/g, " ").trim();
-  return t;
-}
-
-function renderTextWithInlineCode(text) {
-  const s = String(text || "");
-  const re = /(\b(?:module|always|initial|assign|wire|reg|input|output|parameter)\b[^\n?。]*(?:;|\))|\b\d+\s*[’'`]\s*[bdhBDH]\s*[0-9a-fA-F_xzXZ]+\b|#[0-9]+|\b[a-zA-Z_]\w*(?:\[[^\]]+\])?\s*(?:===|!==|<=|>=|≤|≥|==|!=|>>|<<|=|\+|\-|\*|\/|&|\||\^)\s*(?:\d+\s*[’'`]\s*[bdhBDH]\s*[0-9a-fA-F_xzXZ]+|\d+|[a-zA-Z_]\w*(?:\[[^\]]+\])?|\{[^}]+\}))/gi;
-  let out = "";
-  let last = 0;
-  let m;
-  while ((m = re.exec(s)) !== null) {
-    const before = s.slice(last, m.index);
-    const token = m[0];
-    out += escapeHTML(before);
-    const displayToken = normalizeVerilogDisplayToken(token);
-    if (isLikelyVerilogCode(token) || /(?:===|!==|<=|>=|≤|≥|==|!=|>>|<<|=|\+|\-|\*|\/|&|\||\^|\d+\s*'\s*[bdh])/i.test(displayToken)) {
-      out += `<code class="question-inline-code">${escapeHTML(displayToken)}</code>`;
-    } else {
-      out += escapeHTML(token);
-    }
-    last = m.index + token.length;
-  }
-  out += escapeHTML(s.slice(last));
-  return out;
-}
-
-function renderOptionText(text) {
-  const s = String(text || "").trim();
-  if (isLikelyVerilogCode(s)) {
-    return `<code class="option-code-inline">${escapeHTML(normalizeVerilogDisplayToken(s))}</code>`;
-  }
-  return renderTextWithInlineCode(s);
-}
-
 function renderQuestionMedia(q) {
-  const originalBlocks = q.codeBlocks || [];
-  const blocks = getQuestionCodeBlocks(q, { forDisplay: true });
-  // Chỉ ẩn ảnh khi dữ liệu gốc đã có codeBlocks rõ ràng. Nếu code được tự nhận diện từ chữ trong câu hỏi, vẫn giữ ảnh mạch/sơ đồ kèm theo.
-  const images = originalBlocks.length ? [] : (q.images || (q.image ? [q.image] : []));
+  const blocks = q.codeBlocks || [];
+  // Nếu đã có khung code dạng chữ, không hiển thị lại ảnh code gốc để tránh rối mắt.
+  const images = blocks.length ? [] : (q.images || (q.image ? [q.image] : []));
   const codeHtml = blocks.map(block => `<div class="question-code-wrap">
     ${block.title ? `<div class="code-title">${escapeHTML(block.title)}</div>` : ""}
     <pre class="code-block"><code>${escapeHTML(block.code || "")}</code></pre>
@@ -442,7 +243,7 @@ function renderQuestion() {
     ? ` • Trang ${q.page || "?"}`
     : "";
   $("questionMeta").textContent = `${q.chapter || ""} • ${q.section || ""}${sourceLink}${q.type === "multi" ? " • Có thể chọn nhiều đáp án" : ""}`;
-  $("questionText").innerHTML = renderQuestionStem(q);
+  $("questionText").textContent = q.question;
   $("questionMedia").innerHTML = renderQuestionMedia(q);
 
   const selected = state.answers[q.id] || [];
@@ -454,7 +255,7 @@ function renderQuestion() {
     return `<label class="option ${checked ? "selected" : ""} ${locked ? "locked" : ""}" data-option-id="${escapeAttr(opt.id)}">
       <input type="${inputType}" name="q_${escapeAttr(q.id)}" value="${escapeAttr(opt.id)}" ${checked} ${disabled}>
       <span class="letter">${escapeHTML(opt.id)}</span>
-      <span class="option-text">${renderOptionText(opt.text)}</span>
+      <span>${escapeHTML(opt.text)}</span>
     </label>`;
   }).join("");
 
@@ -697,13 +498,7 @@ function getQuestionExplanation(q) {
   let baseExplanation = (q.explanation || "").trim();
   if (/^Cần đọc đoạn code theo thứ tự thực thi/i.test(baseExplanation)) baseExplanation = "";
   if (/^Đáp án đúng là/i.test(baseExplanation)) return baseExplanation;
-  const autoReason = (buildAutoExplanation(q, correctOptions) || "").trim();
-  const reasonParts = [];
-  if (autoReason) reasonParts.push(autoReason);
-  if (baseExplanation && !autoReason.includes(baseExplanation)) {
-    reasonParts.push(`Ghi chú thêm: ${baseExplanation}`);
-  }
-  const reason = reasonParts.join("\n\n");
+  const reason = baseExplanation || buildAutoExplanation(q, correctOptions);
 
   const wrongText = wrongOptions.length
     ? `\n\nVì sao không chọn các đáp án còn lại:\n${wrongOptions.map(o => `- ${o.id}. ${o.text}: ${buildWrongOptionReason(q, o, correctOptions)}`).join("\n")}`
@@ -770,11 +565,7 @@ function buildAutoExplanation(q, correctOptions) {
   if (qText.includes("pld viet tat")) return "PLD viết đầy đủ là Programmable Logic Device(s): thiết bị logic lập trình được. Các lựa chọn khác không phải thuật ngữ chuẩn hoặc viết sai chính tả.";
   if (qText.includes("asic viet tat")) return "ASIC là Application-Specific Integrated Circuit, tức mạch tích hợp chuyên dụng cho một ứng dụng cụ thể. Các phương án khác không đúng thuật ngữ chuyên ngành.";
   if (qText.includes("fgpa viet tat") || qText.includes("fpga viet tat")) return "FPGA viết đúng là Field Programmable Gate Array. Đây là mảng cổng logic có thể lập trình ngoài hiện trường; các phương án khác chỉ là cụm từ sai hoặc không tồn tại.";
-  if (qText.includes("nen tang cac thiet bi lap trinh duoc pld")) return `PLD là viết tắt của Programmable Logic Device, tức nhóm thiết bị logic có thể lập trình được sau khi chế tạo. Nhóm này gồm ba mức chính:
-- SPLD: Simple Programmable Logic Device, loại đơn giản như PLA/PAL/GAL.
-- CPLD: Complex Programmable Logic Device, ghép nhiều khối logic lập trình được và mạng liên kết.
-- FPGA: Field Programmable Gate Array, mảng logic lập trình được có LUT/CLB/routing.
-Vì vậy đáp án đúng là SPLD, CPLD và FPGA. ASIC, Semi-Custom và Full-Custom là hướng thiết kế IC chuyên dụng, không phải các thiết bị PLD.`;
+  if (qText.includes("nen tang cac thiet bi lap trinh duoc pld")) return "PLD gồm SPLD, CPLD và FPGA. SPLD là loại đơn giản, CPLD phức tạp hơn, còn FPGA có cấu trúc mảng logic/routing lập trình được lớn hơn.";
   if (qText.includes("nen tang cac mach tich hop voi mot ung dung cu the")) return "ASIC là mạch tích hợp cho ứng dụng cụ thể, gồm hai hướng chính: Semi-Custom và Full-Custom. Các nhóm SPLD/CPLD/FPGA thuộc PLD nên không phải câu trả lời cho ASIC.";
   if (qText.includes("uu diem") && qText.includes("fpga")) return "Ưu điểm FPGA là lập trình nhanh, dễ thử nghiệm, rẻ khi số lượng nhỏ, rủi ro tài chính thấp và có thể sửa thiết kế. Vì vậy các ý về giá rẻ số lượng nhỏ và rủi ro thấp đều đúng.";
   if (qText.includes("nhuoc diem") && qText.includes("fpga")) return "Nhược điểm FPGA so với ASIC là chậm hơn, tiêu thụ điện/diện tích lớn hơn và dùng nhiều transistor hơn cho mỗi chức năng logic. Do cả ba nhận định đều không sai, đáp án tổng hợp là đúng.";
@@ -926,63 +717,7 @@ function specificExplanation(q, correctOptions) {
   if (includesAny(qText, ["forever clk1", "repeat (5)", "#75", "finish"])) return "Khối `initial` thực thi tuần tự. Khi gặp `forever clk1 = !clk1;`, nó lặp vô hạn ngay trong luồng đó, nên các lệnh phía sau như `repeat(5)` và `#75 $finish` không bao giờ được thực hiện. Vì vậy mô phỏng/khối này không tự chấm dứt theo các dòng sau.";
   if (qText.includes("blocking") || qText.includes("non-blocking") || qText.includes("nonblocking")) return "Blocking `=` cập nhật ngay và câu lệnh sau thấy giá trị mới; non-blocking `<=` lấy giá trị cũ ở vế phải rồi cập nhật đồng thời. Vì vậy kết quả phải được tính theo đúng loại phép gán đang dùng.";
 
-  return buildDefaultTheoryExplanation(q, correctOptions);
-}
-
-function buildDefaultTheoryExplanation(q, correctOptions) {
-  const qText = textOfQuestion(q);
-  const correctText = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
-  const correctNorm = normalize(correctOptions.map(o => o.text).join(" "));
-  const codeBlocks = q.codeBlocks || [];
-  const hasCode = codeBlocks.length > 0;
-  const hasImage = (q.images || []).length > 0 || q.image;
-
-  if (hasCode) {
-    const code = codeBlocks.map(b => b.code || "").join("\n");
-    const codeNorm = normalize(code);
-    const notes = [];
-    notes.push("Cách đọc câu code: trước hết xác định đây là mô tả cấu trúc, gán liên tục `assign`, hay khối thủ tục `always/initial`. Sau đó kiểm tra kiểu tín hiệu `wire/reg`, sensitivity list, cạnh clock và thứ tự thực thi.");
-    if (codeNorm.includes("module")) notes.push("Trong Verilog, một module phải có dạng `module ten_module(danh_sach_cong); ... endmodule`. Nếu thiếu tên module, sai thứ tự port, sai dấu `;` hoặc sai chữ hoa/thường của từ khóa thì chương trình không hợp lệ.");
-    if (codeNorm.includes("assign")) notes.push("`assign` là gán liên tục, thường dùng cho mạch tổ hợp và lái tín hiệu kiểu net/wire. Vì vậy khi thấy `assign`, cần đọc biểu thức logic ở vế phải để suy ra mạch hoặc giá trị ngõ ra.");
-    if (codeNorm.includes("always")) notes.push("Khối `always` chỉ chạy khi có sự kiện trong sensitivity list. `always @*` hoặc `always @(a,b,sel)` thường dùng cho mạch tổ hợp; `always @(posedge clk)` hoặc `negedge clk` mô tả phần tử tuần tự theo cạnh clock.");
-    if (codeNorm.includes("<=") || qText.includes("non-blocking")) notes.push("Phép gán non-blocking `<=` lấy giá trị cũ ở vế phải rồi cập nhật đồng thời ở cuối bước thời gian, nên thường dùng trong mạch tuần tự/flip-flop.");
-    if (code.includes("=") && !code.includes("<=")) notes.push("Phép gán blocking `=` trong procedural block thực hiện theo thứ tự từ trên xuống; câu sau có thể dùng ngay giá trị vừa gán ở câu trước.");
-    if (codeNorm.includes("posedge") || codeNorm.includes("negedge")) notes.push("Từ khóa `posedge/negedge` cho biết mạch chốt dữ liệu theo cạnh xung clock. Đây là dấu hiệu quan trọng để phân biệt flip-flop với latch tác động theo mức.");
-    if (codeNorm.includes("forever")) notes.push("`forever` tạo vòng lặp vô hạn. Nếu trong vòng lặp không có delay hoặc không có điều kiện dừng, các câu lệnh phía sau trong cùng khối sẽ không được thực hiện.");
-    if (codeNorm.includes("repeat")) notes.push("`repeat(n)` lặp đúng n lần; nếu bên trong có delay `#`, thời điểm hoàn thành phải cộng dồn theo số lần lặp.");
-    notes.push(`Vì vậy đáp án đúng là ${correctText}: lựa chọn này khớp với hành vi/cú pháp thực tế của đoạn code, không chỉ nhìn tên biến hoặc đoán theo hình thức.`);
-    return notes.join("\n");
-  }
-
-  if (hasImage) {
-    return `Cách đọc câu có hình: đếm số ngõ vào/ngõ ra, xem có tín hiệu chọn, clock/enable hay đường hồi tiếp hay không. MUX là nhiều ngõ vào chọn ra một ngõ ra; DEMUX là một ngõ vào phân phối ra nhiều ngõ ra; encoder mã hóa nhiều đường vào thành ít bit; decoder giải mã ít bit thành nhiều đường one-hot; latch có hồi tiếp và tác động theo mức; flip-flop cập nhật theo cạnh clock. Đáp án đúng là ${correctText} vì hình/câu hỏi có đúng dấu hiệu của loại mạch đó.`;
-  }
-
-  if (includesAny(qText, ["pld", "spld", "cpld", "fpga", "asic", "lut", "clb"])) {
-    return `Câu này kiểm tra phân loại nền tảng thiết kế số. PLD là nhóm thiết bị logic lập trình được, trong đó có SPLD, CPLD và FPGA. FPGA dùng các khối logic/lut và mạng liên kết lập trình được; ASIC là mạch chuyên dụng cho một ứng dụng cụ thể, không thuộc nhóm PLD. Đáp án đúng là ${correctText} vì nó đặt đúng thuật ngữ vào đúng nhóm.`;
-  }
-
-  if (includesAny(qText, ["reg", "wire", "net", "z", "x", "bus", "array", "vector", "verilog", "module", "assign", "always", "if", "case"])) {
-    return `Câu này kiểm tra quy tắc cơ bản của Verilog. Cần phân biệt: \`wire/net\` dùng cho đường nối và gán liên tục; \`reg\` là biến lưu giá trị trong khối thủ tục; \`Z\` là trạng thái tổng trở cao; \`X\` là chưa biết/không xác định; \`if/case\` nằm trong procedural block như \`always/initial\`. Đáp án đúng là ${correctText} vì nó khớp đúng quy tắc cú pháp hoặc ý nghĩa tín hiệu được hỏi.`;
-  }
-
-  if (includesAny(qText, ["and", "or", "nor", "nand", "mux", "demux", "decoder", "encoder", "mach to hop", "combinational"])) {
-    return `Câu này thuộc mạch tổ hợp, nên ngõ ra chỉ phụ thuộc vào giá trị ngõ vào hiện tại. Cần nhận ra chức năng logic: AND chỉ bằng 1 khi tất cả ngõ vào bằng 1; OR bằng 1 khi có ít nhất một ngõ vào bằng 1; NOR là OR rồi đảo; NAND là AND rồi đảo; MUX chọn một ngõ vào theo tín hiệu chọn; DEMUX phân phối một ngõ vào ra nhiều ngõ ra. Đáp án đúng là ${correctText} vì nó khớp đúng chức năng logic được mô tả.`;
-  }
-
-  if (includesAny(qText, ["latch", "chot", "flip flop", "flip-flop", "thanh ghi", "bo dem", "counter", "fsm", "moore", "mealy", "tuan tu", "clock", "xung clock"])) {
-    return `Câu này thuộc mạch tuần tự, tức ngõ ra phụ thuộc cả ngõ vào hiện tại và trạng thái đã lưu. Latch thường tác động theo mức; flip-flop tác động theo cạnh clock; thanh ghi là tập hợp nhiều flip-flop; bộ đếm cập nhật trạng thái theo mỗi cạnh clock; FSM gồm thanh ghi trạng thái, logic trạng thái kế tiếp và logic ngõ ra. Đáp án đúng là ${correctText} vì nó mô tả đúng phần tử hoặc hành vi tuần tự đang được hỏi.`;
-  }
-
-  if (includesAny(qText, ["tan so", "chia tan", "mhz", "hz"])) {
-    return `Câu này cần đổi tần số thành số xung clock phải đếm. Nếu tạo xung ra bằng cách đảo trạng thái, một chu kỳ ngõ ra cần hai lần đảo; vì vậy giá trị so sánh thường bằng \`f_in / (2*f_out)\`. Đáp án đúng là ${correctText} vì nó khớp công thức chia tần đó.`;
-  }
-
-  if (includesAny(qText, ["ket qua", "gia tri", "bao nhieu", "tinh", "phep", "so nhi phan", "bit"])) {
-    return `Câu này cần tính theo đúng độ rộng bit và quy tắc biểu diễn số. Khi có \`x\` trong phép toán, kết quả có thể lan truyền thành không xác định; khi có số signed/unsigned phải xét miền giá trị; khi ghép bit phải đếm đúng số bit của từng phần. Đáp án đúng là ${correctText} vì nó là kết quả sau khi áp dụng đúng các quy tắc trên.`;
-  }
-
-  return `Cần bám vào định nghĩa trong câu hỏi rồi so sánh từng lựa chọn với định nghĩa đó. Đáp án đúng là ${correctText} vì nó trả lời trực tiếp khái niệm được hỏi, còn các lựa chọn khác nhầm sang khái niệm khác hoặc chỉ đúng một phần.`;
+  return "";
 }
 
 function buildWrongOptionReason(q, opt, correctOptions) {
@@ -995,16 +730,6 @@ function buildWrongOptionReason(q, opt, correctOptions) {
   const correctNorm = normalize(correctText);
   const hasCode = (q.codeBlocks || []).length > 0;
   const hasImage = (q.images || []).length > 0 || q.image;
-
-  if (includesAny(qText, ["pld", "spld", "cpld", "fpga", "asic", "lut", "clb"])) {
-    if (optNorm.includes("asic")) return "ASIC là mạch tích hợp chuyên dụng cho một ứng dụng cụ thể; nó được thiết kế/chế tạo theo mục tiêu cố định nên không được xếp là thiết bị logic lập trình được PLD.";
-    if (optNorm.includes("semi") || optNorm.includes("full")) return "Semi-Custom và Full-Custom là các phương pháp triển khai ASIC, không phải các họ PLD như SPLD/CPLD/FPGA.";
-    if (optNorm.includes("spld") && !correctNorm.includes("spld")) return "SPLD chỉ là một nhánh của PLD hoặc không đúng với cấu trúc đang hỏi trong câu này.";
-    if (optNorm.includes("cpld") && !correctNorm.includes("cpld")) return "CPLD là một họ PLD riêng; nếu câu hỏi đang hỏi FPGA/CLB/LUT thì CPLD không thay thế cho đáp án đó.";
-    if (optNorm.includes("fpga") && !correctNorm.includes("fpga")) return "FPGA là một họ PLD riêng; nếu câu hỏi đang hỏi ASIC hoặc SPLD/CPLD cụ thể thì FPGA không phải đáp án phù hợp.";
-    if (optNorm.includes("lut") && !correctNorm.includes("lut")) return "LUT là bảng tra cứu nằm trong khối logic của FPGA, không phải toàn bộ nền tảng/họ thiết bị nếu câu hỏi hỏi cấp cao hơn.";
-    if (optNorm.includes("clb") && !correctNorm.includes("clb")) return "CLB là khối logic cấu hình được bên trong FPGA, không phải họ thiết bị độc lập nếu câu hỏi hỏi nền tảng chính.";
-  }
 
   if (q.id === "main_296") {
     if (opt.id === "A") return "50.000.000 là số xung clock gốc trong 1 giây, không phải số đếm để đảo `clkout` cho tần số 2 Hz.";
@@ -1105,11 +830,11 @@ function renderReviewItem(q, i) {
       selected.includes(o.id) && !o.correct ? "bad" : ""
     ].join(" ");
     const mark = o.correct ? " ✓" : selected.includes(o.id) ? " ✗" : "";
-    return `<span class="${classes}">${escapeHTML(o.id)}. ${renderOptionText(o.text)}${mark}</span>`;
+    return `<span class="${classes}">${escapeHTML(o.id)}. ${escapeHTML(o.text)}${mark}</span>`;
   }).join("");
   return `<div class="review-item ${ok ? "correct" : "wrong"}">
     <div class="review-meta">${escapeHTML(source)}</div>
-    <h4>${i + 1}. ${renderQuestionStem(q)}</h4>
+    <h4>${i + 1}. ${escapeHTML(q.question)}</h4>
     ${renderQuestionMedia(q)}
     <div>${opts}</div>
     ${q.note ? `<p class="review-meta">Ghi chú: ${escapeHTML(q.note)}</p>` : ""}
@@ -1192,7 +917,7 @@ function openAnswerEditor() {
     return `<label class="editor-option">
       <input type="checkbox" value="${escapeAttr(opt.id)}" ${checked}>
       <strong>${escapeHTML(opt.id)}</strong>
-      <span class="option-text">${renderOptionText(opt.text)}</span>
+      <span>${escapeHTML(opt.text)}</span>
     </label>`;
   }).join("");
   $("editAnswerNote").className = "edit-note hidden";
@@ -1611,9 +1336,9 @@ function renderBank(items) {
     const correct = q.options.filter(o => o.correct).map(o => `${o.id}. ${o.text}`).join(" | ");
     return `<div class="review-item">
       <div class="review-meta">${escapeHTML(q.chapter || "")} • ${escapeHTML(q.section || "")} • trang ${q.page || "?"}</div>
-      <h4>${escapeHTML(q.question_no || `Câu ${i+1}`)}: ${renderQuestionStem(q)}</h4>
+      <h4>${escapeHTML(q.question_no || `Câu ${i+1}`)}: ${escapeHTML(q.question)}</h4>
       ${renderQuestionMedia(q)}
-      <div>${q.options.map(o => `<span class="answer-pill ${o.correct ? "good" : ""}">${escapeHTML(o.id)}. ${renderOptionText(o.text)}</span>`).join("")}</div>
+      <div>${q.options.map(o => `<span class="answer-pill ${o.correct ? "good" : ""}">${escapeHTML(o.id)}. ${escapeHTML(o.text)}</span>`).join("")}</div>
       <p class="review-meta">Đáp án: ${escapeHTML(correct)}</p>
     </div>`;
   }).join("");
@@ -1690,300 +1415,4 @@ function normalize(str) {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, " ")
     .trim();
-}
-/* ==========================================================
-   LKQ final review: explanation is generated question-by-question
-   in a ChatGPT-like style. It reads the exact question, code/images,
-   correct option(s), and then explains why each wrong option is wrong.
-   ========================================================== */
-function getQuestionExplanation(q) {
-  const correctOptions = q.options.filter(o => o.correct);
-  const wrongOptions = q.options.filter(o => !o.correct);
-  const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
-
-  const analysisParts = [];
-  analysisParts.push(buildQuestionFocus(q, correctOptions));
-  const concept = buildConceptRule(q, correctOptions);
-  if (concept) analysisParts.push(`Lý thuyết cần nhớ:\n${concept}`);
-  const apply = buildApplyReason(q, correctOptions);
-  if (apply) analysisParts.push(`Áp dụng vào câu này:\n${apply}`);
-
-  let baseExplanation = String(q.explanation || "").trim();
-  if (/^Cần đọc đoạn code theo thứ tự thực thi/i.test(baseExplanation)) baseExplanation = "";
-  if (baseExplanation && !/^Đáp án đúng là/i.test(baseExplanation)) {
-    const existed = analysisParts.some(p => normalize(p).includes(normalize(baseExplanation).slice(0, 70)));
-    if (!existed) analysisParts.push(`Ghi chú thêm:\n${baseExplanation}`);
-  }
-
-  if (!analysisParts.filter(Boolean).length) {
-    analysisParts.push(`Đọc đúng trọng tâm câu hỏi rồi so từng lựa chọn với định nghĩa. Đáp án ${correctLabel} là lựa chọn khớp đầy đủ nhất; các lựa chọn còn lại chỉ đúng một phần, nhầm khái niệm hoặc sai cú pháp.`);
-  }
-
-  const wrongText = wrongOptions.length
-    ? `\n\nVì sao không chọn các đáp án còn lại:\n${wrongOptions.map(o => `- ${o.id}. ${o.text}: ${buildWrongOptionReason(q, o, correctOptions)}`).join("\n")}`
-    : "";
-
-  return `Đáp án đúng là ${correctLabel}.\n\nPhân tích: ${analysisParts.filter(Boolean).join("\n\n")}${wrongText}`;
-}
-
-function buildQuestionFocus(q, correctOptions) {
-  const t = textOfQuestion(q);
-  const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
-  const hasCode = (q.codeBlocks || []).length > 0;
-  const hasImage = (q.images || []).length > 0 || q.image;
-
-  if (hasCode) {
-    return `Đề này là câu đọc code/cú pháp Verilog. Mình không chọn đáp án theo tên gọi, mà phải nhìn: code có module/port không, tín hiệu được khai báo kiểu gì, dùng \`assign\` hay \`always\`, cập nhật theo cạnh clock hay theo mức, và phép gán là \`=\` hay \`<=\`. Sau khi đối chiếu các điểm đó, đáp án đúng là ${correctLabel}.`;
-  }
-  if (hasImage) {
-    return `Đề này là câu nhận dạng hình/sơ đồ. Cần nhìn số ngõ vào/ngõ ra, có đường hồi tiếp hay không, có clock/enable hay đường chọn hay không. Những dấu hiệu đó khớp với đáp án ${correctLabel}.`;
-  }
-  if (t.includes("ket qua") || t.includes("gia tri") || t.includes("tinh") || t.includes("bao nhieu") || t.includes("result")) {
-    return `Đề này hỏi kết quả cuối cùng, nên phải tính theo quy tắc chứ không chọn theo cảm giác. Làm đúng thứ tự thực thi, độ rộng bit và kiểu phép toán thì kết quả ra ${correctLabel}.`;
-  }
-  if (correctOptions.length > 1) {
-    return `Đề này có nhiều đáp án đúng. Phải chọn đủ các ý đúng, vì mỗi ý đúng mô tả một phần của khái niệm. Tập đáp án đúng là ${correctLabel}.`;
-  }
-  return `Đề này hỏi đúng một khái niệm trọng tâm. Đáp án ${correctLabel} đúng vì nó khớp trực tiếp với định nghĩa/hành vi trong lý thuyết, không bị nhầm sang khái niệm gần giống.`;
-}
-
-function buildConceptRule(q, correctOptions) {
-  const t = textOfQuestion(q);
-  const code = (q.codeBlocks || []).map(b => b.code || "").join("\n");
-  const cn = normalize(code);
-  const cText = normalize(correctOptions.map(o => o.text).join(" "));
-  const rules = [];
-
-  if (cn || t.includes("verilog") || /\b(4'b|8'b|16'h|32'h|assign|always|module|wire|reg|posedge|negedge|<=|===|==)\b/i.test(q.question || "")) {
-    if (t.includes("module") || cn.includes("module")) rules.push("Trong Verilog, module hợp lệ có dạng `module ten_module (danh_sach_port); ... endmodule`. Sau từ khóa `module` phải có tên module, rồi mới đến danh sách port.");
-    if (t.includes("wire") || cn.includes("wire")) rules.push("`wire`/net biểu diễn dây nối. Nó thường được lái bằng `assign` hoặc output của cổng/module khác; không dùng để lưu giá trị trong `always` theo kiểu Verilog cổ điển.");
-    if (t.includes("reg") || cn.includes("reg") || cText.includes("reg")) rules.push("`reg` là biến có khả năng giữ giá trị trong khối thủ tục như `always` hoặc `initial`; tên `reg` không có nghĩa chắc chắn là flip-flop, phần cứng sinh ra phụ thuộc cách mô tả.");
-    if (cn.includes("assign") || t.includes("assign")) rules.push("`assign` là gán liên tục: vế trái luôn được cập nhật theo vế phải. Nó phù hợp để mô tả mạch tổ hợp hoặc nối dây logic.");
-    if (cn.includes("always") || t.includes("always")) rules.push("`always @(...)` là khối thủ tục. `always @*` thường dùng cho mạch tổ hợp; `always @(posedge clk)` hoặc `always @(negedge clk)` dùng cho mạch tuần tự theo cạnh clock.");
-    if (cn.includes("initial") || t.includes("initial")) rules.push("`initial` chạy một lần từ thời điểm mô phỏng 0, thường dùng trong testbench để khởi tạo, tạo xung hoặc kết thúc mô phỏng.");
-    if (cn.includes("posedge") || cn.includes("negedge") || t.includes("posedge") || t.includes("negedge")) rules.push("`posedge clk` nghĩa là cập nhật ở cạnh lên của xung clock; `negedge clk` nghĩa là cập nhật ở cạnh xuống.");
-    if (code.includes("<=" ) || t.includes("<=") || t.includes("non-blocking") || t.includes("nonblocking")) rules.push("Phép gán non-blocking `<=` đọc vế phải trước và cập nhật vế trái đồng thời ở cuối bước thời gian; vì vậy nó hay dùng trong mạch tuần tự.");
-    if ((code.includes("=") || t.includes("blocking")) && !code.includes("<=")) rules.push("Phép gán blocking `=` thực hiện tuần tự từng dòng trong procedural block; dòng sau thấy giá trị vừa gán ở dòng trước.");
-    if (t.includes("===") || t.includes("case equality") || (q.question || "").includes("===")) rules.push("Toán tử `===` là so sánh bằng theo từng bit kiểu case equality: cả `0`, `1`, `x`, `z` đều phải giống nhau thì kết quả mới là 1.");
-    if (t.includes("==") && !t.includes("===")) rules.push("Toán tử `==` là so sánh logic. Nếu trong toán hạng có `x` hoặc `z`, kết quả có thể là `x` vì Verilog không xác định được đúng/sai chắc chắn.");
-    if (t.includes("integer")) rules.push("`integer` là biến số nguyên. Khi gán giá trị thực như `2.9` vào integer, Verilog chuyển sang số nguyên nên kết quả không còn phần thập phân.");
-    if (t.includes("vector") || t.includes("bus") || t.includes("[")) rules.push("Vector/bus trong Verilog viết dạng `[msb:lsb] ten_tin_hieu`, ví dụ `wire [7:0] a;`. Cách viết này tạo một tín hiệu nhiều bit.");
-    if (t.includes("array") || t.includes("mang")) rules.push("Array là nhiều phần tử riêng biệt, ví dụ `reg [7:0] mem [1023:0]` nghĩa là 1024 phần tử, mỗi phần tử rộng 8 bit.");
-    if (t.includes("x") || t.includes("z") || t.includes("tri") || t.includes("tristate")) rules.push("Bốn mức logic cơ bản trong Verilog là `0`, `1`, `x` và `z`. `x` là không xác định, còn `z` là tổng trở cao/high impedance.");
-    if (rules.length) return bulletJoin(rules);
-  }
-
-  if (t.includes("pld") || t.includes("spld") || t.includes("cpld") || t.includes("fpga") || t.includes("asic") || t.includes("lut") || t.includes("clb")) {
-    return bulletJoin([
-      "PLD là nhóm thiết bị logic lập trình được, gồm SPLD, CPLD và FPGA.",
-      "FPGA dùng các khối logic cấu hình được, thường có LUT/CLB và mạng liên kết lập trình được.",
-      "ASIC là mạch tích hợp chuyên dụng cho một ứng dụng cụ thể; nó không linh hoạt như FPGA nhưng thường nhanh hơn, tiết kiệm điện hơn và rẻ hơn khi sản xuất số lượng lớn.",
-      "SPLD/CPLD/FPGA là phân loại thiết bị; Semi-Custom/Full-Custom là hướng thiết kế ASIC."
-    ]);
-  }
-  if (t.includes("front") || t.includes("back") || t.includes("tapeout") || t.includes("quy trinh") || t.includes("tang thu") || t.includes("san xuat ic")) {
-    return bulletJoin([
-      "Front-End gồm mô tả HDL/specification, testbench, mô phỏng và tổng hợp logic.",
-      "Back-End gồm bố cục vật lý, placement, routing, phân tích timing sau layout và kiểm tra/tapeout.",
-      "Tapeout là dữ liệu/kết quả cuối cùng gửi đi sản xuất chip hoặc PCB."
-    ]);
-  }
-  if (t.includes("mux") || t.includes("da hop")) return bulletJoin(["MUX chọn một trong nhiều ngõ vào đưa ra một ngõ ra theo tín hiệu chọn.", "MUX 2:1 thường viết bằng toán tử điều kiện `assign o = s ? i1 : i0;` hoặc if-else hợp lệ trong `always`."]);
-  if (t.includes("demux") || t.includes("giai da hop")) return bulletJoin(["DEMUX làm ngược MUX: một ngõ vào được phân phối tới một trong nhiều ngõ ra theo tín hiệu chọn.", "Nếu output là `wire` thì dùng `assign`; nếu output là `reg` thì có thể gán trong `always`."]);
-  if (t.includes("decoder")) return "Decoder giải mã n bit ngõ vào thành nhiều ngõ ra, thường theo dạng one-hot.";
-  if (t.includes("encoder")) return "Encoder mã hóa nhiều đường vào thành ít bit hơn, ngược hướng với decoder.";
-  if (t.includes("nor")) return "Cổng NOR là OR rồi đảo, nên ngõ ra bằng 1 chỉ khi tất cả ngõ vào bằng 0.";
-  if (t.includes("nand")) return "Cổng NAND là AND rồi đảo, nên ngõ ra bằng 0 chỉ khi tất cả ngõ vào bằng 1.";
-  if (t.includes("and")) return "Cổng AND chỉ cho ngõ ra 1 khi tất cả ngõ vào đều bằng 1.";
-  if (t.includes("or")) return "Cổng OR cho ngõ ra 1 khi có ít nhất một ngõ vào bằng 1.";
-  if (t.includes("latch") || t.includes("chot")) return bulletJoin(["Latch là phần tử nhớ tác động theo mức, không bắt buộc chờ cạnh clock.", "D latch khi enable/clock ở mức cho phép thì Q theo D; khi không cho phép thì giữ trạng thái cũ."]);
-  if (t.includes("flip flop") || t.includes("flip-flop") || t.includes("ffd") || t.includes("dff")) return bulletJoin(["Flip-flop là phần tử nhớ tác động theo cạnh xung clock.", "D flip-flop lấy giá trị D tại cạnh clock và đưa ra Q sau cạnh đó."]);
-  if (t.includes("thanh ghi") || t.includes("shift") || t.includes("siso") || t.includes("sipo") || t.includes("piso") || t.includes("pipo")) return bulletJoin(["Thanh ghi là tập hợp nhiều flip-flop dùng chung xung clock.", "Thanh ghi dịch cho dữ liệu đi qua từng FF sau mỗi cạnh clock; SISO là vào nối tiếp ra nối tiếp, SIPO là vào nối tiếp ra song song."]);
-  if (t.includes("counter") || t.includes("bo dem") || t.includes("đếm") || t.includes("dem")) return "Bộ đếm là mạch tuần tự có trạng thái được cập nhật theo xung clock, thường dùng `q <= q + 1` hoặc logic trạng thái kế tiếp.";
-  if (t.includes("fsm") || t.includes("moore") || t.includes("mealy") || t.includes("may trang thai")) return bulletJoin(["FSM gồm thanh ghi trạng thái, logic trạng thái kế tiếp và logic ngõ ra.", "Moore: output phụ thuộc trạng thái hiện tại.", "Mealy: output phụ thuộc trạng thái hiện tại và input. "]);
-  if (t.includes("tan so") || t.includes("chia tan") || t.includes("mhz") || t.includes("hz")) return "Khi tạo xung ra bằng cách đảo trạng thái, một chu kỳ xung ra gồm hai lần đảo. Vì vậy thường dùng `K = f_in / (2 × f_out)`.";
-  if (t.includes("signed") || t.includes("unsigned") || t.includes("2's complement") || t.includes("bu 2") || t.includes("nhi phan")) return bulletJoin(["Số unsigned n bit có giá trị từ 0 đến `2^n - 1`.", "Số bù 2 n bit có giá trị từ `-2^(n-1)` đến `2^(n-1)-1`.", "Nếu phép toán có bit `x/z`, kết quả có thể lan truyền `x` vì không xác định được giá trị chắc chắn."]);
-  return "Đối chiếu từng lựa chọn với đúng định nghĩa trong lý thuyết. Đáp án đúng phải khớp đủ điều kiện, không chỉ đúng một phần hoặc đúng trong trường hợp khác.";
-}
-
-function buildApplyReason(q, correctOptions) {
-  const t = textOfQuestion(q);
-  const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
-  const correctText = normalize(correctOptions.map(o => o.text).join(" "));
-  const code = (q.codeBlocks || []).map(b => b.code || "").join("\n");
-  const cn = normalize(code);
-
-  const specific = buildSpecificSolvedReason(q, correctOptions);
-  if (specific) return specific;
-
-  if ((q.codeBlocks || []).length) {
-    const steps = [];
-    if (cn.includes("assign")) steps.push("Nhìn các dòng `assign` để suy ra hàm logic đang được nối liên tục từ vế phải sang vế trái.");
-    if (cn.includes("always") && (cn.includes("posedge") || cn.includes("negedge"))) steps.push("Có `always` theo cạnh clock nên đây là mạch tuần tự, dữ liệu chỉ cập nhật tại cạnh clock được chỉ định.");
-    if (cn.includes("always") && !(cn.includes("posedge") || cn.includes("negedge"))) steps.push("Có `always` nhưng không theo cạnh clock, nên cần xem sensitivity list và if/case để xác định mạch tổ hợp hay latch.");
-    if (cn.includes("initial")) steps.push("Khối `initial` chạy một lần, nên các lệnh delay, repeat, forever phải xét theo thứ tự từ trên xuống.");
-    if (code.includes("<=")) steps.push("Vì dùng `<=`, các vế phải được đọc theo giá trị cũ rồi cập nhật đồng thời.");
-    if (code.includes("=") && !code.includes("<=")) steps.push("Vì dùng `=`, dòng sau sử dụng ngay giá trị vừa gán ở dòng trước.");
-    if (cn.includes("case") || cn.includes("if")) steps.push("Cần xét từng nhánh điều kiện để xem output được gán trong trường hợp nào.");
-    steps.push(`Khi áp dụng các quy tắc đó, hành vi/cú pháp của đoạn code khớp với ${correctLabel}.`);
-    return bulletJoin(steps);
-  }
-
-  if ((q.images || []).length || q.image) return `Hình trong đề có đúng dấu hiệu của ${correctLabel}: xem đường hồi tiếp/clock/đường chọn/ngõ vào-ngõ ra để nhận dạng mạch, nên chọn đáp án này.`;
-  if (t.includes("pld bao gom") || (t.includes("nen tang") && t.includes("pld"))) return "PLD là nhóm lớn, bên dưới gồm SPLD, CPLD và FPGA. Vì vậy đáp án gồm đủ ba loại này là đúng.";
-  if (t.includes("fpga") && t.includes("asic") && t.includes("toc do")) return "FPGA có phần tử lập trình và mạng liên kết linh hoạt nên tiện chỉnh sửa nhưng chậm hơn ASIC. ASIC được tối ưu vật lý cho chức năng cụ thể nên thường nhanh hơn.";
-  if (t.includes("uu diem") && t.includes("fpga")) return "Ưu điểm của FPGA nằm ở khả năng lập trình lại, thời gian thử nghiệm nhanh, chi phí thiết kế ban đầu thấp và linh hoạt khi thay đổi thiết kế.";
-  if (t.includes("nhuoc diem") && t.includes("fpga")) return "Nhược điểm của FPGA là chậm hơn, tốn diện tích và điện năng hơn ASIC vì cần tài nguyên lập trình và mạng kết nối có thể cấu hình.";
-  if (t.includes("uu diem") && t.includes("asic")) return "ASIC được tối ưu riêng cho một thiết kế nên có tốc độ cao, công suất thấp và chi phí/đơn vị rẻ khi sản xuất số lượng lớn.";
-  if (t.includes("nhuoc diem") && t.includes("asic")) return "ASIC không lập trình lại linh hoạt như FPGA, thời gian chế tạo lâu và chi phí mask/kỹ thuật ban đầu cao.";
-  if (t.includes("z") && (t.includes("khong duoc ket noi") || t.includes("no driver") || t.includes("tristate"))) return "Dây không có driver hoặc output tristate ở trạng thái cách ly điện sẽ ở mức `Z`, không phải `X`.";
-  if (t.includes("khong duoc ho tro") && t.includes("verilog")) return "Verilog hỗ trợ `0`, `1`, `X`, `Z`; ký hiệu `U` là kiểu thường gặp trong VHDL, không phải mức logic chuẩn của Verilog.";
-  if (t.includes("default value of reg") || t.includes("gia tri mac dinh")) return "Khi chưa được khởi tạo, biến `reg` không có giá trị xác định nên mặc định là `X`.";
-  if (t.includes("maximum") && t.includes("8-bit unsigned")) return "Số unsigned 8 bit lớn nhất là `2^8 - 1 = 255`, nên chọn 255.";
-  if (t.includes("smallest negative") && t.includes("8-bit") || t.includes("nho nhat") && t.includes("bu 2")) return "Bù 2 8 bit có miền giá trị từ `-2^7` đến `2^7 - 1`, tức từ `-128` đến `127`, nên số âm nhỏ nhất là `-128`.";
-  if (t.includes("4-input nor")) return "NOR bằng 1 khi OR của tất cả input bằng 0; điều đó chỉ xảy ra khi mọi input đều bằng 0.";
-  if (t.includes("4-input and")) return "AND 4 ngõ vào bằng 1 chỉ khi cả 4 input đều bằng 1.";
-  if (t.includes("synthesis")) return "Synthesis là quá trình biến đặc tả/mô tả HDL thành mạch phần cứng tương ứng, không phải bước kiểm tra mô phỏng.";
-  if (t.includes("shortest design turnaround")) return "FPGA có thời gian quay vòng thiết kế ngắn nhất vì có thể lập trình và kiểm thử ngay trên phần cứng có sẵn, không cần chờ chế tạo chip như ASIC.";
-  if (t.includes("ket qua") || t.includes("gia tri") || t.includes("tinh")) return `Tính theo đúng quy tắc của câu hỏi sẽ ra ${correctLabel}. Những đáp án khác thường sai do nhầm thứ tự thực thi, nhầm độ rộng bit hoặc nhầm toán tử.`;
-  return `So với các lựa chọn còn lại, ${correctLabel} là đáp án khớp đủ ý nhất với kiến thức cần hỏi. Vì vậy chọn ${correctLabel}.`;
-}
-
-function buildSpecificSolvedReason(q, correctOptions) {
-  const t = textOfQuestion(q);
-  const code = (q.codeBlocks || []).map(b => b.code || "").join("\n");
-  const cn = normalize(code);
-  const correctLabel = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
-
-  if (t.includes("integer i") || (cn.includes("integer i") && cn.includes("2.9"))) {
-    return "Khai báo `integer i;` nghĩa là `i` chỉ lưu số nguyên. Khi gán `i = 2.9`, Verilog chuyển giá trị thực sang integer nên kết quả thành 3. Vì vậy chọn đáp án 3.";
-  }
-  if ((q.question || "").includes("===") || cn.includes("===")) {
-    return "Ở phép so sánh `===`, từng bit phải giống hệt nhau, kể cả `x` và `z`. Với `A = 4'b1xxz` và `B = 4'b1xxx`, ba bit đầu giống nhưng bit cuối là `z` so với `x`, nên không bằng nhau. Kết quả phép so sánh là `0`.";
-  }
-  if ((q.question || "").includes("==") && !(q.question || "").includes("===")) {
-    if (t.includes("1xxx") || t.includes("1xxz") || t.includes("x")) return "Toán tử `==` không so sánh `x/z` như giá trị xác định. Nếu có bit không xác định thì kết quả so sánh có thể không xác định hoặc phụ thuộc cách viết đề. Cần phân biệt với `===`, vì `===` mới so sánh cả `x/z` theo từng bit.";
-  }
-  if (cn.includes("a = b = 0") && cn.includes("a = 1") && cn.includes("b = a") && !cn.includes("<=")) {
-    return "Đây là phép gán blocking. Ban đầu `a = b = 0`; sau đó `a = 1`; dòng kế tiếp `b = a` đọc ngay giá trị mới của `a`, nên `b = 1`. Kết quả cuối cùng là `a = 1, b = 1`.";
-  }
-  if (cn.includes("a = b = 0") && cn.includes("a <= 1") && cn.includes("b <= a")) {
-    return "Đây là phép gán non-blocking. Ban đầu `a = 0`, `b = 0`. Hai vế phải được đọc trước: `a <= 1` sẽ cập nhật a thành 1, còn `b <= a` đọc giá trị cũ của a là 0. Cuối bước thời gian: `a = 1`, `b = 0`.";
-  }
-  if (cn.includes("forever") && cn.includes("$finish")) {
-    return "Trong khối `initial`, lệnh chạy tuần tự. Khi gặp `forever clk1 = !clk1;` không có delay, mô phỏng bị kẹt ở vòng lặp vô hạn này. Vì vậy các dòng `repeat` và `#75 $finish` phía sau không được thực hiện; khối không bao giờ chấm dứt.";
-  }
-  if (cn.includes("forever #10") || cn.includes("#10 clk")) {
-    return "Mỗi `#10` thì clock đảo một lần. Một chu kỳ đầy đủ cần hai lần đảo: 0→1 rồi 1→0, nên chu kỳ là `10 + 10 = 20` đơn vị thời gian.";
-  }
-  if (cn.includes("wait") && cn.includes("ctrl")) {
-    return "Lệnh `wait(ctrl)` làm chương trình dừng tại đó cho đến khi `ctrl` có giá trị đúng/mức 1. Sau khi điều kiện đúng, các lệnh delay và tăng biến phía dưới mới chạy.";
-  }
-  if (t.includes("a+b") || t.includes("a + b")) {
-    if (t.includes("001x") || t.includes("1011")) return "Phép cộng có bit `x` trong toán hạng thì các bit kết quả bị ảnh hưởng bởi bit không xác định cũng trở thành `x`. Vì vậy không thể tính ra một dãy 0/1 chắc chắn như phép cộng số thường.";
-  }
-  if (t.includes("a**b") || t.includes("a^b")) {
-    return `Cần đọc đúng toán tử trong đề. Nếu là lũy thừa hoặc XOR thì kết quả phải tính theo giá trị nhị phân đã cho và độ rộng bit. Sau khi tính đúng, kết quả khớp với ${correctLabel}.`;
-  }
-  if (t.includes("catr") || t.includes("noi chuoi") || t.includes("concatenation")) {
-    return "Toán tử `{}` dùng để nối chuỗi bit. Dạng `{4{a}}` là lặp lại `a` 4 lần, còn `{2{c}}` lặp lại `c` 2 lần. Cần tính độ rộng và thứ tự nối từ trái sang phải để chọn kết quả đúng.";
-  }
-  if (t.includes("chia xung") || t.includes("chia tan") || (t.includes("50") && t.includes("mhz") && t.includes("2 hz"))) {
-    return "Tần số vào 50 MHz nghĩa là 50.000.000 xung/giây. Muốn ngõ ra 2 Hz thì chu kỳ ngõ ra là 0,5 s. Nếu mạch đảo output mỗi khi đếm đủ K, mỗi lần đảo là nửa chu kỳ, tức 0,25 s. Vậy `K = 50.000.000 × 0,25 = 12.500.000`.";
-  }
-  if (t.includes("siso") || (cn.includes("q1") && cn.includes("q2") && cn.includes("q3") && cn.includes("out"))) {
-    return "Dữ liệu đi theo chuỗi `in -> q1 -> q2 -> q3 -> out`. Mỗi cạnh clock, dữ liệu dịch sang FF kế tiếp. Vì vào nối tiếp và ra cũng lấy nối tiếp ở cuối chuỗi, đây là thanh ghi dịch SISO.";
-  }
-  if (cn.includes("r_reg >>1") || cn.includes("r_next")) {
-    return "Dịch phải nghĩa là các bit dịch về phía chỉ số thấp hơn, còn bit mới được đưa vào phía MSB. Với ngõ vào nối tiếp `Di`, dạng đúng thường là `{Di, r_reg[7:1]}` cho thanh ghi dịch phải.";
-  }
-  if (t.includes("module") && t.includes("thieu") && t.includes("ten module")) {
-    return "Sau từ khóa `module` phải có tên module. Nếu code viết ngay `module (a, b, ...)` thì thiếu tên module, nên lỗi chính là thiếu tên module.";
-  }
-  return "";
-}
-
-function buildWrongOptionReason(q, opt, correctOptions) {
-  if (q.wrongExplanations && q.wrongExplanations[opt.id]) return q.wrongExplanations[opt.id];
-
-  const t = textOfQuestion(q);
-  const optText = String(opt.text || "");
-  const o = normalize(optText);
-  const correctText = correctOptions.map(x => x.text).join("; ");
-  const c = normalize(correctText);
-  const hasCode = (q.codeBlocks || []).length > 0;
-  const code = (q.codeBlocks || []).map(b => b.code || "").join("\n");
-  const codeNorm = normalize(code);
-
-  if (correctOptions.length > 1) {
-    return "câu này có nhiều đáp án đúng; lựa chọn này không thuộc tập đúng hoặc chỉ đúng một phần nên không được chọn.";
-  }
-
-  if (o.includes("asign") || o.includes("alwayss")) return "sai chính tả từ khóa. Verilog yêu cầu viết đúng `assign` hoặc `always`; viết sai sẽ lỗi cú pháp.";
-  if (o.includes("port map")) return "`port map` là phong cách VHDL, không phải cú pháp gọi module chuẩn trong Verilog.";
-  if (/\balways\s*\(/.test(optText) && !optText.includes("@")) return "thiếu ký hiệu `@`; cú pháp đúng là `always @(...)`.";
-  if (o.includes("posedge ,") || o.includes("negedge ,")) return "sai cú pháp cạnh clock; phải viết `posedge clk` hoặc `negedge clk`, không đặt dấu phẩy giữa từ khóa và tên clock.";
-  if (o.includes("negedge") && (t.includes("canh len") || t.includes("cạnh lên") || t.includes("posedge"))) return "`negedge` là cạnh xuống, trong khi đề yêu cầu cạnh lên.";
-  if (o.includes("posedge") && (t.includes("canh xuong") || t.includes("cạnh xuống") || t.includes("negedge"))) return "`posedge` là cạnh lên, trong khi đề yêu cầu cạnh xuống.";
-  if (o.includes(" and ") && !o.includes("and (")) return "trong biểu thức Verilog không dùng chữ `and` như toán tử; phải dùng `&` hoặc primitive `and(out, in1, in2, ...)`.";
-  if (o.includes(" or ") && !o.includes("or (")) return "trong biểu thức Verilog không dùng chữ `or` như toán tử; phải dùng `|` hoặc primitive `or(...)`.";
-  if (o.includes("/")) return "dấu `/` là phép chia, không phải toán tử logic dùng để ghép MUX/DEMUX.";
-  if (o.includes("endmodule;")) return "`endmodule` không có dấu chấm phẩy phía sau; thêm `;` là sai cú pháp.";
-
-  if (t.includes("pld") || t.includes("spld") || t.includes("cpld") || t.includes("fpga") || t.includes("asic") || t.includes("lut") || t.includes("clb")) {
-    if (o.includes("asic")) return "ASIC là mạch chuyên dụng, không thuộc nhóm PLD lập trình được.";
-    if (o.includes("semi") || o.includes("full")) return "Semi-Custom/Full-Custom là cách thiết kế ASIC, không phải họ PLD.";
-    if (o.includes("spld") && !c.includes("spld")) return "SPLD chỉ là một loại PLD đơn giản, không phải đáp án đúng cho cấp phân loại mà đề hỏi.";
-    if (o.includes("cpld") && !c.includes("cpld")) return "CPLD là một họ PLD riêng, không thay cho FPGA/LUT/CLB nếu đề đang hỏi phần khác.";
-    if (o.includes("fpga") && !c.includes("fpga")) return "FPGA là một họ PLD, nhưng câu này đang hỏi khái niệm/khối khác nên chọn FPGA ở đây là sai.";
-    if (o.includes("lut") && !c.includes("lut")) return "LUT chỉ là bảng tra cứu bên trong FPGA, không phải toàn bộ nền tảng nếu đề hỏi nhóm thiết bị.";
-    if (o.includes("clb") && !c.includes("clb")) return "CLB là khối logic bên trong FPGA, không phải đáp án cho câu hỏi phân loại nền tảng.";
-  }
-
-  if (hasCode) {
-    if (o.includes("wire") && (t.includes("always") || codeNorm.includes("always"))) return "tín hiệu gán trong `always` cần kiểu `reg/logic`; `wire` không phù hợp trong Verilog cổ điển.";
-    if (o.includes("reg") && (t.includes("assign") || codeNorm.includes("assign"))) return "vế trái của `assign` thường là net/wire; `reg` không phù hợp trong ngữ cảnh gán liên tục Verilog cổ điển.";
-    if (o.includes("mux") || o.includes("đa hợp") || o.includes("da hop")) return "MUX phải chọn một trong nhiều input theo tín hiệu chọn; code/câu này không thể hiện đúng quan hệ đó.";
-    if (o.includes("demux") || o.includes("giải đa hợp") || o.includes("giai da hop")) return "DEMUX phải phân phối một input ra nhiều output; code/câu này không có đúng hướng đó.";
-    if (o.includes("decoder")) return "Decoder phải giải mã input thành nhiều output one-hot; code/câu này không có cấu trúc đó.";
-    if (o.includes("encoder")) return "Encoder mã hóa nhiều input thành ít bit output; code/câu này không mô tả encoder.";
-    if (o.includes("latch") || o.includes("chot")) return "Latch cần đặc điểm giữ mức/hồi tiếp; nếu code cập nhật theo cạnh clock thì đó là flip-flop/thanh ghi chứ không phải latch.";
-    if (o.includes("flip flop") || o.includes("flip-flop")) return "Flip-flop cập nhật theo cạnh clock; nếu code không có cạnh clock hoặc chỉ là logic tổ hợp thì không phải flip-flop.";
-    if (o.includes("counter") || o.includes("bo dem") || o.includes("bộ đếm")) return "Bộ đếm phải có trạng thái tăng/giảm theo clock; nếu code chỉ gán logic hoặc dịch dữ liệu thì không phải bộ đếm.";
-    if (o.includes("thanh ghi dich") || o.includes("shift")) return "Thanh ghi dịch phải đưa dữ liệu qua chuỗi FF theo clock; nếu không có chuỗi dịch thì không phải thanh ghi dịch.";
-    return "không khớp với cú pháp hoặc hành vi thực tế của đoạn code khi xét kiểu tín hiệu, toán tử, sensitivity list và thứ tự thực thi.";
-  }
-
-  if (t.includes("wire") || t.includes("reg") || t.includes("net") || t.includes("array") || t.includes("vector") || t.includes("bus")) {
-    if (o.includes("wire")) return "`wire` là net/dây nối; chỉ đúng khi câu hỏi yêu cầu dây hoặc gán liên tục, không phải biến lưu trong procedure.";
-    if (o.includes("reg")) return "`reg` là biến procedural; nếu câu hỏi hỏi net/wire/vector thì `reg` không đúng trọng tâm.";
-    if (o.includes("array")) return "array là nhiều phần tử riêng; nếu câu hỏi hỏi bus/vector thì array không giống vector.";
-    if (o.includes("bus")) return "bus là cách gọi tín hiệu nhiều bit, không phải lúc nào cũng là kiểu dữ liệu cần chọn.";
-  }
-
-  if (t.includes("x") || t.includes("z") || t.includes("logic level") || t.includes("muc logic") || t.includes("mức logic")) {
-    if (o === "u" || o.includes(" u")) return "`U` không phải mức logic chuẩn của Verilog; Verilog dùng `0`, `1`, `x`, `z`.";
-    if (o === "x" || o.includes(" x")) return "`X` là unknown/không xác định, không phải tổng trở cao hoặc trạng thái cách ly.";
-    if (o === "z" || o.includes(" z")) return "`Z` là tổng trở cao; chỉ đúng khi câu hỏi hỏi dây không driver/tristate.";
-  }
-
-  if (t.includes("mux") || t.includes("da hop") || t.includes("đa hợp")) return "mô tả này không tạo đúng quan hệ chọn của MUX hoặc sai cú pháp gán tín hiệu.";
-  if (t.includes("demux") || t.includes("giai da hop") || t.includes("giải đa hợp")) return "mô tả này không phân phối input ra output đúng theo tín hiệu chọn hoặc sai kiểu gán.";
-  if (t.includes("and")) return "AND chỉ đúng khi mọi ngõ vào bằng 1 hoặc phải viết đúng primitive/toán tử; lựa chọn này sai điều kiện hoặc sai cú pháp.";
-  if (t.includes("nor")) return "NOR chỉ bằng 1 khi tất cả ngõ vào bằng 0; lựa chọn này không đúng điều kiện đó.";
-  if (t.includes("tan so") || t.includes("chia tan") || t.includes("mhz") || t.includes("hz")) return "giá trị này tính sai hệ số chia hoặc quên rằng một chu kỳ output cần hai lần đảo trạng thái.";
-  if (t.includes("blocking") || t.includes("non-blocking") || t.includes("<=")) return "lựa chọn này nhầm giữa cập nhật tuần tự của `=` và cập nhật song song/cuối bước thời gian của `<=`.";
-  if (t.includes("latch") || t.includes("chot")) return "lựa chọn này nhầm với flip-flop hoặc mạch tổ hợp; latch có đặc điểm giữ trạng thái theo mức cho phép.";
-  if (t.includes("flip flop") || t.includes("flip-flop")) return "lựa chọn này không đúng loại flip-flop hoặc không có đặc điểm cập nhật theo cạnh clock như đề yêu cầu.";
-  if (t.includes("thanh ghi") || t.includes("shift")) return "lựa chọn này sai hướng vào/ra hoặc không đúng cách dữ liệu dịch qua các FF theo từng xung clock.";
-  if (t.includes("counter") || t.includes("bo dem") || t.includes("bộ đếm")) return "lựa chọn này không mô tả đúng thao tác cập nhật trạng thái đếm theo clock/reset.";
-  if (t.includes("fsm") || t.includes("moore") || t.includes("mealy")) return "lựa chọn này nhầm quan hệ giữa output, trạng thái hiện tại và input; Moore phụ thuộc trạng thái, Mealy phụ thuộc cả trạng thái và input.";
-
-  if (c.includes("ca ") || c.includes("đều đúng") || c.includes("deu dung") || c.includes("khong sai") || c.includes("khong the sai")) return "ý này chỉ đúng một phần; phương án tổng hợp mới đúng vì nhiều nhận định trong đề đều đúng.";
-  if (o.includes("ca ") || o.includes("đều đúng") || o.includes("deu dung") || o.includes("đều sai") || o.includes("deu sai")) return "phương án tổng hợp này sai vì không phải tất cả các ý được nêu đều đúng/sai như nó nói.";
-  return "không đúng trọng tâm câu hỏi hoặc chỉ đúng trong một trường hợp khác, nên không phải đáp án cần chọn.";
-}
-
-function bulletJoin(items) {
-  return items.filter(Boolean).map(x => `- ${x}`).join("\n");
 }

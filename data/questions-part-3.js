@@ -152,7 +152,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 40",
-    "question": "Cho khai báo integer i, kết quả thu được sau khi gán giá trị thực 2.9 cho i là?",
+    "question": "Cho khai báo: integer i; kết quả thu được khi thực hiện lệnh gán i=2,9 là?",
     "options": [
       {
         "id": "A",
@@ -179,14 +179,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       "B"
     ],
     "type": "single",
-    "id": "main_117",
-    "codeBlocks": [
-      {
-        "title": "Đoạn code/cú pháp trong đề",
-        "code": "integer i;\ni = 2.9;"
-      }
-    ],
-    "explanation": "Đáp án đúng là B. 3.\n\nKhai báo integer i nghĩa là i chỉ lưu giá trị nguyên. Khi gán một giá trị thực như 2.9 cho biến integer, phần giá trị thực sẽ được chuyển về số nguyên gần nhất theo cách làm tròn của Verilog, nên 2.9 được lưu thành 3.\n\nVì sao các đáp án khác sai:\n- A. 2.9 sai vì integer không lưu phần thập phân. Nếu muốn lưu số thực phải dùng real.\n- C. 2 sai vì giá trị 2.9 không bị hiểu đơn giản là lấy phần nguyên 2 trong câu này; kết quả được làm tròn về 3.\n- D. 00101001 sai vì đây là dạng chuỗi bit/nhị phân, không phải kết quả khi gán số thực cho integer."
+    "id": "main_117"
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -918,13 +911,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 60",
-    "question": "Cho a = 4'b1010. Kết quả của phép tính c = a >> 2 là?",
-    "codeBlocks": [
-      {
-        "title": "Biểu thức trong đề",
-        "code": "a = 4'b1010;\nc = a >> 2;"
-      }
-    ],
+    "question": "Cho a=4’b 1010. Kết quả của phép tính c=a>>2 là?",
     "options": [
       {
         "id": "A",
