@@ -1080,3 +1080,21 @@ body.license-unlocked .license-view { display: none; }
     align-items: start;
   }
 }
+
+/* Hiển thị toán tử Verilog rõ ràng hơn để tránh nhầm =, ==, ===, <=... */
+.question-inline-code,
+.option-code-inline {
+  font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+  white-space: nowrap;
+  letter-spacing: .02em;
+  word-spacing: .12em;
+}
+.question-inline-code {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 2px;
+  border-radius: 7px;
+  background: #eef4ff;
+  color: #1e3a8a;
+  border: 1px solid #cfe0ff;
+}

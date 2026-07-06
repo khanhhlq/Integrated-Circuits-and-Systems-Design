@@ -621,10 +621,9 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       }
     ],
     "answers": [
-      "B",
-      "D"
+      "B"
     ],
-    "type": "multi",
+    "type": "single",
     "id": "main_73"
   },
   {

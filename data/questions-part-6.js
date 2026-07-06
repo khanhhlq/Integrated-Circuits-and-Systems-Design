@@ -7,7 +7,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 6: MẠCH TUẦN TỰ ĐỒNG BỘ",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 8",
-    "question": "Kết quả của a và b khi thực hiện a=b=0; a=1; b=a;",
+    "question": "Kết quả cuối cùng của a và b sau đoạn code blocking sau là?",
     "options": [
       {
         "id": "A",
@@ -34,7 +34,14 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       "A"
     ],
     "type": "single",
-    "id": "main_281"
+    "id": "main_281",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "a = b = 0;\na = 1;\nb = a;"
+      }
+    ],
+    "explanation": "Đáp án đúng: A. a = b = 1\n\nĐây là nhóm phép gán blocking, dùng dấu =. Với blocking assignment, các lệnh được thực hiện lần lượt theo đúng thứ tự xuất hiện.\n\nBan đầu a = b = 0 nên a = 0 và b = 0. Sau đó lệnh a = 1 làm a đổi thành 1 ngay lập tức. Tiếp theo lệnh b = a lấy giá trị hiện tại của a, lúc này a đã bằng 1, nên b cũng bằng 1.\n\nVì sao các đáp án khác sai:\n- B. a = b = 0 sai vì sau đó a đã được gán thành 1 và b nhận lại giá trị của a.\n- C. a = 1, b = 0 là kết quả thường gặp của non-blocking assignment, không phải blocking assignment.\n- D. a = 0, b = 1 sai vì a không quay về 0 sau khi đã được gán a = 1."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -43,7 +50,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 6: MẠCH TUẦN TỰ ĐỒNG BỘ",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 9",
-    "question": "Kết quả của a và b khi thực hiện a = b = 0; a<=1; b<=a",
+    "question": "Kết quả cuối cùng của a và b sau đoạn code non-blocking sau là?",
     "options": [
       {
         "id": "A",
@@ -70,7 +77,14 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       "C"
     ],
     "type": "single",
-    "id": "main_282"
+    "id": "main_282",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "a = b = 0;\na <= 1;\nb <= a;"
+      }
+    ],
+    "explanation": "Đáp án đúng: C. a = 1, b = 0\n\nĐây là nhóm phép gán non-blocking, dùng dấu <=. Với non-blocking assignment, vế phải của các lệnh được đọc trước theo giá trị cũ, sau đó các vế trái mới được cập nhật gần như đồng thời ở cuối bước thời gian.\n\nBan đầu a = b = 0 nên a cũ = 0 và b cũ = 0. Lệnh a <= 1 lên lịch cập nhật a thành 1. Lệnh b <= a không lấy a mới, mà lấy giá trị cũ của a tại thời điểm đọc vế phải, tức là 0. Vì vậy sau khi cập nhật xong: a = 1, b = 0.\n\nVì sao các đáp án khác sai:\n- A. a = b = 1 là kết quả của blocking assignment a = 1; b = a;, không phải non-blocking.\n- B. a = b = 0 sai vì a vẫn được cập nhật thành 1.\n- D. a = 0, b = 1 sai vì b không thể nhận 1 trong trường hợp này; b đọc giá trị cũ của a là 0."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
