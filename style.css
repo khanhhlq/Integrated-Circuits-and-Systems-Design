@@ -1002,3 +1002,30 @@ body.license-unlocked .license-view { display: none; }
 .multi-lock-btn {
   width: fit-content;
 }
+
+/* Hiển thị các đoạn code/cú pháp Verilog còn sót trong câu hỏi và đáp án */
+.question-inline-code,
+.option-code-inline {
+  font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
+  background: #eef2ff;
+  color: #1e3a8a;
+  border: 1px solid #c7d2fe;
+  border-radius: 8px;
+  padding: 2px 6px;
+  font-weight: 850;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.option-code-inline {
+  display: inline-block;
+  line-height: 1.55;
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #dbe4f0;
+}
+
+.option-text {
+  min-width: 0;
+  line-height: 1.55;
+}

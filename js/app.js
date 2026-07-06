@@ -216,10 +216,91 @@ function startExam(configOverride = null) {
   startTimer();
 }
 
+
+function isLikelyVerilogCode(text) {
+  const s = String(text || "").trim();
+  if (!s) return false;
+  const keyword = /\b(module|endmodule|input|output|wire|reg|assign|always|initial|begin|end|posedge|negedge|case|if|else|parameter|forever|repeat|wait|integer|real|time)\b/i.test(s);
+  const syntax = /(;|\{|\}|@|#|<=|>=|==|===|!==|!=|\[[^\]]+\]|\d+'[bdh][0-9a-fxz_]+|[~&|^]|>>|<<)/i.test(s);
+  const assignment = /\b[a-zA-Z_][\w$]*(\[[^\]]+\])?\s*(<=|=)\s*[^,.;?]+;?/.test(s);
+  const instantiation = /^\s*[a-zA-Z_]\w*\s+[a-zA-Z_]\w*\s*\(/.test(s);
+  return (keyword && syntax) || assignment || instantiation;
+}
+
+function extractInlineCodeSnippets(text) {
+  const s = String(text || "");
+  const snippets = [];
+  const patterns = [
+    /\b(?:module|always|initial|assign|wire|reg|input|output|parameter)\b[^\n?。]*(?:;|\))/gi,
+    /\b[a-zA-Z_]\w*\s*(?:<=|=)\s*[^\n?。;]+;/g,
+    /\{\s*[^{};]*\b[a-zA-Z_]\w*(?:\[[^\]]+\])?[^{};]*\}/g,
+    /\b\d+'[bdh][0-9a-fA-F_xzXZ]+\b/g,
+    /#\d+\s*[^,.;?]*/g
+  ];
+  for (const re of patterns) {
+    let m;
+    while ((m = re.exec(s)) !== null) {
+      const t = m[0].trim().replace(/[,:。]+$/g, "");
+      if (t.length >= 4 && isLikelyVerilogCode(t) && !snippets.includes(t)) snippets.push(t);
+    }
+  }
+  return snippets.slice(0, 4);
+}
+
+function getAutoCodeBlocks(q) {
+  if ((q.codeBlocks || []).length) return [];
+  const blocks = [];
+  const question = String(q.question || "");
+  const lines = question.split(/\n+/).map(x => x.trim()).filter(Boolean);
+  const codeLines = lines.filter(isLikelyVerilogCode);
+  if (codeLines.length >= 2) {
+    blocks.push({ title: "Đoạn code trong đề", code: codeLines.join("\n") });
+  } else {
+    const snippets = extractInlineCodeSnippets(question);
+    if (snippets.length) blocks.push({ title: "Đoạn code/cú pháp trong đề", code: snippets.join("\n") });
+  }
+  return blocks;
+}
+
+function getQuestionCodeBlocks(q) {
+  return [...(q.codeBlocks || []), ...getAutoCodeBlocks(q)];
+}
+
+function renderQuestionStem(q) {
+  return renderTextWithInlineCode(q.question || "");
+}
+
+function renderTextWithInlineCode(text) {
+  const s = String(text || "");
+  const re = /(\b(?:module|always|initial|assign|wire|reg|input|output|parameter)\b[^\n?。]*(?:;|\))|\b\d+'[bdh][0-9a-fA-F_xzXZ]+\b|#[0-9]+|\b[a-zA-Z_]\w*(?:\[[^\]]+\])?\s*(?:<=|==|===|!==|!=|=)\s*[^,.;?]+;?)/gi;
+  let out = "";
+  let last = 0;
+  let m;
+  while ((m = re.exec(s)) !== null) {
+    const before = s.slice(last, m.index);
+    const token = m[0];
+    out += escapeHTML(before);
+    if (isLikelyVerilogCode(token)) out += `<code class="question-inline-code">${escapeHTML(token)}</code>`;
+    else out += escapeHTML(token);
+    last = m.index + token.length;
+  }
+  out += escapeHTML(s.slice(last));
+  return out;
+}
+
+function renderOptionText(text) {
+  const s = String(text || "").trim();
+  if (isLikelyVerilogCode(s)) {
+    return `<code class="option-code-inline">${escapeHTML(s)}</code>`;
+  }
+  return renderTextWithInlineCode(s);
+}
+
 function renderQuestionMedia(q) {
-  const blocks = q.codeBlocks || [];
-  // Nếu đã có khung code dạng chữ, không hiển thị lại ảnh code gốc để tránh rối mắt.
-  const images = blocks.length ? [] : (q.images || (q.image ? [q.image] : []));
+  const originalBlocks = q.codeBlocks || [];
+  const blocks = getQuestionCodeBlocks(q);
+  // Chỉ ẩn ảnh khi dữ liệu gốc đã có codeBlocks rõ ràng. Nếu code được tự nhận diện từ chữ trong câu hỏi, vẫn giữ ảnh mạch/sơ đồ kèm theo.
+  const images = originalBlocks.length ? [] : (q.images || (q.image ? [q.image] : []));
   const codeHtml = blocks.map(block => `<div class="question-code-wrap">
     ${block.title ? `<div class="code-title">${escapeHTML(block.title)}</div>` : ""}
     <pre class="code-block"><code>${escapeHTML(block.code || "")}</code></pre>
@@ -243,7 +324,7 @@ function renderQuestion() {
     ? ` • Trang ${q.page || "?"}`
     : "";
   $("questionMeta").textContent = `${q.chapter || ""} • ${q.section || ""}${sourceLink}${q.type === "multi" ? " • Có thể chọn nhiều đáp án" : ""}`;
-  $("questionText").textContent = q.question;
+  $("questionText").innerHTML = renderQuestionStem(q);
   $("questionMedia").innerHTML = renderQuestionMedia(q);
 
   const selected = state.answers[q.id] || [];
@@ -255,7 +336,7 @@ function renderQuestion() {
     return `<label class="option ${checked ? "selected" : ""} ${locked ? "locked" : ""}" data-option-id="${escapeAttr(opt.id)}">
       <input type="${inputType}" name="q_${escapeAttr(q.id)}" value="${escapeAttr(opt.id)}" ${checked} ${disabled}>
       <span class="letter">${escapeHTML(opt.id)}</span>
-      <span>${escapeHTML(opt.text)}</span>
+      <span class="option-text">${renderOptionText(opt.text)}</span>
     </label>`;
   }).join("");
 
@@ -498,7 +579,13 @@ function getQuestionExplanation(q) {
   let baseExplanation = (q.explanation || "").trim();
   if (/^Cần đọc đoạn code theo thứ tự thực thi/i.test(baseExplanation)) baseExplanation = "";
   if (/^Đáp án đúng là/i.test(baseExplanation)) return baseExplanation;
-  const reason = baseExplanation || buildAutoExplanation(q, correctOptions);
+  const autoReason = (buildAutoExplanation(q, correctOptions) || "").trim();
+  const reasonParts = [];
+  if (autoReason) reasonParts.push(autoReason);
+  if (baseExplanation && !autoReason.includes(baseExplanation)) {
+    reasonParts.push(`Ghi chú thêm: ${baseExplanation}`);
+  }
+  const reason = reasonParts.join("\n\n");
 
   const wrongText = wrongOptions.length
     ? `\n\nVì sao không chọn các đáp án còn lại:\n${wrongOptions.map(o => `- ${o.id}. ${o.text}: ${buildWrongOptionReason(q, o, correctOptions)}`).join("\n")}`
@@ -565,7 +652,11 @@ function buildAutoExplanation(q, correctOptions) {
   if (qText.includes("pld viet tat")) return "PLD viết đầy đủ là Programmable Logic Device(s): thiết bị logic lập trình được. Các lựa chọn khác không phải thuật ngữ chuẩn hoặc viết sai chính tả.";
   if (qText.includes("asic viet tat")) return "ASIC là Application-Specific Integrated Circuit, tức mạch tích hợp chuyên dụng cho một ứng dụng cụ thể. Các phương án khác không đúng thuật ngữ chuyên ngành.";
   if (qText.includes("fgpa viet tat") || qText.includes("fpga viet tat")) return "FPGA viết đúng là Field Programmable Gate Array. Đây là mảng cổng logic có thể lập trình ngoài hiện trường; các phương án khác chỉ là cụm từ sai hoặc không tồn tại.";
-  if (qText.includes("nen tang cac thiet bi lap trinh duoc pld")) return "PLD gồm SPLD, CPLD và FPGA. SPLD là loại đơn giản, CPLD phức tạp hơn, còn FPGA có cấu trúc mảng logic/routing lập trình được lớn hơn.";
+  if (qText.includes("nen tang cac thiet bi lap trinh duoc pld")) return `PLD là viết tắt của Programmable Logic Device, tức nhóm thiết bị logic có thể lập trình được sau khi chế tạo. Nhóm này gồm ba mức chính:
+- SPLD: Simple Programmable Logic Device, loại đơn giản như PLA/PAL/GAL.
+- CPLD: Complex Programmable Logic Device, ghép nhiều khối logic lập trình được và mạng liên kết.
+- FPGA: Field Programmable Gate Array, mảng logic lập trình được có LUT/CLB/routing.
+Vì vậy đáp án đúng là SPLD, CPLD và FPGA. ASIC, Semi-Custom và Full-Custom là hướng thiết kế IC chuyên dụng, không phải các thiết bị PLD.`;
   if (qText.includes("nen tang cac mach tich hop voi mot ung dung cu the")) return "ASIC là mạch tích hợp cho ứng dụng cụ thể, gồm hai hướng chính: Semi-Custom và Full-Custom. Các nhóm SPLD/CPLD/FPGA thuộc PLD nên không phải câu trả lời cho ASIC.";
   if (qText.includes("uu diem") && qText.includes("fpga")) return "Ưu điểm FPGA là lập trình nhanh, dễ thử nghiệm, rẻ khi số lượng nhỏ, rủi ro tài chính thấp và có thể sửa thiết kế. Vì vậy các ý về giá rẻ số lượng nhỏ và rủi ro thấp đều đúng.";
   if (qText.includes("nhuoc diem") && qText.includes("fpga")) return "Nhược điểm FPGA so với ASIC là chậm hơn, tiêu thụ điện/diện tích lớn hơn và dùng nhiều transistor hơn cho mỗi chức năng logic. Do cả ba nhận định đều không sai, đáp án tổng hợp là đúng.";
@@ -717,7 +808,63 @@ function specificExplanation(q, correctOptions) {
   if (includesAny(qText, ["forever clk1", "repeat (5)", "#75", "finish"])) return "Khối `initial` thực thi tuần tự. Khi gặp `forever clk1 = !clk1;`, nó lặp vô hạn ngay trong luồng đó, nên các lệnh phía sau như `repeat(5)` và `#75 $finish` không bao giờ được thực hiện. Vì vậy mô phỏng/khối này không tự chấm dứt theo các dòng sau.";
   if (qText.includes("blocking") || qText.includes("non-blocking") || qText.includes("nonblocking")) return "Blocking `=` cập nhật ngay và câu lệnh sau thấy giá trị mới; non-blocking `<=` lấy giá trị cũ ở vế phải rồi cập nhật đồng thời. Vì vậy kết quả phải được tính theo đúng loại phép gán đang dùng.";
 
-  return "";
+  return buildDefaultTheoryExplanation(q, correctOptions);
+}
+
+function buildDefaultTheoryExplanation(q, correctOptions) {
+  const qText = textOfQuestion(q);
+  const correctText = correctOptions.map(o => `${o.id}. ${o.text}`).join(" | ");
+  const correctNorm = normalize(correctOptions.map(o => o.text).join(" "));
+  const codeBlocks = q.codeBlocks || [];
+  const hasCode = codeBlocks.length > 0;
+  const hasImage = (q.images || []).length > 0 || q.image;
+
+  if (hasCode) {
+    const code = codeBlocks.map(b => b.code || "").join("\n");
+    const codeNorm = normalize(code);
+    const notes = [];
+    notes.push("Cách đọc câu code: trước hết xác định đây là mô tả cấu trúc, gán liên tục `assign`, hay khối thủ tục `always/initial`. Sau đó kiểm tra kiểu tín hiệu `wire/reg`, sensitivity list, cạnh clock và thứ tự thực thi.");
+    if (codeNorm.includes("module")) notes.push("Trong Verilog, một module phải có dạng `module ten_module(danh_sach_cong); ... endmodule`. Nếu thiếu tên module, sai thứ tự port, sai dấu `;` hoặc sai chữ hoa/thường của từ khóa thì chương trình không hợp lệ.");
+    if (codeNorm.includes("assign")) notes.push("`assign` là gán liên tục, thường dùng cho mạch tổ hợp và lái tín hiệu kiểu net/wire. Vì vậy khi thấy `assign`, cần đọc biểu thức logic ở vế phải để suy ra mạch hoặc giá trị ngõ ra.");
+    if (codeNorm.includes("always")) notes.push("Khối `always` chỉ chạy khi có sự kiện trong sensitivity list. `always @*` hoặc `always @(a,b,sel)` thường dùng cho mạch tổ hợp; `always @(posedge clk)` hoặc `negedge clk` mô tả phần tử tuần tự theo cạnh clock.");
+    if (codeNorm.includes("<=") || qText.includes("non-blocking")) notes.push("Phép gán non-blocking `<=` lấy giá trị cũ ở vế phải rồi cập nhật đồng thời ở cuối bước thời gian, nên thường dùng trong mạch tuần tự/flip-flop.");
+    if (code.includes("=") && !code.includes("<=")) notes.push("Phép gán blocking `=` trong procedural block thực hiện theo thứ tự từ trên xuống; câu sau có thể dùng ngay giá trị vừa gán ở câu trước.");
+    if (codeNorm.includes("posedge") || codeNorm.includes("negedge")) notes.push("Từ khóa `posedge/negedge` cho biết mạch chốt dữ liệu theo cạnh xung clock. Đây là dấu hiệu quan trọng để phân biệt flip-flop với latch tác động theo mức.");
+    if (codeNorm.includes("forever")) notes.push("`forever` tạo vòng lặp vô hạn. Nếu trong vòng lặp không có delay hoặc không có điều kiện dừng, các câu lệnh phía sau trong cùng khối sẽ không được thực hiện.");
+    if (codeNorm.includes("repeat")) notes.push("`repeat(n)` lặp đúng n lần; nếu bên trong có delay `#`, thời điểm hoàn thành phải cộng dồn theo số lần lặp.");
+    notes.push(`Vì vậy đáp án đúng là ${correctText}: lựa chọn này khớp với hành vi/cú pháp thực tế của đoạn code, không chỉ nhìn tên biến hoặc đoán theo hình thức.`);
+    return notes.join("\n");
+  }
+
+  if (hasImage) {
+    return `Cách đọc câu có hình: đếm số ngõ vào/ngõ ra, xem có tín hiệu chọn, clock/enable hay đường hồi tiếp hay không. MUX là nhiều ngõ vào chọn ra một ngõ ra; DEMUX là một ngõ vào phân phối ra nhiều ngõ ra; encoder mã hóa nhiều đường vào thành ít bit; decoder giải mã ít bit thành nhiều đường one-hot; latch có hồi tiếp và tác động theo mức; flip-flop cập nhật theo cạnh clock. Đáp án đúng là ${correctText} vì hình/câu hỏi có đúng dấu hiệu của loại mạch đó.`;
+  }
+
+  if (includesAny(qText, ["pld", "spld", "cpld", "fpga", "asic", "lut", "clb"])) {
+    return `Câu này kiểm tra phân loại nền tảng thiết kế số. PLD là nhóm thiết bị logic lập trình được, trong đó có SPLD, CPLD và FPGA. FPGA dùng các khối logic/lut và mạng liên kết lập trình được; ASIC là mạch chuyên dụng cho một ứng dụng cụ thể, không thuộc nhóm PLD. Đáp án đúng là ${correctText} vì nó đặt đúng thuật ngữ vào đúng nhóm.`;
+  }
+
+  if (includesAny(qText, ["reg", "wire", "net", "z", "x", "bus", "array", "vector", "verilog", "module", "assign", "always", "if", "case"])) {
+    return `Câu này kiểm tra quy tắc cơ bản của Verilog. Cần phân biệt: \`wire/net\` dùng cho đường nối và gán liên tục; \`reg\` là biến lưu giá trị trong khối thủ tục; \`Z\` là trạng thái tổng trở cao; \`X\` là chưa biết/không xác định; \`if/case\` nằm trong procedural block như \`always/initial\`. Đáp án đúng là ${correctText} vì nó khớp đúng quy tắc cú pháp hoặc ý nghĩa tín hiệu được hỏi.`;
+  }
+
+  if (includesAny(qText, ["and", "or", "nor", "nand", "mux", "demux", "decoder", "encoder", "mach to hop", "combinational"])) {
+    return `Câu này thuộc mạch tổ hợp, nên ngõ ra chỉ phụ thuộc vào giá trị ngõ vào hiện tại. Cần nhận ra chức năng logic: AND chỉ bằng 1 khi tất cả ngõ vào bằng 1; OR bằng 1 khi có ít nhất một ngõ vào bằng 1; NOR là OR rồi đảo; NAND là AND rồi đảo; MUX chọn một ngõ vào theo tín hiệu chọn; DEMUX phân phối một ngõ vào ra nhiều ngõ ra. Đáp án đúng là ${correctText} vì nó khớp đúng chức năng logic được mô tả.`;
+  }
+
+  if (includesAny(qText, ["latch", "chot", "flip flop", "flip-flop", "thanh ghi", "bo dem", "counter", "fsm", "moore", "mealy", "tuan tu", "clock", "xung clock"])) {
+    return `Câu này thuộc mạch tuần tự, tức ngõ ra phụ thuộc cả ngõ vào hiện tại và trạng thái đã lưu. Latch thường tác động theo mức; flip-flop tác động theo cạnh clock; thanh ghi là tập hợp nhiều flip-flop; bộ đếm cập nhật trạng thái theo mỗi cạnh clock; FSM gồm thanh ghi trạng thái, logic trạng thái kế tiếp và logic ngõ ra. Đáp án đúng là ${correctText} vì nó mô tả đúng phần tử hoặc hành vi tuần tự đang được hỏi.`;
+  }
+
+  if (includesAny(qText, ["tan so", "chia tan", "mhz", "hz"])) {
+    return `Câu này cần đổi tần số thành số xung clock phải đếm. Nếu tạo xung ra bằng cách đảo trạng thái, một chu kỳ ngõ ra cần hai lần đảo; vì vậy giá trị so sánh thường bằng \`f_in / (2*f_out)\`. Đáp án đúng là ${correctText} vì nó khớp công thức chia tần đó.`;
+  }
+
+  if (includesAny(qText, ["ket qua", "gia tri", "bao nhieu", "tinh", "phep", "so nhi phan", "bit"])) {
+    return `Câu này cần tính theo đúng độ rộng bit và quy tắc biểu diễn số. Khi có \`x\` trong phép toán, kết quả có thể lan truyền thành không xác định; khi có số signed/unsigned phải xét miền giá trị; khi ghép bit phải đếm đúng số bit của từng phần. Đáp án đúng là ${correctText} vì nó là kết quả sau khi áp dụng đúng các quy tắc trên.`;
+  }
+
+  return `Cần bám vào định nghĩa trong câu hỏi rồi so sánh từng lựa chọn với định nghĩa đó. Đáp án đúng là ${correctText} vì nó trả lời trực tiếp khái niệm được hỏi, còn các lựa chọn khác nhầm sang khái niệm khác hoặc chỉ đúng một phần.`;
 }
 
 function buildWrongOptionReason(q, opt, correctOptions) {
@@ -730,6 +877,16 @@ function buildWrongOptionReason(q, opt, correctOptions) {
   const correctNorm = normalize(correctText);
   const hasCode = (q.codeBlocks || []).length > 0;
   const hasImage = (q.images || []).length > 0 || q.image;
+
+  if (includesAny(qText, ["pld", "spld", "cpld", "fpga", "asic", "lut", "clb"])) {
+    if (optNorm.includes("asic")) return "ASIC là mạch tích hợp chuyên dụng cho một ứng dụng cụ thể; nó được thiết kế/chế tạo theo mục tiêu cố định nên không được xếp là thiết bị logic lập trình được PLD.";
+    if (optNorm.includes("semi") || optNorm.includes("full")) return "Semi-Custom và Full-Custom là các phương pháp triển khai ASIC, không phải các họ PLD như SPLD/CPLD/FPGA.";
+    if (optNorm.includes("spld") && !correctNorm.includes("spld")) return "SPLD chỉ là một nhánh của PLD hoặc không đúng với cấu trúc đang hỏi trong câu này.";
+    if (optNorm.includes("cpld") && !correctNorm.includes("cpld")) return "CPLD là một họ PLD riêng; nếu câu hỏi đang hỏi FPGA/CLB/LUT thì CPLD không thay thế cho đáp án đó.";
+    if (optNorm.includes("fpga") && !correctNorm.includes("fpga")) return "FPGA là một họ PLD riêng; nếu câu hỏi đang hỏi ASIC hoặc SPLD/CPLD cụ thể thì FPGA không phải đáp án phù hợp.";
+    if (optNorm.includes("lut") && !correctNorm.includes("lut")) return "LUT là bảng tra cứu nằm trong khối logic của FPGA, không phải toàn bộ nền tảng/họ thiết bị nếu câu hỏi hỏi cấp cao hơn.";
+    if (optNorm.includes("clb") && !correctNorm.includes("clb")) return "CLB là khối logic cấu hình được bên trong FPGA, không phải họ thiết bị độc lập nếu câu hỏi hỏi nền tảng chính.";
+  }
 
   if (q.id === "main_296") {
     if (opt.id === "A") return "50.000.000 là số xung clock gốc trong 1 giây, không phải số đếm để đảo `clkout` cho tần số 2 Hz.";
@@ -830,11 +987,11 @@ function renderReviewItem(q, i) {
       selected.includes(o.id) && !o.correct ? "bad" : ""
     ].join(" ");
     const mark = o.correct ? " ✓" : selected.includes(o.id) ? " ✗" : "";
-    return `<span class="${classes}">${escapeHTML(o.id)}. ${escapeHTML(o.text)}${mark}</span>`;
+    return `<span class="${classes}">${escapeHTML(o.id)}. ${renderOptionText(o.text)}${mark}</span>`;
   }).join("");
   return `<div class="review-item ${ok ? "correct" : "wrong"}">
     <div class="review-meta">${escapeHTML(source)}</div>
-    <h4>${i + 1}. ${escapeHTML(q.question)}</h4>
+    <h4>${i + 1}. ${renderQuestionStem(q)}</h4>
     ${renderQuestionMedia(q)}
     <div>${opts}</div>
     ${q.note ? `<p class="review-meta">Ghi chú: ${escapeHTML(q.note)}</p>` : ""}
@@ -917,7 +1074,7 @@ function openAnswerEditor() {
     return `<label class="editor-option">
       <input type="checkbox" value="${escapeAttr(opt.id)}" ${checked}>
       <strong>${escapeHTML(opt.id)}</strong>
-      <span>${escapeHTML(opt.text)}</span>
+      <span class="option-text">${renderOptionText(opt.text)}</span>
     </label>`;
   }).join("");
   $("editAnswerNote").className = "edit-note hidden";
@@ -1336,9 +1493,9 @@ function renderBank(items) {
     const correct = q.options.filter(o => o.correct).map(o => `${o.id}. ${o.text}`).join(" | ");
     return `<div class="review-item">
       <div class="review-meta">${escapeHTML(q.chapter || "")} • ${escapeHTML(q.section || "")} • trang ${q.page || "?"}</div>
-      <h4>${escapeHTML(q.question_no || `Câu ${i+1}`)}: ${escapeHTML(q.question)}</h4>
+      <h4>${escapeHTML(q.question_no || `Câu ${i+1}`)}: ${renderQuestionStem(q)}</h4>
       ${renderQuestionMedia(q)}
-      <div>${q.options.map(o => `<span class="answer-pill ${o.correct ? "good" : ""}">${escapeHTML(o.id)}. ${escapeHTML(o.text)}</span>`).join("")}</div>
+      <div>${q.options.map(o => `<span class="answer-pill ${o.correct ? "good" : ""}">${escapeHTML(o.id)}. ${renderOptionText(o.text)}</span>`).join("")}</div>
       <p class="review-meta">Đáp án: ${escapeHTML(correct)}</p>
     </div>`;
   }).join("");
