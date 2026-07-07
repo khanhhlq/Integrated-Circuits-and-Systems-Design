@@ -1197,3 +1197,209 @@ html.dark-mode .option-code {
 .option-code {
   font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
 }
+
+
+/* Theory review */
+.theory-panel {
+  overflow: hidden;
+}
+
+.theory-tools {
+  margin-bottom: 16px;
+}
+
+.theory-layout {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.theory-chapters {
+  display: grid;
+  gap: 10px;
+  position: sticky;
+  top: 14px;
+}
+
+.theory-chapter {
+  appearance: none;
+  text-align: left;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--text);
+  border-radius: 16px;
+  padding: 13px 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, .04);
+}
+
+.theory-chapter strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.theory-chapter span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.theory-chapter.active {
+  border-color: rgba(37, 99, 235, .45);
+  background: linear-gradient(180deg, #eff6ff, #ffffff);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .08);
+}
+
+.theory-content {
+  display: grid;
+  gap: 14px;
+}
+
+.theory-hero,
+.theory-section,
+.theory-example,
+.empty-state {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .86);
+  padding: 18px;
+}
+
+.theory-hero {
+  background: linear-gradient(135deg, #eff6ff, #ecfeff);
+}
+
+.theory-hero h3 {
+  margin: 0 0 8px;
+  font-size: 26px;
+}
+
+.theory-hero p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.theory-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+
+.theory-badges span {
+  border: 1px solid rgba(37, 99, 235, .18);
+  background: rgba(37, 99, 235, .08);
+  color: var(--primary-strong);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.theory-section h4 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.theory-section ul {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+}
+
+.theory-section li,
+.theory-example p {
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.theory-examples {
+  display: grid;
+  gap: 10px;
+}
+
+.theory-example {
+  background: #f8fafc;
+}
+
+.theory-example strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.inline-code {
+  font-family: "Cascadia Code", Consolas, Monaco, monospace;
+  font-size: .92em;
+  background: rgba(15, 23, 42, .06);
+  border: 1px solid rgba(15, 23, 42, .08);
+  padding: 1px 5px;
+  border-radius: 6px;
+}
+
+html.dark-mode .theory-chapter,
+html.dark-mode .theory-hero,
+html.dark-mode .theory-section,
+html.dark-mode .theory-example,
+html.dark-mode .empty-state {
+  background: rgba(15, 23, 42, .72);
+  border-color: rgba(148, 163, 184, .24);
+}
+
+html.dark-mode .theory-chapter.active {
+  background: rgba(37, 99, 235, .18);
+  border-color: rgba(96, 165, 250, .45);
+}
+
+html.dark-mode .theory-hero {
+  background: linear-gradient(135deg, rgba(37,99,235,.20), rgba(14,165,233,.16));
+}
+
+html.dark-mode .theory-section li,
+html.dark-mode .theory-example p {
+  color: #f8fafc;
+}
+
+html.dark-mode .theory-badges span {
+  background: rgba(96, 165, 250, .14);
+  border-color: rgba(96, 165, 250, .28);
+  color: #bfdbfe;
+}
+
+html.dark-mode .inline-code {
+  background: rgba(248, 250, 252, .08);
+  border-color: rgba(248, 250, 252, .12);
+  color: #f8fafc;
+}
+
+@media (max-width: 860px) {
+  .theory-layout {
+    grid-template-columns: 1fr;
+  }
+  .theory-chapters {
+    position: static;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+
+/* Detailed theory review */
+.theory-section ul {
+  gap: 10px;
+}
+.theory-section li {
+  line-height: 1.7;
+}
+.theory-section h4 {
+  scroll-margin-top: 18px;
+}
+.theory-example p {
+  line-height: 1.65;
+}
+.theory-badges {
+  row-gap: 8px;
+}

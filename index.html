@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Luyện thi trắc nghiệm - Thiết kế & Tổng hợp Hệ thống số</title>
   <script>try{if(localStorage.getItem("tkhts_theme_mode_v1")==="dark"){document.documentElement.classList.add("dark-mode");}}catch(e){}</script>
-  <link rel="stylesheet" href="style.css?v=v8final" />
+  <link rel="stylesheet" href="style.css?v=v10theorydeep" />
 </head>
 <body class="license-locked">
 
@@ -116,6 +116,7 @@
         <div class="actions">
           <button id="startBtn" class="btn primary">Bắt đầu làm bài</button>
           <button id="reviewBankBtn" class="btn">Xem ngân hàng câu hỏi</button>
+          <button id="theoryBtn" class="btn success">Ôn tập lý thuyết chi tiết</button>
         </div>
 
       </section>
@@ -185,6 +186,25 @@
         <div id="reviewList" class="review-list"></div>
       </section>
 
+      <section id="theoryView" class="panel hidden theory-panel">
+        <div class="panel-title">
+          <div>
+            <h2>Ôn tập lý thuyết chi tiết chương 1–6</h2>
+            <p>Tóm tắt kiến thức trọng tâm, ví dụ nhanh và nút luyện câu theo từng chương.</p>
+          </div>
+          <button id="closeTheoryBtn" class="btn ghost">Đóng</button>
+        </div>
+
+        <div class="theory-tools">
+          <input id="theorySearch" class="search" placeholder="Tìm lý thuyết: assign, FPGA, Flip-Flop, reset..." />
+        </div>
+
+        <div class="theory-layout">
+          <aside id="theoryChapterList" class="theory-chapters"></aside>
+          <article id="theoryContent" class="theory-content"></article>
+        </div>
+      </section>
+
       <section id="bankView" class="panel hidden">
         <div class="panel-title">
           <div>
@@ -211,8 +231,9 @@
         </div>
       </footer>
   </div>
-  <script src="data/questions-all.js?v=v8final"></script>
-  <script src="data/ai-notes.js?v=v8final"></script>
-  <script src="js/app.js?v=v8final"></script>
+  <script src="data/questions-all.js?v=v10theorydeep"></script>
+  <script src="data/ai-notes.js?v=v10theorydeep"></script>
+  <script src="data/theory-notes.js?v=v10theorydeep"></script>
+  <script src="js/app.js?v=v10theorydeep"></script>
 </body>
 </html>

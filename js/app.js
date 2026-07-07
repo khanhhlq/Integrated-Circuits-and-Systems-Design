@@ -1,4 +1,5 @@
 let QUESTIONS = window.QUESTION_BANK || [];
+const THEORY_NOTES = window.THEORY_NOTES || [];
 const LICENSE_STORAGE_KEY = "lkq_license_v2_signed";
 const DEVICE_STORAGE_KEY = "lkq_device_id_v1";
 const ADMIN_SESSION_KEY = "lkq_admin_session_v2";
@@ -26,7 +27,8 @@ const state = {
   timeLimitSec: 0,
   timerId: null,
   submitted: false,
-  lastConfig: null
+  lastConfig: null,
+  theoryIndex: 0
 };
 
 const CHAPTER_1_TO_6 = [
@@ -112,6 +114,7 @@ function init() {
   updateSelectedCount();
   bindEvents();
   renderBank(QUESTIONS.slice(0, 60));
+  renderTheoryView();
 }
 
 function bindEvents() {
@@ -140,6 +143,9 @@ function bindEvents() {
     }
   });
   $("reviewBankBtn").addEventListener("click", () => showView("bankView"));
+  $("theoryBtn")?.addEventListener("click", () => { renderTheoryView(); showView("theoryView"); });
+  $("closeTheoryBtn")?.addEventListener("click", () => showView("setupView"));
+  $("theorySearch")?.addEventListener("input", (e) => searchTheory(e.target.value));
   $("closeBankBtn").addEventListener("click", () => showView("setupView"));
   $("bankSearch").addEventListener("input", (e) => searchBank(e.target.value));
   $("prevBtn").addEventListener("click", () => goQuestion(state.index - 1));
@@ -167,7 +173,7 @@ function bindEvents() {
 }
 
 function showView(id) {
-  ["setupView", "quizView", "resultView", "bankView"].forEach(v => $(v).classList.add("hidden"));
+  ["setupView", "quizView", "resultView", "bankView", "theoryView"].forEach(v => $(v).classList.add("hidden"));
   $(id).classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -1136,6 +1142,117 @@ function startTimer() {
 function stopTimer() {
   if (state.timerId) clearInterval(state.timerId);
   state.timerId = null;
+}
+
+
+function renderTheoryView(list = THEORY_NOTES) {
+  const chapterList = $("theoryChapterList");
+  const content = $("theoryContent");
+  if (!chapterList || !content) return;
+
+  if (!THEORY_NOTES.length) {
+    chapterList.innerHTML = "";
+    content.innerHTML = `<div class="empty-state">Chưa có dữ liệu lý thuyết.</div>`;
+    return;
+  }
+
+  const source = list.length ? list : THEORY_NOTES;
+  const active = source[state.theoryIndex] || source[0];
+  const activeIndex = Math.max(0, source.findIndex(item => item.id === active.id));
+  state.theoryIndex = activeIndex;
+
+  chapterList.innerHTML = source.map((item, index) => `
+    <button class="theory-chapter ${index === activeIndex ? "active" : ""}" data-index="${index}">
+      <strong>${escapeHTML(item.shortTitle || item.title)}</strong>
+      <span>${escapeHTML(item.subtitle || "")}</span>
+    </button>
+  `).join("");
+
+  chapterList.querySelectorAll(".theory-chapter").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.theoryIndex = +btn.dataset.index;
+      renderTheoryView(source);
+    });
+  });
+
+  content.innerHTML = renderTheoryContent(active);
+  content.querySelector("[data-theory-practice]")?.addEventListener("click", () => startTheoryPractice(active));
+}
+
+function renderTheoryContent(item) {
+  const badges = (item.badges || []).map(b => `<span>${escapeHTML(b)}</span>`).join("");
+  const sections = (item.sections || []).map(section => `
+    <section class="theory-section">
+      <h4>${escapeHTML(section.title)}</h4>
+      <ul>${(section.items || []).map(line => `<li>${formatInlineCode(line)}</li>`).join("")}</ul>
+    </section>
+  `).join("");
+  const examples = (item.examples || []).map(ex => `
+    <div class="theory-example">
+      <strong>${escapeHTML(ex.title)}</strong>
+      <p>${formatInlineCode(ex.body || "")}</p>
+    </div>
+  `).join("");
+
+  return `
+    <div class="theory-hero">
+      <p class="eyebrow">${escapeHTML(item.shortTitle || "Lý thuyết")}</p>
+      <h3>${escapeHTML(item.title)}</h3>
+      <p>${escapeHTML(item.subtitle || "")}</p>
+      <div class="theory-badges">${badges}</div>
+      <button class="btn primary" type="button" data-theory-practice>Luyện câu chương này</button>
+    </div>
+    ${sections}
+    ${examples ? `<section class="theory-section"><h4>Ví dụ nhanh</h4><div class="theory-examples">${examples}</div></section>` : ""}
+  `;
+}
+
+function formatInlineCode(text) {
+  return escapeHTML(text).replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+}
+
+function searchTheory(keyword) {
+  const key = normalizeText(keyword || "");
+  if (!key) {
+    state.theoryIndex = 0;
+    renderTheoryView(THEORY_NOTES);
+    return;
+  }
+
+  const filtered = THEORY_NOTES.filter(item => {
+    const haystack = [
+      item.title,
+      item.subtitle,
+      ...(item.badges || []),
+      ...(item.sections || []).flatMap(section => [section.title, ...(section.items || [])]),
+      ...(item.examples || []).flatMap(ex => [ex.title, ex.body])
+    ].join(" ");
+    return normalizeText(haystack).includes(key);
+  });
+
+  state.theoryIndex = 0;
+  if (!filtered.length) {
+    $("theoryChapterList").innerHTML = "";
+    $("theoryContent").innerHTML = `<div class="empty-state">Không tìm thấy nội dung lý thuyết phù hợp.</div>`;
+    return;
+  }
+  renderTheoryView(filtered);
+}
+
+function startTheoryPractice(item) {
+  if (!item?.chapterValue) return;
+  showView("setupView");
+  const select = $("chapterSelect");
+  if (select) {
+    select.value = item.chapterValue;
+    if (select.value !== item.chapterValue) select.value = "CHAPTER_1_6";
+  }
+  $("shuffleQuestions").checked = true;
+  updateSelectedCount();
+}
+
+function normalizeText(text) {
+  return String(text || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 function renderBank(items) {
