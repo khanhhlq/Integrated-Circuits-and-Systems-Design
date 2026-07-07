@@ -1187,3 +1187,13 @@ html.dark-mode .ai-tools .btn.warning {
 html.dark-mode .option-code {
   color: #f8fafc;
 }
+
+
+.option span {
+  font-family: inherit;
+  letter-spacing: normal;
+}
+
+.option-code {
+  font-family: "Cascadia Code", "Fira Code", Consolas, Monaco, monospace;
+}

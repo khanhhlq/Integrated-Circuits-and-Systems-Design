@@ -272,10 +272,31 @@ function renderQuestionMedia(q) {
 }
 
 function isCodeLikeOption(text) {
-  const value = String(text || "");
-  return value.includes("\\n")
-    || /\b(always|assign|module|reg|wire|input|output|begin|end|if|else|case|posedge|negedge)\b/.test(value)
-    || /(<=|==|\?|:|;|\{|\})/.test(value);
+  const value = String(text || "").trim();
+  if (!value) return false;
+
+  // Câu văn tiếng Việt có keyword như always/assign/wire vẫn phải dùng font thường.
+  if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ]/.test(value)) {
+    return false;
+  }
+
+  // Các toán tử/ký hiệu Verilog riêng lẻ.
+  if (/^(==|=|=>|<=|>=|<|>|\+|-|\*|\/|&&|\|\||!|~|\^)$/.test(value)) return true;
+
+  // Đáp án nhiều dòng thường là đoạn code.
+  if (value.includes("\n")) return true;
+
+  // Chú thích Verilog/C-style.
+  if (/^(\/\*|\/\/|\*\/)/.test(value)) return true;
+
+  // Câu lệnh hoặc khai báo Verilog thật sự.
+  if (/^(assign|always|module|reg|wire|input|output|and|or|not|nand|nor|xor|xnor|type)\b/.test(value)) return true;
+
+  // Gán/instance/primitive ngắn, không phải câu văn.
+  if (/^[A-Za-z_]\w*(\[[^\]]+\])?\s*(<=|=)\s*.+;?$/.test(value)) return true;
+  if (/^[A-Za-z_]\w*\s*\([^)]*\);?$/.test(value)) return true;
+
+  return false;
 }
 
 function renderOptionContent(text) {

@@ -1686,7 +1686,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       {
         "id": "A",
         "text": "0",
-        "correct": true
+        "correct": false
       },
       {
         "id": "B",
@@ -1701,11 +1701,11 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       {
         "id": "D",
         "text": "1",
-        "correct": false
+        "correct": true
       }
     ],
     "answers": [
-      "A"
+      "D"
     ],
     "type": "single",
     "id": "main_103"

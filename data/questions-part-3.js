@@ -1494,7 +1494,13 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 76",
-    "question": "Câu lệnh sau có thể miêu tả mạch tổ hợp đơn giản nào Y = (sel==1’b1)? A : B;",
+    "question": "Câu lệnh sau có thể miêu tả mạch tổ hợp đơn giản nào?",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "Y = (sel == 1'b1) ? A : B;"
+      }
+    ],
     "options": [
       {
         "id": "A",
