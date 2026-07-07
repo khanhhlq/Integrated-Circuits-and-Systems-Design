@@ -1,5 +1,6 @@
-// Question bank part 3/6 - generated from original script.js
-window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
+// Question bank questions-part-3 - cleaned and answer-audited
+window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
+[
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
     "source_file": "TỔNG HỢP CÂU HỎI TRẮC NGHIỆM(1).pdf",
@@ -298,7 +299,13 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 43",
-    "question": "Xác định số kí tự tối đa mà khai báo chuỗi sau chứa được: reg [8*13:1] string_val;",
+    "question": "Xác định số kí tự tối đa mà khai báo chuỗi sau chứa được:",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "reg [8*13:1] string_val;"
+      }
+    ],
     "options": [
       {
         "id": "A",
@@ -1523,7 +1530,13 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 77",
-    "question": "Câu lệnh sau có thể miêu tả mạch tổ hợp đơn giản nào ? Y = (sel==2’b00)? A :((sel==2’b01)? B:((sel==2’b10)? C : D));",
+    "question": "Câu lệnh sau có thể miêu tả mạch tổ hợp đơn giản nào?",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "Y = (sel == 2'b00) ? A :\n    (sel == 2'b01) ? B :\n    (sel == 2'b10) ? C : D;"
+      }
+    ],
     "options": [
       {
         "id": "A",
@@ -1595,7 +1608,13 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 79",
-    "question": "Giá trị được lưu trữ trong thanh ghi sau là gì khi thực hiện các câu lệnh? reg [15:0] reg A; regA= -4’d12;",
+    "question": "Giá trị được lưu trữ trong thanh ghi sau là gì khi thực hiện các câu lệnh?",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "reg [15:0] regA;\nregA = -4'd12;"
+      }
+    ],
     "options": [
       {
         "id": "A",
@@ -2020,4 +2039,5 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "type": "single",
     "id": "main_168"
   }
-]);
+]
+);

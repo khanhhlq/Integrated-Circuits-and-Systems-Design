@@ -1,4 +1,4 @@
-// Final exam question bank - ICSD336764 2023-2024
+// Final exam question bank - cleaned and answer-audited
 window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
 [
   {
@@ -40,8 +40,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "C"
     ],
     "type": "single",
-    "id": "final2024_1",
-    "explanation": "Đáp án đúng là C vì nhiễu có thể làm mức logic 0/1 bị đọc sai, từ đó gây lỗi truyền dữ liệu hoặc lỗi xử lý. A sai vì chống nhiễu kém không làm giảm công suất. B sai vì độ tin cậy giảm chứ không tăng. D sai vì hiệu suất không được cải thiện. E sai vì A không đúng."
+    "id": "final2024_1"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -82,8 +81,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "A"
     ],
     "type": "single",
-    "id": "final2024_2",
-    "explanation": "Đáp án đúng là A. Trong Verilog cơ bản, if/case là câu lệnh thủ tục nên đặt trong procedure như initial hoặc always. B sai vì không thể đặt if/case thường trực tiếp ngoài procedure. C sai vì assign là phép gán liên tục, không biến một if ngoài procedure thành hợp lệ. D sai vì bên trong if/case thường dùng phép gán thủ tục = hoặc <=, không dùng assign. E sai vì chỉ A đúng."
+    "id": "final2024_2"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -124,8 +122,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "B"
     ],
     "type": "single",
-    "id": "final2024_3",
-    "explanation": "Đáp án đúng là B. FPGA có phần tử lập trình và mạng liên kết cấu hình được nên linh hoạt nhưng thường chậm hơn ASIC khoảng 2–3 lần. A sai vì ASIC được tối ưu trực tiếp cho thiết kế nên thường nhanh hơn. C sai vì tốc độ hai nền tảng không tương tự nhau. D sai vì con số 5–7 lần không khớp với lý thuyết trong phần FPGA vs ASIC. E sai vì B đúng."
+    "id": "final2024_3"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -167,7 +164,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_4",
-    "explanation": "Đáp án đúng là C. Phép ^ là XOR theo từng bit: A = 10, B = 11 nên C = 10 ^ 11 = 01. Ghép {A,B,C} tức là ghép lần lượt A rồi B rồi C: 10 11 01 = 101101. A, B, D, E sai vì không đúng kết quả ghép bit sau phép XOR.",
     "codeBlocks": [
       {
         "title": "Đoạn code trong đề",
@@ -214,8 +210,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "C"
     ],
     "type": "single",
-    "id": "final2024_5",
-    "explanation": "Đáp án đúng là C. Trong mô phỏng Verilog, #20 là độ trễ 20 đơn vị thời gian theo timescale của mô phỏng. A sai vì không phải thời điểm bắt đầu. B, D, E sai vì tự gán 10 ns trong khi đề chỉ ghi #20 và không nói timescale."
+    "id": "final2024_5"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -256,8 +251,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "A"
     ],
     "type": "single",
-    "id": "final2024_6",
-    "explanation": "Đáp án đúng là A. Với hằng số có khai báo độ rộng 8 bit, các bit thiếu ở bên trái được điền 0 nên 8'b10 tương đương 8'b00000010. B và C sai vì thêm các bit x làm giá trị trở thành không xác định ở 6 bit cao. D tuy có cùng giá trị số 2 nhưng chỉ rộng 2 bit, không phải biểu diễn 8 bit. E sai vì B, C, D không đúng theo yêu cầu biểu diễn 8 bit."
+    "id": "final2024_6"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -298,8 +292,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "A"
     ],
     "type": "single",
-    "id": "final2024_7",
-    "explanation": "Đáp án đúng là A. Cú pháp số trong Verilog có dạng <độ rộng>'<cơ số><giá trị>, ví dụ 4'b0110. B, C, D sai vì không đúng cú pháp literal của Verilog. E sai vì chỉ A hợp lệ."
+    "id": "final2024_7"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -341,7 +334,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_8",
-    "explanation": "Đáp án đúng là E. A và B được khai báo là wire, nhưng các dòng A = 1; B = A; A = 0; là phép gán thủ tục và phải nằm trong initial/always, đồng thời không gán trực tiếp cho wire bằng phép gán thủ tục. Nếu muốn gán cho wire cần dùng assign. Vì mô tả không hợp lệ nên không xét giá trị B. A, B, C, D sai vì giả sử code chạy được.",
     "codeBlocks": [
       {
         "title": "Đoạn code trong đề",
@@ -388,8 +380,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "E"
     ],
     "type": "single",
-    "id": "final2024_9",
-    "explanation": "Đáp án đúng là E. Toán tử == là logical equality; khi toán hạng có x hoặc z, kết quả có thể là x vì không xác định chắc hai giá trị bằng nhau hay khác nhau. Muốn so sánh cả x/z như ký tự cụ thể phải dùng case equality ===. A, B, C, D sai vì coi x/z như giá trị logic xác định."
+    "id": "final2024_9"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -430,8 +421,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "D"
     ],
     "type": "single",
-    "id": "final2024_10",
-    "explanation": "Đáp án đúng là D. Một byte có 8 bit nên mỗi phần tử nhớ phải là reg [7:0]. Dải [1023:0] tạo 1024 phần tử, tương ứng 1024 byte. A và B sai vì Byte không phải kiểu khai báo chuẩn trong Verilog cơ bản. C sai vì chỉ tạo một vector 1025 bit, không phải mảng 1024 byte. E sai vì tạo 8 phần tử, mỗi phần tử 1024 bit, không đúng 1024 byte."
+    "id": "final2024_10"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -472,8 +462,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "C"
     ],
     "type": "single",
-    "id": "final2024_11",
-    "explanation": "Đáp án đúng là C. Tín hiệu được gán bên trong khối always phải khai báo kiểu reg trong Verilog. wire/net dùng cho kết nối và phép gán liên tục assign, không dùng làm vế trái của phép gán thủ tục trong always. D sai vì wire không được gán theo cách này. E không phải kiểu cần dùng trong câu lệnh này."
+    "id": "final2024_11"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -497,12 +486,12 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       {
         "id": "C",
         "text": "assign a[0:3] = b[3:0]",
-        "correct": false
+        "correct": true
       },
       {
         "id": "D",
         "text": "assign a[3:0] = b[0:3]",
-        "correct": false
+        "correct": true
       },
       {
         "id": "E",
@@ -511,11 +500,12 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       }
     ],
     "answers": [
-      "B"
+      "B",
+      "C",
+      "D"
     ],
-    "type": "single",
-    "id": "final2024_12",
-    "explanation": "Đáp án đúng là B theo khóa đề. Vector b được khai báo theo chiều [3:0], nên cách chọn b[0:3] bị đảo chiều chỉ số so với khai báo và không nên dùng trong Verilog cơ bản. A hợp lệ vì gán toàn bộ vector. C và D cũng chứa part-select đảo chiều ở một phía; khi viết code thực tế nên thống nhất theo [3:0] để tránh lỗi biên dịch. E sai vì có mô tả không hợp lệ."
+    "type": "multi",
+    "id": "final2024_12"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -557,7 +547,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_13",
-    "explanation": "Đáp án đúng là D. Vì o là wire, cách mô tả ngắn gọn cho MUX bằng phép gán liên tục là assign o = s ? i[0] : i[1];. A sai vì if/else không đặt trực tiếp sau assign. B sai vì biểu thức XOR/AND không đúng dạng chọn 1 trong 2 ngõ vào. C và E sai vì thiếu assign hoặc không nằm trong always.",
     "codeBlocks": [
       {
         "title": "Module đã cho",
@@ -605,7 +594,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_14",
-    "explanation": "Đáp án đúng là B. Đây là phép gán non-blocking <=. Các vế phải được lấy theo giá trị cũ trước, sau đó mới cập nhật đồng thời. Vì a cũ bằng 0 nên b <= a làm b nhận 0; a <= 1 làm a nhận 1. A, C, D sai vì hiểu sai cơ chế cập nhật song song của non-blocking. E sai vì mô tả hợp lệ nếu a,b được khai báo phù hợp.",
     "codeBlocks": [
       {
         "title": "Đoạn code trong đề",
@@ -653,7 +641,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_15",
-    "explanation": "Đáp án đúng là B. D được gán bằng ~Q nên mỗi cạnh lên của clk, Q nhận giá trị đảo của chính nó. Một lần cạnh clock làm Q đổi trạng thái, cần hai cạnh clock để Q hoàn thành một chu kỳ đầy đủ, vì vậy tần số Qout bằng clk/2. A sai vì không có chuỗi thanh ghi dịch. C và D sai vì chỉ có một FF nên không chia 4 hoặc chia 3. E sai vì B đúng.",
     "codeBlocks": [
       {
         "title": "Đoạn code dùng cho câu 15–18",
@@ -701,7 +688,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_16",
-    "explanation": "Đáp án đúng là A. Giá trị Q khi reset được quyết định ngay trong nhánh if(reset). Muốn reset đưa Q lên 1 thì sửa Q <= 1'b0 thành Q <= 1'b1. B chỉ đảo ngõ ra Qout chứ không đổi trạng thái Q. C làm mất chức năng toggle vì D không còn là ~Q. D không đúng cho mạch reset vì initial không thay thế logic reset trong FF tổng hợp. E sai vì chỉ A đúng.",
     "codeBlocks": [
       {
         "title": "Đoạn code dùng cho câu 15–18",
@@ -749,7 +735,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_17",
-    "explanation": "Đáp án đúng là A. Khối always nhạy với posedge clk hoặc negedge reset nên reset nằm trong sensitivity list độc lập với clock, đó là reset bất đồng bộ. B sai vì reset đồng bộ chỉ kiểm tra trong always @(posedge clk). C và D sai vì code dùng D làm ngõ vào FF; việc D = ~Q tạo hành vi toggle nhưng phần tử được mô tả vẫn là D flip-flop. E sai vì A đúng.",
     "codeBlocks": [
       {
         "title": "Đoạn code dùng cho câu 15–18",
@@ -796,8 +781,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "A"
     ],
     "type": "single",
-    "id": "final2024_18",
-    "explanation": "Đáp án đúng là A. Yêu cầu 'chỉ khi cả Q0 và Q1 cao' chính là phép AND logic theo bit, nên dùng Q1 & Q0. B sai vì XOR chỉ bằng 1 khi hai bit khác nhau. C sai vì NOR chỉ bằng 1 khi cả hai bằng 0. D sai vì dấu + là phép cộng, không phải cổng AND logic. E sai vì A đúng."
+    "id": "final2024_18"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -838,8 +822,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "C"
     ],
     "type": "single",
-    "id": "final2024_19",
-    "explanation": "Đáp án đúng là C. FPGA cần LUT, switch box, routing lập trình được và phần tử cấu hình để người dùng có thể nạp lại thiết kế. Phần 'dự phòng/cấu hình lại' này làm số transistor trên mỗi hàm logic cao hơn ASIC. A sai vì FPGA không hiệu quả hơn ASIC về số transistor. B và D có thể mô tả lợi thế ASIC nhưng không nêu trực tiếp nguyên nhân cấu trúc làm FPGA tốn transistor. E sai vì A sai."
+    "id": "final2024_19"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -880,8 +863,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "E"
     ],
     "type": "single",
-    "id": "final2024_20",
-    "explanation": "Đáp án đúng là E. Front-end tập trung vào mô tả RTL, mô phỏng, kiểm chứng và tổng hợp. Tapeout là kết quả cuối cùng sau khi hoàn tất các bước back-end/physical design trước khi gửi chế tạo. A, B, C, D đều có thể xuất hiện trong quá trình thiết kế/kiểm tra trước tapeout nên không phải lựa chọn 'không thuộc Front-end' rõ nhất bằng E."
+    "id": "final2024_20"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -894,22 +876,22 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     "options": [
       {
         "id": "A",
-        "text": "wire a,b; assign a=1; assign b=1; assign a=b;",
+        "text": "wire a, b;\nassign a = 1;\nassign b = 1;\nassign a = b;",
         "correct": false
       },
       {
         "id": "B",
-        "text": "reg a,b; always @* begin a<=1; b<=1; end",
+        "text": "reg a, b;\nalways @* begin\n  a <= 1;\n  b <= 1;\nend",
         "correct": true
       },
       {
         "id": "C",
-        "text": "reg a,b; a=1; b=1; a=b;",
+        "text": "reg a, b;\na = 1;\nb = 1;\na = b;",
         "correct": false
       },
       {
         "id": "D",
-        "text": "wire a,b; a=1; b=1; assign a=b;",
+        "text": "wire a, b;\na = 1;\nb = 1;\nassign a = b;",
         "correct": false
       },
       {
@@ -922,8 +904,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "B"
     ],
     "type": "single",
-    "id": "final2024_21",
-    "explanation": "Đáp án đúng là B. Tín hiệu kiểu reg có thể được gán bên trong always. Viết chuẩn là always @* begin ... end. A không tốt vì một net a bị nhiều driver liên tục. C sai vì phép gán thủ tục không được đặt trần ngoài initial/always. D sai vì wire không được gán trực tiếp bằng phép gán thủ tục. E sai vì B là mô tả hợp lệ về mặt cấu trúc."
+    "id": "final2024_21"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -964,8 +945,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "D"
     ],
     "type": "single",
-    "id": "final2024_22",
-    "explanation": "Đáp án đúng là D. CPLD có thể xem như nhiều khối SPLD/macrocell được nối với nhau bằng mạng liên kết lập trình được. A sai vì nếu kết nối cố định thì không phản ánh tính lập trình. B và E mô tả gần với PLA hơn. C mô tả sai thứ tự và không phải cấu trúc tổng quát của CPLD."
+    "id": "final2024_22"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -1006,8 +986,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "E"
     ],
     "type": "single",
-    "id": "final2024_23",
-    "explanation": "Đáp án đúng là E. Dịch phải 2 bit có thể viết bằng toán tử dịch A = A >> 2; hoặc viết bằng phép ghép bit A = {2'b00, A[7:2]}; cả hai đều tạo 2 bit 0 ở phía MSB và đẩy dữ liệu sang phải 2 vị trí. A sai vì {A[5:0], 2'b00} là dịch trái 2 bit. B sai vì {A[1:0], A[7:2]} là xoay vòng hai bit thấp lên đầu, không phải dịch phải chèn 0. Vì C và D đều đúng nên chọn E."
+    "id": "final2024_23"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -1049,7 +1028,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_24",
-    "explanation": "Đáp án đúng là B. D flip-flop được kích cạnh nên phải dùng always @(posedge clk) hoặc negedge clk. A sai vì if(posedge clk) không phải cách mô tả cạnh clock trong Verilog. C và D nhạy theo mọi thay đổi của clk nên giống mạch mức/latch hơn, không mô tả FF cạnh lên. E sai vì chỉ B đúng.",
     "codeBlocks": [
       {
         "title": "Module đã cho",
@@ -1096,8 +1074,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "D"
     ],
     "type": "single",
-    "id": "final2024_25",
-    "explanation": "Đáp án đúng là D. Identifier trong Verilog không được bắt đầu bằng chữ số. Nó có thể bắt đầu bằng chữ cái hoặc dấu gạch dưới, và có thể chứa chữ, số, _, $. A, B, C, E đều hợp lệ về quy tắc ký tự; D sai vì bắt đầu bằng số 4."
+    "id": "final2024_25"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -1138,8 +1115,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "B"
     ],
     "type": "single",
-    "id": "final2024_26",
-    "explanation": "Đáp án đúng là B. Trình tự cơ bản là viết HDL, mô phỏng/kiểm chứng chức năng, tổng hợp, placement & routing, rồi phân tích thời gian và xác minh. A sai vì đưa timing analysis trước placement and routing. C và D sai vì tổng hợp đặt trước mô phỏng chức năng. E sai vì không thể mô phỏng trước khi có HDL coding."
+    "id": "final2024_26"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -1180,8 +1156,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "D"
     ],
     "type": "single",
-    "id": "final2024_27",
-    "explanation": "Đáp án đúng là D. 8'b100 có giá trị thập phân là 4, 4'b11 có giá trị thập phân là 3. Toán tử ** là lũy thừa, nên A ** B = 4 ** 3 = 64. A, B, C là các phép tính khác không đúng. E sai vì D đúng."
+    "id": "final2024_27"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -1222,8 +1197,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       "D"
     ],
     "type": "single",
-    "id": "final2024_28",
-    "explanation": "Đáp án đúng là D. Bus/vector 4 bit trong Verilog được khai báo bằng miền chỉ số trước tên tín hiệu: wire [3:0] BusC;. A và C là dạng mảng net chứ không phải một bus vector như yêu cầu. B thiếu cặp chỉ số đầy đủ [msb:lsb]. E sai vì chỉ D đúng."
+    "id": "final2024_28"
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -1265,7 +1239,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_29",
-    "explanation": "Đáp án đúng là B. Next State Logic là mạch tổ hợp tạo state_next từ Inputs và state_reg hiện tại, nên dùng assign. Với thanh ghi dịch vào nối tiếp, bit mới Inputs được đưa vào đầu vector, các bit còn lại lấy từ state_reg[7:1]. A sai vì lấy state_reg[6:0] sẽ tạo hướng dịch khác. C sai vì đưa logic trạng thái kế tiếp vào always theo cạnh clock, trong khi khối này là tổ hợp. D sai vì dùng dấu ngoặc tròn và toán tử phẩy, không phải phép ghép vector. E sai vì chỉ dịch Inputs, không dùng state_reg.",
     "images": [
       {
         "src": "data:image/png;base64,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",
@@ -1313,7 +1286,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_30",
-    "explanation": "Đáp án đúng là C. Khối đồng bộ là thanh ghi trạng thái nên chỉ cập nhật tại cạnh clock: always @(posedge Clk) state_reg <= state_next. Nên dùng non-blocking <= cho mạch tuần tự. A sai vì assign tạo mạch tổ hợp, không phải thanh ghi. B gần đúng về cạnh clock nhưng dùng blocking = nên không phải cách viết khuyến nghị cho mạch tuần tự. D sai vì chỉ cập nhật khi reset, thiếu nhánh hoạt động bình thường. E sai vì reset đưa vào sensitivity list thành bất đồng bộ và cũng thiếu nhánh else.",
     "images": [
       {
         "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAC0CAIAAADD3miXAAAwZ0lEQVR4nO3deVwTd94H8MzkTshNIIQrnEIIApFDQBAFUUSrrbW2q/vU+vh0XXusPV7tbrvu026323a7fXx2n227Xm2ttdXaelC1XohH662gyH0f4UqA3Hdmnj9mnzy8PFAhmAS/779wMpn8EiefzPzmN98fguM4CQAAgO9Bvd0AAAAAtwcBDQAAPgoCGgAAfBQENAAA+CgIaAAA8FEQ0AAA4KMgoAEAwEdBQAMAgI+CgAYAAB8FAQ0AAD4KAhoAAHwUBDQAAPgoCGgAAPBRENAAAOCjIKABAMBHQUADAICPgoAGAAAfBQENAAA+CgIaAAB8FAQ0AAD4KAhoAADwURDQAADgoyCgAQDAR0FAAwCAj4KABgAAHwUBDQAAPgoCGgAAfBQENAAA+CgIaAAA8FEQ0AAA4KMgoAEAwEdBQAMAgI+CgAYAAB8FAQ0AAD4KAhoAAHwUBDQAAPgoircbAADwjL6+vnXr1l24cIFC8fvvtdPplMlk+/bt4/F43m6LN/n9fyQAgGAymbq7u1NSUjIzMxEE8XZzxqWysrKqqspsNkNAAwAmAxRFqVRqUVHRs88+6+8BvWPHjrq6On9/F+MHAQ3ApEImk6lUqr9HG5lM9nYTfAJcJAQAAB8FAQ0AAD4KAhoAP+N0OjEM83YrwIPgK33QHtnh/L3fbfzgE5j0jEbjxo0b2Wx2QUGBTCajUqnQXTuJ+URAO53OH3/8sa+vb8y7GoIgDAaDwWB4tmH3hUqlstlsFPXaSQmCIGw2m0qleqsBJBKJSqXSaDQv/k4Qe4IX/xdIJBKdTp+4kcjDw8NHjhw5depUUFBQRkZGUVFRVlZWdHQ0n8+foFcEXuQTAT08PPzee+/19fUJBIIxf7epVOo4s8lsNrtcrjE/nUwm0+n08WSTzWaz2Wxjfvr4swnDMLPZjOP4mLdA/Ex6MaDJZDKbzfbuQSWbzabT6RO0cZvNVlNTY7fbu7u7u7u7jx49Gh0dnZSUVFxcLJfLJ+hFgbf4REA7nU4cx1euXPnEE09469gHx3Gj0ejdrj2r1Wq1Wr3YAAzDjEbjeAJ6nNGM47hGo7FYLOPZyDiZzebh4WEv7gkul2twcNBut9/2Ubvd7m4biqIIghC7TUBAAPR1TD4+EdAkEglF0eDg4Pj4eO+enALg44aGhlasWPHzzz/LZLK0tLQZM2bk5+dHRUVRqdS2tjZvtw54mK8ENADgXtBotJKSksWLF2dmZkZFRY35wNlut7e1tXV1dSkUiuDg4JtOfTAMQxBklPMh4iieOJwaGhpSq9Xx8fGjnz9ptdqBgYG4uDi4lH3vIKAB8CdsNnvNmjUoio6nQ8NqtW7evLm8vFwikfz9739fv369QqFAUZRCoVitVofD8fnnn8+bNy8iIsLpdNrtdoFA4HK5MAyj0Wg2m83pdO7duzc6Ojo3NxdF0V27drW3t3/wwQckEgnDML1eb7fbeTwejUYzm81Wq5XJZJLJ5JqamoaGhujoaK1WSyaTuVwu9MncFQQ0AP4EQZDxD9RpaGgoLy9/4403oqKi/vCHP5w7d666ujoqKkokEp06dUogEOzcuTM2NrasrAzDsP7+/ieeeGJwcNDlcsnl8oqKirCwsI0bN65duzYnJwfDsKqqquTkZBKJhGHYlStX9u/fb7Va09PTCwoKtm3bZrVaqVRqXl5eXV1dWFjY8ePHy8vLyWTyihUrFAqFJz6SMXI6nVarlc1m+/IRPXT4AvDQqaysFAqFaWlpLBaLTqfb7fYTJ07Y7fYzZ850dHTodLq0tDQOh3Pq1CmlUikUCo8dO3b69GmTyVRXV3flyhUKhSIUCjMzM1EUVavV/f39KSkpJBLJYDBs3bo1KCho+vTpJ06c+O677xoaGhYuXHj48OHOzs4TJ04MDAx8/fXX+fn5eXl5TCbTux9Cb2/vK6+88rvf/a68vHxgYMDhcIzn8vgEgSNoAB46TCZTo9E0Njb29va2tLTk5uaePn0ax/Fr164plUqVShUeHq7Vah0Oh0gkMhgMISEh9fX1OTk5VVVVISEhQ0NDQqGQ6Lnu7u62WCxOp7O9vZ0YfxIREWGz2XAcb29v53A4TqeTTqcTPwM0Go3YmtFoFIlEo7QQx3GHw9Ha2mowGCboQ+jo6Dh//vyNGzc2btyYkJBAjChPTEwMDQ317h0VI0FAA/DQmTFjxsmTJ999992AgIClS5empaXt3bv35MmTFoslKSnJbDYTaUuhULZu3Uqn02fNmtXa2nru3DmtVltUVEShUFwul0aj4XA4Op2OwWB8//33dDp9/vz5s2bNOnbsGIqic+fOpdPpO3bs2LhxI5PJZLPZcXFx06ZNu3r16qZNm8LDw0cftW2329Vq9YsvvjhxN15ZrdbW1lYMw7Ra7fnz5y9evBgYGJiSkrJ48eIlS5YEBwdP0OveFwhoAB46Uqn0/fffHxwc5HK5PB6PTCb/7W9/I5FIFAolICBAqVT29vZu2bJlxYoV+fn5bDabx+O99dZbxEVCBoOB43hWVlZgYCCKojk5OVOnTsVxnLiRNTc3V6PRMBgMNpu9devW6dOnt7e3T5kyJT8/Pzc3NyAg4Pe//71WqxWLxSwWa5QWksnkgICAJUuWcLncCfoQ1Gr1F198YTQaURRlMpl8Pj8hIWHBggWzZs0SCAQT9KL3CwIagIcOgiA8Hm/kZCVisdj9N5VKDQ8PLy4ujomJCQ8PJxYGBgaO3EJoaCjxx60lFsLCwog/CgoKzp07l5aWNm/ePDabTSzk8/n3clc6hULhcrnPPPOMRCK533d3j1paWk6cOEEmk5VKZW5u7qxZs6ZMmTLOm4E9DgIaAHAzOp1eUFAwzqhKSkpKTExEEMQ37z4TCoUvv/xyaGhoRESEUCj0bhGbO4GABgDcxvhTFUEQXx7pzOfzH3nkEd/88XCDgAYAPIxGv1XSR0BAA+B/KioqAgICZDIZccOet5sDJgoENAD+56uvvtq7d29qaurMmTMLCgqioqJ8ZFiYX8AwzMd7Ntz8NaCNRmN5eXlnZ6e3GwKAF9TU1Gi12pMnT/70009bt25NSkrKy8uLjY29U5FSQHA4HD///HNTU1NoaGhBQcFNQ/0cDofVauVwOHd6usvlMhgMPB7vgfWN+GtAd3R0vPPOO0NDQ+7hOwD4Ha1Wq9frw8PD7/cLr1KpiPuSHQ5Hb2+vTqfr7u6Wy+UajcYH71f2ETabbcuWLRUVFfn5+Vu3bm1ubl61apXVahUIBENDQxQKZdOmTWFhYfPnzycKQvH5fAqFYjQa+Xy+TqcjykLZbLZnnnnGYDCgKCoUCiduZgaCvwY0iqI4jv/+978vKSnxdlsAGKMtW7bs2LHj0KFD9zvG66WXXvr222+pVGpMTEx2dnZmZmZeXh6O488995zvX/jylra2th9//PGdd95JSUmRSCSHDh0Si8UNDQ0rV65877335s6d+8MPP+Tm5ra1tanVaqfTmZycnJiYePz48TVr1nz44YfZ2dnffPPNjBkzPvnkk+HhYQaDsWjRIqVSOaFt9teAJvZCgUAQEhLi7bYAMEZcLpdCoUgkkvu90BcXF/eLX/yiuLg4JSUlIiKCKN3Z1tYG6TyKzs5O4icNQRC1Ws3j8drb29lsdkdHx9DQEIfDiYiImD9//pdffjlv3jyn0/nTTz8ZDAar1Wqz2ZqampYsWcJgMB599NE9e/bU1NQUFBTcdPPORPDXgAbgYfbSSy+xWCwajeYvF7t8gUAgsNlsZ8+exTCsvLx86dKlp06dSkhIOHXqlEwmM5lMxJSkTU1NJSUlLS0tgYGB9fX1Eonk4MGDPB7PZDIRH3hOTo5IJDp8+HB+fn5ERMSEthkCGgD/IxQKvd0E/yOXy3/5y1/u3r2bxWItWbJk3rx5er2+paWFwWBMnz49JCREJBLV19cjCHL58mUcx5966qnKyspr164NDAzMnTtXKpVGRkZ2dXU1NTVptdrS0tLIyMiJbjMENADgocBms5cuXVpUVETM50KhUH75y19aLBYajUalUslkcmxs7N69e3Nycl544QU2m83hcBISEh555BEqlUqs8/bbb7NYrMLCQrPZzGazR6/35BEQ0ACAhwWFQhlZForFYo0MWZFINGPGjIKCAolEQvQd3VQKyl3DOiAg4AE1+MG8DADgwcAwzOVy+fvVQmJS2gcvISHBK697JxDQAEwSOI67XK4PP/xw8+bN3m7LeOn1ehqNBmO6IaABmCSCg4NffPHF/v5+X64hd49cLhebzYZroRDQAEwSbDb78ccf93YrgCfBIEoAAPBRENAAAOCjIKABAMBHQUADAICPgoAGAAAfBQENAAA+CgIaAAB8FAQ0AAD4KAhoAADwURDQAADgoyCgAQDAR0FAAwCAj4JiScCbcBw/d+5cQ0ODe249CoWSkpIil8tdLtf58+dbW1vdK7PZ7KKiIj6fPzQ0dPz4cYvF4n4oNjY2NzcXx/HKysobN264y1TS6fTc3NywsDCj0XjmzBm1Wu1+SlhYWG5uLoPBaGpqunjxotPpdD+UnZ0dHx/vcrlOnjzZ3d3tXs7n82fPns3hcPr7+ysqKmw2G7EcRdGkpKSUlBQURS9fvlxfX+8uZ4wgSHFxsdFojI6OhvkDwf3y44CGWrGTBofDoVKpxN9kMtk9hwWbzebz+e7VmEwmUUiTTCbz+Xw6ne5+yD0vBpPJ5PP57n2DmKkIQRAURblcrsPhcD+FzWYTVe1pNBqPxyMmDHU/i0QiIQgSEBAwsgFcLpcIWQqFwuPx7HY7sRxFUSaTSWyNyWTyeDx3AxAEcblcWq3W5XJBQIP75a8B7XQ6HQ6H+xsC/BSCIDk5Obd9CEVRpVKpVCpvfYjH4xUXF992a4mJiYmJibc+xGazZ8yYcdsXioyMvO3snyiKZmVl3fYpIpGopKTktg8pFAqFQnHTwtDQ0NuuDMDo/PUnHUVRCoVCofjrDwxwczqd3prf6MHAMMzhcMAJHxgDPw5ogrcbAsYFx/Hjx493dnZ6uyETqK+v78CBA1ar1dsNAf4HAg54E47j1dXVGo3G2w2ZQFqttqqqamT3NwD3CAIaAAB8FAQ0AAD4KAhoAADwUTAK4u7sdjuGYcQoV7+G47gPDn0RCATugc+TEo1GE4lEcEEbjIFvfVd9kE6n+/LLL7Va7eQI6KSkpAULFhA3YvgCFEVLS0u5XK63GzKBQkNDH3vsMSaT6e2GAP8DAX0XHR0d//M//8NmswUCgbfbMl5dXV2JiYkzZswICgrydlv+X0hIiLebMLGYTGZYWJi3WwH8EgT0XRB3Hr/66qu3vXXNv/zlL3+pqanxtVOBzs5OgUDA4XC83ZCJYjKZ1Gp1eHg4cZ86APcOAvruEATh8XhisdjbDRkvNpvt7SbcDMOww4cPZ2dnJycne7stE6Wnp+fgwYOrV68OCAjwdluAn4ELF8DLdDqduyzcpORwOIaHhyf37exggkBAAwCAj4Iujn/BcdzXOme94tbPwSOfzAP+eB0Ox4M/YkUQhEwmQ0cz8CAIaBKJRDIYDJWVlYGBgTKZzF3Y9+FBpCeO4yqVCsOwiIgI90M6na6rqyshIYFCodxLyN4231UqlcvlioiIuO3TPf5pm0ymTz75pLm52bObvSsymbxgwYK5c+femtEP2x4FPAUCmkQikQYHB//617/29fWlp6fn5eVNnz49IiLiYTgUcjqdjY2Nra2t0dHRXC73ww8/TElJKSoqqq2tFQgESUlJO3furKmpWb9+fXd399DQkFKpdA83xHF8cHCwv79fo9EEBgYmJCR0dXW1tLREREQEBgb29vZGRka2trYyGIxNmzaFhYWtXbvWXZXfDUGQKVOmCIVCD76poaGhr776SiKRxMfHe3Czo3M6nSdPnmQwGAUFBe7ZAwhcLjcpKenW9w7AXfl3QF+7ds0jV8Z7e3vb2tpu3Lhx9erVr7/+OiIiIjMzs7S0VKlUTu45Aerr6zds2BAZGXnt2rWUlJTLly9nZGR8/fXXKpVKpVKtW7fu2LFjAoFg165dNTU1DAajurr6hRdeIH66iEqhe/bsSU1NbWxsXLt27T/+8Q+pVNrf3//v//7v27dvFwqFdru9pKSksrIyNDTU5XLdNqCLi4s9e3Ojy+Uik8lPPvnksmXLPLjZ0ZnN5hdffBHDsFvrPkul0kceecR3bg4CfsRfA5rD4UybNu3gwYMHDx4c/9ZsNlt7ezuJRHK5XDqd7saNG+3t7ZWVlU8//XRSUtL4t++z6HQ6i8Xq7u6eP3++SCSSSCQpKSk9PT1sNttgMFCpVLFY/Oijj3766acRERFEyLqf63Q66+rqsrOzs7Ky6urqrly5olars7Ky1Go1Me1TWVnZZ599xmazg4KCFi5ceKf7uUfOXOVBNBrtpiPZCYXj+J1OuVAUnaD3CCY9fw3o4ODg//zP/zQYDB7ZWldX129/+9vKykoqlSoUCmfOnDl79mylUjllypSOjg6PvIQPwjCssbExPj6+tbX12LFj6enpZDL5/PnzV65ciYuLYzKZDAaDKKXP5/OZTKbFYklPT3fXlHA4HCqVKisrq7GxMSQkJCgoKCAgwG63JyQkqFSq5uZmiUSCYVhfX5/ZbL5TG3AcP3v2bFRUlFQqfUBv+4FTq9U1NTXZ2dkQ0+B++WtAUygUD87zxmKx5HJ5XFzc3Llz8/PzpVIpjUYjDohGubxDHCqyWCytVstkMu9UbIE47SW25nK5BgYGzGazSCTi8XjEkptO8InZRW96XQzDhoeHWSzW6CUdMAwbvTEjIQgSExNTVVXF5/Mfe+wxKpXa3d0dGxs7PDzMZrPlcrlUKi0uLrZarevWrSsrKwsJCZk2bZrJZCKebrPZ5s2bp1Qqa2trp0yZkpqaqtFo+vv758yZo1arX331VYvF4nQ6o6OjMzIy9Hr9ba8x4jh+/vx5BoMxiQNao9GcOnVKqVTeb0DjOI7j+E1VlogOHI82EPgufw1ozwoODn733XcFAkFAQMA9XnC3WCzvv/9+enp6aWnpli1bZs2alZGRcetqOI5fuXIFQRClUokgSENDw4YNGzAMk0qlL7zwwsDAgNVqTU9Pd6+v0+kuXbqUlZV1063PRqPx448/XrhwYVpa2iitstlsBw8eTE9Pv+3EqTdBECQhIeG1117DcZzoIX399dcpFMqMGTOIXwgURZ977jkSiUShUORyOYqiLS0te/fuJUawhYeHL1y4kEajBQUFIQiCIMjq1asxDHOP9yB6Y1EUfe2118hk8p0+2Nv2204mOI6PYcwfhmENDQ0IgsTHx7szuq+vr7W1NTMz09dKEoIJAv/NJBKJRKfTR44tuxddXV1Hjhzp7OxMTk6+ePFiQUHBDz/8UF9fn56eHh8ff+3aNblcfvXq1dDQ0Pfeey8jI0Mul9Pp9J9//tlms/3qV7+6du1aXV3dJ598Ehsby+fzT5w44XA4iouLjx49euzYseDg4Lq6up6enoKCgpSUFARBdDrd+fPnH3nkERKJhGFYZWXl0aNHhULh0qVLTSbTwYMHORyOQCBITU11OBxsNvvQoUNVVVXTpk0rLi4e/Sdn5IU7IqZHHrK5g4BYTSqVzp07l8hTJpNJo9GIaCbWcY8CJpa4l3tqAMOYB1P39vZWVVWRSCSpVCqXy8fZHpfL1djYWFtby+Pxpk2b5sEqWmaz+eLFix0dHQqFgsfj/fnPf87PzyeRSJWVlVwuV6lUfvLJJ2azWSaT1dbWajSanJyc8PBw4jPBcby9vb2rq8toNEZGRjY2NlIolLy8PK1We+HChcjISARBUlNToZvFv0BAj1FXV1d4eDiTyTx58iSGYdXV1YcPH05KStqyZcv69esPHDiwY8eO5ORkiURiMBjS0tJoNBqKollZWRUVFZ9//vnjjz8uEAh0Ol1GRsbVq1eHhobOnj1LIpEaGhqio6OJeJXJZNu2bfvrX/9KJpO7u7tZLBZRD6Suru6Pf/xjaWnpTz/9hGFYe3t7QEDAwMDA2bNnX3/99WPHjtHp9P379xcVFV25ciUnJ8eDdYgCAgK8VVBCo9E0NjZGR0cHBQXdV21lHMcPHTq0a9eu7Ozs6urqNWvWjKfuFYZhZ8+e3bBhw5QpU3p6es6cOfPKK694pFwqjuMXLlz4+9//npqaajKZ5HJ5Y2PjwoULDxw40NXVVV1dvXbt2srKypycnK+++qqjowNBkMbGxtdff53IXAzD9u7de/r06by8vLKyMqFQ2NDQoNfrT58+LZFIKioqnE7nRx99BAHtX+BW7zGqqalJTk7OyMjYuXOnWCxubGzkcDg8Hi82NpbJZOI43tTU9OSTT5LJZJFIlJaWRqFQVCpVfX397373u/j4+O3bt2s0GmKEbF1dHYPBsNvtfD7farUqlcqGhoaQkBA+nx8eHk68HLGECMempiYEQZ566qnw8PD29vaWlpbCwsLY2NioqKi2tjY+n3/9+vXExMQlS5YsXbrUxwv0IAhCpVLvJXAbGhrWrFmzdu3a//7v/7506ZLRaLzHl7Db7e3t7QsWLFi/fr1Sqbxw4cJ4GqzVardt2zZ//vy33npr9erVDQ0NQ0NDoz8FRVHiVOOuGw8JCYmNjW1paQkMDBQIBBERETKZTK1WBwQEoCjK4XA4HE5xcXFtbS2KokKhkMPhuDtPLBZLZ2dnaWnpnDlzOjs7mUymRCLp7u7u7+9fvny5VCqNiYmBmtR+B46gxwLH8c7Ozuzs7ISEhH379mVmZgYEBBw9elSn00VGRp4+fdput0ul0o6ODrPZbLfbDQaDRCKx2+1lZWWVlZX9/f1BQUEYhlkslvb29vr6+ri4OAaDIZFIjEaj0WiMi4vr7+/X6XR5eXkoijqdzra2tra2tg0bNgQHB8tkMiqV+s9//pPIrIGBgd27dzc3N+fn5+v1+oSEBC6Xe+LEibfffnvq1KlxcXHuZjscjqampj//+c/u8Wd0Ol0oFI6zQ5NCodzvUe1IKIrW1dWp1eqgoKBRLn/V19c3NDTU1NT8+OOPgYGB06ZNmz9/fnZ2Np/P1+v1I8f/9fX1jRy9rtPpGhoaZs6ciSCIyWQirs2OmV6vHxgYyMvLs1gsBoNh5Aw1GIZpNJobN27clIMGg2HKlCmNjY23dq2oVCp3/7vdbr948WJkZCSGYc3NzUSgNzc3d3Z2xsfHC4VCHo9nMBisVmt0dDRRBTc5Odl9RGw0Gi0WC9E3EhUVJRaLKRSKQqE4e/bsrl27jh079uqrr8JYbL8DAT0WGIYtX75cJpOxWKwPPvggJCRELBaLRCKLxTJt2jSVSlVQUGC1WlEU5XK5DoeD+BbJZLJ33323qqoKRdGcnBwEQdasWRMdHf3cc89ZLJaSkpL4+PiXX37ZbrfL5fIzZ84wGIzs7Gyik3fRokW5ubkkEonD4SQlJUml0paWltLSUj6fL5fLMQxra2uTy+UymYzP5/N4PCLsiKe42Ww2vV5fXV19719UHMfNZvP4q82NfyMWi8XhcOA4brVau7u7VSpVRUVFWlqaUqksKyvT6XTuNYlB3O5/9vf39/f3U6nUsrKympqaN998czzNoNFoNBrt6NGjarX6+vXrhYWFxOwHGIbZbLZDhw4dPnx45MGy+2LpnWRlZRHr02i07Ozs8vLypKQk4srB8PCwXC53OBwUCiU7OzsuLu4Xv/gFlUpdtWrVkSNHBALB1KlT3W8cQZAVK1YQP89r166tqKjIzc0lfslsNhuZTJ46dep43jjwCgjosSCTye7RFO4xGIWFhSQSCUGQm0aMLVy4kFiOIEhkZCRxNZL4Ts6fPx9BkOjoaPcSkUhEXApbsGCBeyGZTFYqlSO3OXXq1KlTpyIIMjg4yGAwhoeH58yZk5mZ6S5aPX/+fNItYwTZbLZCodiwYYNIJLr3N2u32x0Ox72vf78bue2wwltdvnz5+eefdzgcZDJZLBbPmjWrsLAwJSVFKBQuW7bM6XS611Sr1W+88Yb7nyaTKTg4eNeuXTQabdWqVaMPg7krsVj89NNPf/HFF0ajkQhQ95VVOp2+YMGCZ5999qYjaGIUx51ODohDXRKJhCAI0U9F+r9rs8888wyZTFYoFMTOg6LoE088QZRkevrppxEEuXTp0okTJ4izB4VCUVpaSjRGLpfHx8dTKJTm5ma9Xu9wOEpLS2FWF38EAe0xd4qYm5bfdHh1pxVGDyz3o0KhcM2aNcRg6pE9FXcqS0Sn0yUSie9MPoDj+Pbt2zMyMu46LtBqtaakpMjl8nnz5mVnZ4vFYjqdTvSryGSykWu2t7ePvGtx2rRpn332GTFhrvspY0alUktLSwsKCjAM6+7uHtnFj6KoVCrNzs6+aWIE4j6gFStW3HXCBARBRv4nEl0itx1UQ/yhVCrdd7pSqVT3iRHRs08ikWJjY//4xz9iGEaj0aAYiD+CgPZvxFfRf797OI739/e7b34ZRWJi4meffRYeHn6/QyY8/vkQ1+tIJNI9dmdbrdaenp6RveSeQvS3jLICgiAP8n534HEQ0MA/8Hi8cV7fA8DvwDC7f8EwrL6+Xq1WT8SRDgAAjAEcQf+L0+n8wx/+QCaTc3JyioqKIiMjH8LK/QAAn+L5gCbK+hDFce7xKURJCo1G09raOs5rOGNmt9tramrq6+v37dsnEAgyMjLmzJkze/bs4eHhyV0pwutEItGdKpFODnQ6XSwWe2vHBn7N8wFtsVg+/fTTXbt2jRz5NDqn09nb2/vxxx9v377dWwetRCkDDMOsVmtvb+8PP/xw+PDh6Ojo7Oxsq9XqlSY9DFAUXb58+eQu/SOTyVavXg33WIMx8PwXg8FgPPnkkzNnzvSvA0+Hw7FmzZrm5mZiQGt4eHhOTs6iRYsQBLl48aK3WzeZTfrkIpPJ9zLQG4BbeT6gyWRybGxsbGysx7c8oWw2W1hYGJfLTU5OnjdvXlZWVkhICJ1Or62thfK7E6qtrU0kEnmk3pBvMplMvb29Mplscp8ogIkAe8y/UCiU3/72tyEhITExMXe9oQB4CoZhP/74Y25ubkpKiqe2Sdy5Nzw8bLfbfaH6hEqlKisr+9WvfuXBsoLgIQEB/S9kMvmupZPBRDCZTPdyK/ltpxe5LQzD7Hb7xx9/PDw8vGzZsoiIiNtehMRxXK/X63Q6FoslFAqtVqvdbqfT6TabjcfjeXBPcDqdBoPBv3r8gI+AgP5/kM6+rLu7++eff1YoFJGRkWw2e5SkJpPJxIxohw4d2rt37+LFi0tLSxUKxcjObgzDbty48eWXX3Z1dTEYjHXr1rW2tnZ1dYWFhXV1df3Hf/wHi8WCcRfA6yCgwQNy20NIYiFxdDz609va2l5++WWJRJKVlVVQUDBr1qzAwECiitBNzyXKbixdujQrK2vfvn27d+/et2/fsmXLnnjiicjISCJ2tVrt1q1bg4ODV65cWV5e3t3dXVtby+fz6+vryWRyWVlZYmJiamoq/GYD74KAvidOp3NkiWE/5cWbJHt6ek6dOnXrgEUcx4nq+zdu3Bh9Cw0NDRqNpre39/r169u3bxeLxYWFhYWFhZGRka2trSM7SXQ6ncFgoNPpSUlJ8fHxy5cv37Nnz/bt27ds2bJq1apf//rXfD6/r6+vpqbm2WeflcvlMTExw8PDBw8eTEpKOnPmTF9fX2pq6ty5cz2VzkQhOo9sCjxsIKDvwuFwGI3Gbdu2nTlzxtttGa9z586NnIPjQSovL1+/fn1MTMytdYucTuf58+fvOtHJ0NAQ8QPjcrlMJpPFYjl8+LBOp0tKSqqqqhoZ/S6Xy10PmkqlhoeHl5SUVFVV7d279+jRo0899RSfzyeRSCiKulyurq6u8vLy6Ohos9ksFouJqaQCAwOFQqGn3rtIJJoxY8akH00IJsJoAe1wOCorK2UyGVGS/K4sFguGYZNsCERwcHBGRkZPT8/g4KC32zJeVCp1+vTpXhlLYDQa+Xz+f/3Xf405+M6dO/dv//ZvLpdLKBTGx8fPmzcvPz9fJpNxuVyj0TjyV0elUj377LMkEsnpdHZ2dn733XcHDhwwmUy/+c1vli5dSpRFDg4OVigU77//PjHDenBwMDHrWHR09KOPPnr06NHh4WFPZbRYLJ45cyaMsQNjMNpO09/f/5e//GXdunUIgjgcDpfLFRwcbDKZiNkxQkJCSCSSxWLhcrk6nQ5F0Z07d/J4vAULFgwMDFCp1NDQ0EmwU4aEhOzYsWPSXIJHUdRbp9vELhEYGHjTcpvNRqFQ7jrYfGBgYPbs2enp6XPnzk1KSuJyue43clOVO5fLRSaTW1tb//GPf+zevdtmsxUWFq5atSomJsa9Q4pEojfffPPatWvEXNckEomYXv2tt94KDQ2Vy+UerNKJ47jT6SSTydCjDe7XaAE6PDyMoqjdbv/Tn/4kFou7u7tXr15NnFcajcb8/Pzg4OCGhob58+dv3749PT39+++/z8jI0Ol03d3dVqv1mWeeUSgUD+ydTBy4UWXi4Dh+8uTJhISEyMjI0deUy+Xbtm0TiUR3/YHBcdxms23atInP5y9atGjJkiUKheLWrhWRSDR79mz3PwUCAYlEIk4WPbvf9vf3X7p0qbi4eHKXHAETYbR9vaWlhc/n63S6np6eoqIijUbT3t5+9uzZefPmZWRkHDly5NKlS2azub+/v6mpiUajhYSELFiwoLa2tqurKyUlhZjbCYBR4Dh+48YNjUZz1zWZTOY9lhwihksXFRV98803b775ZmpqqncnNNBqtZWVlZPgIjN48Ebb3Zubm0UiUU9Pj0wmE4vFNpuNmASPTqe3tbUFBQWpVCoqlXrixAmhUEjMN0yhUDIzM6OiojZv3mw0Gh/Y2wD+C8Mwz/YgoShKo9EKCwsVCoUv1Iwl7mz0bhuAnxotoLlcbl5eHoqi06dPt1qtqampVqs1KCjo22+/tdvty5cvj46Orq2t1ev1mZmZEomEyWT29vbW1NT09/fPmTNnEldXAL7P67kMwPiN1ge9YsUKCoXidDopFAqKoi+99NLnn38+Z86c5cuX0+l0NpsdFxdntVoZDAZx79aGDRtYLFZhYaHJZOLz+dDjBgAA4zFaQBMXst3lZrhcbkFBAY/HE4lE7hVGXux2L4eiMOAm+P+5aTmCIDweb3KPEabRaHw+H+5VAWNwH8PgKBSKUqmEM0cwBmaz+bZ3YyIIsmjRosn9ix4WFrZs2TImk+nthgD/c3/jlCGdwdiwWCwKhXLbI+Xg4OAH354HicFgSKVSb7cC+CU47QIPAlHV6LYP3WO5Uf8F5UbBmEFAA2/CMGzbtm21tbXebsgEam1t/ec//wmjTsEYQEADL3sYjqCNRiMcQYMxgIAGAAAfBQENAAA+CgIaAAB8FAQ08CYEQWJiYogK+pNVQEDAlClTJkHpXfDgwU4DvAlBkMWLF0/u8fXh4eHLli2DorVgDCCggZdN+nugEQSBdAZjM8m/G8D31dXVDQ0NebsVE0in01VXV0/uoYRggkBAA2/CMOzAgQOtra3ebsgEUqlU3333ncVi8XZDgP+BgAYAAB8FAQ0AAD4KAhoAAHyU50dx4Diu0WgGBgZgHjbg1tPTc6f9gUqlenwgB47jXV1d1dXVnt3sKCwWi1ardc9ZMRKKolQqdXIPJQQTxPMBbTabt27dun//fpfL5fGNAz9lMpnCw8Pds/O4IQhSUFAQGhrqwddisVjBwcE7duzYs2ePBzc7OgzDzGZzTk7OrSPqgoOD586dCzPAgTFAPF5ky+VytbS0qFQqKN8FRuLz+ampqQ9g1LPT6bx+/bpWq53oF7oJiqJRUVERERFwsAw85f4C2mq1mkwmBoPBYrGcTqfNZiOTyRiGsVism3ZKSGdwk1EK9tNoNCqV6tmX88oeeNv36HQ6rVYrm82G4Ab36z66OHp6er755pvW1tagoKDly5cPDw/X1NSIRCKr1froo4/eVGoA9kVwLzAMO3ToUEpKSnx8vGe37Dt7oEqlOnXq1OOPPz5yhmUA7sW9nm/abLZNmzbV19eXlpbqdLoLFy6cPn26ubn5xIkTw8PDdXV1HR0dE9pQMFm1t7fr9Xpvt2ICmUymlpYWp9Pp7YYA/3OvAT04OHjmzJmVK1eWlJR88MEHS5YsaW5uDgkJaWlpOXfu3Keffnrr9R8AAADjca8B7XK5EAQRi8VOp/PMmTN1dXWDg4MsFkulUlVXV6ekpAQGBk5oQwEA4GFzr33QXC5XKpVu3ryZx+N1dXUVFxcTnc7R0dElJSXNzc1ms5nH401kUwEA4OFyHwH9xhtv7N+/n0wmv/zyyxQKhU6nR0REhIeHy+XyysrKSV80EkyQwMBAJpPp7VZMIDqdHhQUBBVHwRh4fhw0APdFrVYHBAQwmUxiVxzn6AuPbMSD2yGRSFarVafTicViOIgB9wsCGvgEi8Vy9epVnU6XnJwcHh5+6wpms9npdHI4nFFC02w2X7p0yWazKRQKgUBgsVj4fP4YYrGnp6euro5KpfJ4PB6PR6PRpFLpvT/dbrebTCYejweJDMYJZlQB3oTjeGdnp0AgaGho+OKLL5KSkrq7uwsLC/l8vslkwnF8YGDA4XBMmTLlu+++43A4ubm5ra2tiYmJNptNpVK5XK6AgAAqlZqQkEChUC5fvvzFF19kZWXpdDqXy6VSqZYtW9bS0iIQCKKjo9vb241GY2BgYFdXV2RkpFQqraqqolAoQqGQzWbX1tbGxcWFhoYiCPLDDz9cvnw5KysrKCioqalp6tSpw8PDOp1OoVD09fVpNBoEQXAcl0gkYrH4+vXrPB4vLi6uvr7eZDKFhobW1NTU1tYuXbq0paVFIpGEhYWp1erIyEiYlhDcL9hjgDfhOH7w4MHc3Fwul+tyufr7+5csWXLy5Mng4OCLFy8GBQU1NzcnJyfT6fTTp0/n5ub+7W9/EwgE169fNxqNer2+sbExNzfXaDS+/PLLXC6Xz+dbLJbe3t68vLxvv/2WzWZv3ryZTqd3d3cvXrx4586dOTk5PB6voaFh//79eXl5dXV1Wq02OjpapVLR6fSKior169dTqdRLly51dnbiOL548WKDwTA8PHzkyBEMw7q7u2tqaphM5oULFxITE/l8vlAo7O/vHxoamjlz5v79+6OiohgMhl6vd7lc3377rV6vT0pKstlsx48fX7NmDYfD8fbnDfwMnIIBLzOZTDabrampacWKFYODg5WVlSKRaM+ePWw2Ozk5mcViXbt2zel0slisoKCg9vZ2k8lktVp7enrS09NDQ0NTU1OZTCaKokajsaenZ/Xq1Z2dnRcvXsRxPCoqqqOjIycnx+l0tre3x8TEzJw5s6qqqqOjw2Qy3bhxIzU1lUaj6XS6a9euWa1WovPEbDbr9foXX3zx17/+tVQqtdlsHR0dKpXK4XBotVqn05mWlhYREREREcFgMM6fP6/RaEgkUlNTU1JSklQq5fF4GIbl5OSEhYVpNBriMN9oNEJfIhgDOIIG3ocgiMlkunDhglgsnjZt2sDAgEqleuONNzo7OwMCAuh0OpPJFIlEwcHBubm5drs9NTUVQRCRSKRUKl0ul1wuZzKZdrtdo9HU1tZGRkYqFIquri4Wi5WZmVlRUaFQKCQSSUREBFEQQyKRJCQkuFyuysrKzs7OlStX0ul0m81WUFBAoVB6e3uDgoJu3LjR1taWlJQUFRWVnp5usVgEAkFCQgKCIBiGpaen22y2jIwMiURSW1ubmJjIYrHodLrBYAgJCRkaGjKZTBaLRSQSiUQi6IkGYwYXCYE3YRj20UcfzZo1KyUlxWAwkMlku93+6aefhoaGPv300xiG6fV6Op3OYrEMBgOTyXS5XEThIZfLRaFQMAxDEARBEOJGVrvdrtfraTQam802m80UCoWI/oCAABKJhKIohUIhbit3uVy7d+/u7e1FEOT5559nMplWq5XD4VCpVJfLRXR/IwhCp9MxDKPT6Xq9HkVRBoNBvCLRchqN5nK5DAYDkftExzSKojabjfjDYrFwOJyWlpZdu3a98sorXC7Xu5828DtwBA28zOVyabVaojookb8LFixISEggk8kWiwXHcavVarVaSSQShmFcLpeopGg0GkfOAMBgMDgcDo1GYzKZZrPZZrMRyxEE4XK57iR1T62N43hRURHRAc1kMokuCHeFUmLYH4lE0ul0drvdaDS6m8rlcslkssPhMBgM7uUGg4HFYrHZbBKJZDQaR84PS/RHT9ynByY3CGjgZUNDQ2+//bb76JJOpy9fvnzq1KkWi2Xjxo0VFRXuNQMDA995552IiIjOzs633nprcHDQ/VBxcfFvfvMbHMe///773bt3u7Obw+G89NJLmZmZarX6o48+qq2tdT8lIyNj3bp1PB7v6NGjGzdudGc6iUR6/vnnS0pKHA7Hhg0bLl265F4uk8nefPNNqVTa0NDwzjvvuAOaSqU+9thjTz31FIIg33zzTVlZmbsBKIq+9tprPB4PhnCAMYAuDgAA8FFw+QIAAHwUBDQAAPgoCGgAAPBRENAAAOCjIKABAMBH/S+MKq6hhZYChQAAAABJRU5ErkJggg==",
@@ -1361,7 +1333,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_31",
-    "explanation": "Đáp án đúng là C. Trong Verilog, cổng primitive AND có dạng and (ngõ_ra, ngõ_vào_1, ngõ_vào_2, ...); nên and (F, x, y, z); là hợp lệ. A sai vì không dùng assign trước primitive. B sai vì 'and' không phải toán tử biểu thức; nếu viết biểu thức phải dùng x & y & z và F phải được gán trong ngữ cảnh phù hợp. D sai vì thiếu assign/always và cũng dùng từ 'and' sai. E sai vì chỉ C đúng.",
     "codeBlocks": [
       {
         "title": "Module đã cho",
@@ -1409,7 +1380,6 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     ],
     "type": "single",
     "id": "final2024_32",
-    "explanation": "Đáp án đúng là D. Reset đồng bộ nghĩa là reset chỉ được kiểm tra tại cạnh clock, nên sensitivity list chỉ có posedge clk. A và B sai vì reset nằm trong sensitivity list, làm reset bất đồng bộ. C sai vì nhạy theo mức clk/reset, không phải FF cạnh lên. E sai vì không có reset và dùng nhạy mức clk, không mô tả bộ đếm đồng bộ đúng yêu cầu.",
     "codeBlocks": [
       {
         "title": "Module đã cho",

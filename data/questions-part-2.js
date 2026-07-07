@@ -1,5 +1,6 @@
-// Question bank part 2/6 - generated from original script.js
-window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
+// Question bank questions-part-2 - cleaned and answer-audited
+window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
+[
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
     "source_file": "TỔNG HỢP CÂU HỎI TRẮC NGHIỆM(1).pdf",
@@ -621,10 +622,9 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       }
     ],
     "answers": [
-      "B",
-      "D"
+      "B"
     ],
-    "type": "multi",
+    "type": "single",
     "id": "main_73"
   },
   {
@@ -1686,7 +1686,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       {
         "id": "A",
         "text": "0",
-        "correct": false
+        "correct": true
       },
       {
         "id": "B",
@@ -1701,11 +1701,11 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       {
         "id": "D",
         "text": "1",
-        "correct": true
+        "correct": false
       }
     ],
     "answers": [
-      "D"
+      "A"
     ],
     "type": "single",
     "id": "main_103"
@@ -2035,4 +2035,5 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "type": "single",
     "id": "main_112"
   }
-]);
+]
+);

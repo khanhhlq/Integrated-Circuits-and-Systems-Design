@@ -1,5 +1,6 @@
-// Question bank part 6/6 - generated from original script.js
-window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
+// Question bank questions-part-6 - cleaned and answer-audited
+window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
+[
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
     "source_file": "TỔNG HỢP CÂU HỎI TRẮC NGHIỆM(1).pdf",
@@ -546,8 +547,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong ảnh được gõ lại để dễ đọc",
         "code": "module CLK_XHZ(clk50m, clkout);\n  input clk50m;\n  output reg clkout;\n  reg [24:0] count;\n\n  initial begin\n    count <= 1;\n    clkout <= 0;\n  end\n\n  always @(posedge clk50m)\n    if (count == 25_000_000) begin\n      clkout <= ~clkout;\n      count <= 1;\n    end else\n      count <= count + 1;\nendmodule"
       }
-    ],
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là B. 1 Hz."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -583,13 +583,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       "C"
     ],
     "type": "single",
-    "id": "main_296",
-    "explanation": "Clock vào 50 MHz nghĩa là có 50.000.000 xung trong 1 giây. Nếu muốn tạo xung ra 2 Hz thì chu kỳ ngõ ra là 0,5 giây. Trong mạch chia xung kiểu đảo `clkout` khi bộ đếm đạt giá trị so sánh, mỗi lần đảo chỉ tạo nửa chu kỳ. Vì vậy số xung cần đếm cho mỗi lần đảo là 50.000.000 / (2 × 2) = 12.500.000.",
-    "wrongExplanations": {
-      "A": "50.000.000 là số xung của clock gốc trong 1 giây. Nếu dùng giá trị này để đảo `clkout` thì chu kỳ ngõ ra sẽ bị chậm hơn rất nhiều, không phải 2 Hz.",
-      "B": "25.000.000 là số xung tương ứng nửa giây. Nếu đảo `clkout` mỗi 25.000.000 xung thì một chu kỳ đầy đủ cần 50.000.000 xung, tức ngõ ra khoảng 1 Hz chứ không phải 2 Hz.",
-      "D": "12.000.000 chỉ là giá trị gần đúng. Nếu dùng giá trị này thì tần số ra xấp xỉ 50.000.000 / (2 × 12.000.000) ≈ 2,08 Hz, không đúng yêu cầu 2 Hz."
-    }
+    "id": "main_296"
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -640,8 +634,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DEM_8BIT_2SPEED(clk_50M, RESET, ud, ss, SPEED, LED_8out);\n  input clk_50M, RESET, ud, ss, SPEED;\n  output reg [7:0] LED_8out;\n  wire clk_1_2Hz;\n\n  CK_DIV MD_1(.clk50m(clk_50M), .speed(SPEED), .clkout(clk_1_2Hz));\n  DEM_8BIT MD_2(.clk(clk_1_2Hz), .reset(RESET), .ud(ud), .ss(ss), .out(LED_8out));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. 2."
+    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -692,8 +685,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DEM_8BIT_2SPEED(clk_50M, RESET, ud, ss, SPEED, LED_8out);\n  input clk_50M, RESET, ud, ss, SPEED;\n  output reg [7:0] LED_8out;\n  wire clk_1_2Hz;\n\n  CK_DIV MD_1(.clk50m(clk_50M), .speed(SPEED), .clkout(clk_1_2Hz));\n  DEM_8BIT MD_2(.clk(clk_1_2Hz), .reset(RESET), .ud(ud), .ss(ss), .out(LED_8out));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là C. 2 Hz."
+    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -744,8 +736,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Module DEM_8BIT_2SPEED trong ảnh",
         "code": "module DEM_8BIT_2SPEED(clk_50M, RESET, ud, ss, SPEED, LED_8out);\n  input clk_50M, RESET, ud, ss, SPEED;\n  output reg [7:0] LED_8out;\n  wire clk_1_2Hz;\n\n  CK_DIV MD_1(.clk50m(clk_50M), .speed(SPEED), .clkout(clk_1_2Hz));\n  DEM_8BIT MD_2(.clk(clk_1_2Hz), .reset(RESET), .ud(ud), .ss(ss), .out(LED_8out));\nendmodule"
       }
-    ],
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là C. Chương trình 2 và chương trình 3."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -796,8 +787,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DEM_8BIT_2SPEED(clk_50M, RESET, ud, ss, SPEED, LED_8out);\n  input clk_50M, RESET, ud, ss, SPEED;\n  output reg [7:0] LED_8out;\n  wire clk_1_2Hz;\n\n  CK_DIV MD_1(.clk50m(clk_50M), .speed(SPEED), .clkout(clk_1_2Hz));\n  DEM_8BIT MD_2(.clk(clk_1_2Hz), .reset(RESET), .ud(ud), .ss(ss), .out(LED_8out));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. Kiểu biến."
+    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -848,8 +838,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DEM_8BIT_2SPEED(clk_50M, RESET, ud, ss, SPEED, LED_8out);\n  input clk_50M, RESET, ud, ss, SPEED;\n  output reg [7:0] LED_8out;\n  wire clk_1_2Hz;\n\n  CK_DIV MD_1(.clk50m(clk_50M), .speed(SPEED), .clkout(clk_1_2Hz));\n  DEM_8BIT MD_2(.clk(clk_1_2Hz), .reset(RESET), .ud(ud), .ss(ss), .out(LED_8out));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là D. Chưa thể xác định."
+    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -900,8 +889,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DEM_8BIT_2SPEED(clk_50M, RESET, ud, ss, SPEED, LED_8out);\n  input clk_50M, RESET, ud, ss, SPEED;\n  output reg [7:0] LED_8out;\n  wire clk_1_2Hz;\n\n  CK_DIV MD_1(.clk50m(clk_50M), .speed(SPEED), .clkout(clk_1_2Hz));\n  DEM_8BIT MD_2(.clk(clk_1_2Hz), .reset(RESET), .ud(ud), .ss(ss), .out(LED_8out));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là B. 5."
+    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -952,8 +940,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DEM_8BIT_2SPEED(clk_50M, RESET, ud, ss, SPEED, LED_8out);\n  input clk_50M, RESET, ud, ss, SPEED;\n  output reg [7:0] LED_8out;\n  wire clk_1_2Hz;\n\n  CK_DIV MD_1(.clk50m(clk_50M), .speed(SPEED), .clkout(clk_1_2Hz));\n  DEM_8BIT MD_2(.clk(clk_1_2Hz), .reset(RESET), .ud(ud), .ss(ss), .out(LED_8out));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. 1."
+    "note": "Đã bổ sung khung code chữ bên dưới câu hỏi để người học dễ đọc; ảnh gốc vẫn giữ để đối chiếu."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -2113,4 +2100,5 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "type": "single",
     "id": "main_332"
   }
-]);
+]
+);

@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Luyện thi trắc nghiệm - Thiết kế & Tổng hợp Hệ thống số</title>
+  <script>try{if(localStorage.getItem("tkhts_theme_mode_v1")==="dark"){document.documentElement.classList.add("dark-mode");}}catch(e){}</script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="license-locked">
@@ -62,9 +63,12 @@
         <h1>Website luyện thi trắc nghiệm</h1>
         <p class="hero-desc">Ngân hàng câu hỏi tiếng Việt, làm bài theo chương, trộn câu hỏi, chấm điểm và xem lại đáp án như LMS.</p>
       </div>
-      <div class="hero-card">
-        <div class="big-number" id="totalQuestions">0</div>
-        <span>câu hỏi</span>
+      <div class="hero-side">
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Bật chế độ tối" aria-pressed="false">🌙 Tối</button>
+        <div class="hero-card">
+          <div class="big-number" id="totalQuestions">0</div>
+          <span>câu hỏi</span>
+        </div>
       </div>
     </header>
 
@@ -215,6 +219,7 @@
   <script src="data/questions-part-6.js"></script>
   <script src="data/questions-final-exam-2024.js"></script>
   <script src="data/questions-extra-exams.js"></script>
+  <script src="data/ai-notes.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

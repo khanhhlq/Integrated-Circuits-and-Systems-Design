@@ -1,5 +1,6 @@
-// Question bank part 4/6 - generated from original script.js
-window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
+// Question bank questions-part-4 - cleaned and answer-audited
+window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
+[
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
     "source_file": "TỔNG HỢP CÂU HỎI TRẮC NGHIỆM(1).pdf",
@@ -40,8 +41,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "always\nbegin\n  wait (ctrl)\n  #10 cnt = cnt + 1;\n  #10 cnt2 = cnt2 + 2;\nend"
       }
-    ],
-    "explanation": "Lệnh wait(ctrl) làm khối always tạm dừng cho đến khi ctrl đúng/mức 1, sau đó các lệnh trễ #10 mới được thực hiện."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -83,8 +83,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "initial begin\n  clk = 0;\n  forever #10 clk = ~clk;\nend"
       }
-    ],
-    "explanation": "Mỗi 10 đơn vị thời gian tín hiệu clk đảo trạng thái một lần, nên một chu kỳ đầy đủ gồm hai lần đảo: 10 + 10 = 20 đơn vị thời gian."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -274,7 +273,13 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "I. KIẾN THỨC CƠ BẢN",
     "question_no": "Câu 96",
-    "question": "Cho biết thời gian được trì hoãn của câu lệnh sau trước khi được thực hiện `timescale 10ns/1ns later: #5 a = b;",
+    "question": "Cho biết thời gian được trì hoãn của câu lệnh sau trước khi được thực hiện?",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "`timescale 10ns/1ns\n#5 a = b;"
+      }
+    ],
     "options": [
       {
         "id": "A",
@@ -1063,8 +1068,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "wire [7:0] A;\nwire B;\nassign B = ~|A;"
       }
-    ],
-    "explanation": "A khác 0 nên phép reduction NOR ~|A cho B = 0. A[5:3] của 8'b00111001 là 111, ghép với 3 bit B lặp lại thành 111000."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1253,7 +1257,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 27",
-    "question": "Trong đoạn mã đã cho, câu lệnh 2 sẽ được thực thi tại Initial Begin #5 x=1'b0; // câu lệnh 1 #15 y= 1b'1; // câu lệnh 2 End",
+    "question": "Trong đoạn mã đã cho, câu lệnh 2 sẽ được thực thi tại thời điểm nào?",
     "options": [
       {
         "id": "A",
@@ -1280,7 +1284,13 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       "B"
     ],
     "type": "single",
-    "id": "main_203"
+    "id": "main_203",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "initial begin\n  #5  x = 1'b0;  // câu lệnh 1\n  #15 y = 1'b1;  // câu lệnh 2\nend"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1325,7 +1335,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 29",
-    "question": "Xem xét đoạn mã Verilog sau: wire [5:0] A, B; wire C; assign C=^A; Nếu giá trị của A và B lần lượt là 5'b10011 và 5'b01110 thì giá trị của {A[3:1], 2{C}, B[2:0]} sẽ là bao nhiêu? Chọn một:",
+    "question": "Nếu A = 5'b10011 và B = 5'b01110 thì giá trị của {A[3:1], 2{C}, B[2:0]} là bao nhiêu?",
     "options": [
       {
         "id": "A",
@@ -1352,7 +1362,13 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       "B"
     ],
     "type": "single",
-    "id": "main_205"
+    "id": "main_205",
+    "codeBlocks": [
+      {
+        "title": "Đoạn code trong đề",
+        "code": "wire [5:0] A, B;\nwire C;\nassign C = ^A;"
+      }
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1502,8 +1518,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "module mydesign (a, b);\n  input [1:0] b;\n  output reg a;\n\n  always @(b) begin\n    if (b == 2'b00)\n      a = 1'b0;\n    else if (b == 2'b11)\n      a = 1'b0;\n    else\n      a = 1'b1;\n  end\nendmodule"
       }
-    ],
-    "explanation": "Ngõ ra a bằng 0 khi hai bit b giống nhau và bằng 1 khi hai bit khác nhau, đúng với chức năng XOR 2 bit."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1653,8 +1668,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "integer x, y;\n\ninitial begin\n  x = 15;\n  y = 10;\nend\n\ninitial\n  repeat (x) $display(\"x=%d\", x);\n\ninitial\n  while (y < 12) begin\n    y = y + 1;\n    x = x - 1;\n  end"
       }
-    ],
-    "explanation": "Khối repeat sử dụng giá trị x = 15 nên lệnh hiển thị được lặp 15 lần theo đáp án trong đề."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1696,8 +1710,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "initial clk = 1'b0;\nalways #5 clk = ~clk;"
       }
-    ],
-    "explanation": "clk ban đầu bằng 0, sau 5 đơn vị thời gian đảo lên 1, nên các cạnh lên xuất hiện tại 5, 15, 25, 35, ..."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1776,8 +1789,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "always @(posedge clock) begin\n  data3 = din;\n  data2 = data3;\n  data1 = data2;\n  data0 = data1;\nend"
       }
-    ],
-    "explanation": "Do dùng blocking assignment trong cùng một khối always, giá trị din được truyền lần lượt xuống data3, data2, data1, data0 trong cùng một cạnh clock."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1891,8 +1903,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "integer a, b, c, d;\n\ninitial begin\n  a = 25;\n  b = 12;\n  c = 5;\n  d = 17;\n  a = b + c;\n  b = a - 15;\n  c = a + d;\n  d = c + d;\nend"
       }
-    ],
-    "explanation": "Tính tuần tự: a=12+5=17; b=17-15=2; c=17+17=34; d=34+17=51."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1970,8 +1981,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "always @(posedge clock) begin\n  y = x;\n  z = y;\n  x = z;\nend"
       }
-    ],
-    "explanation": "Vì dùng blocking assignment, sau câu y=x thì y nhận x; tiếp theo z=y cũng nhận giá trị x; cuối cùng x=z nên cả ba cùng nhận giá trị x."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -2013,8 +2023,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "module guess (data, cond, result);\n  input [7:0] data;\n  input [1:0] cond;\n  output reg result;\n\n  always @(data) begin\n    if (cond == 2'b00)\n      result = |data;\n    else\n      result = data;\n  end\nendmodule"
       }
-    ],
-    "explanation": "Đoạn mô tả là logic tổ hợp vì result được gán ở cả hai nhánh. Tuy nhiên danh sách nhạy chỉ có data nên khi mô phỏng có thể lệch với phần cứng tổng hợp nếu cond thay đổi."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -2056,8 +2065,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "module mydesign (a, b, c);\n  input c;\n  output reg a, b;\n\n  always @(c) begin\n    if (c == 1'b0) begin\n      b <= ~a;\n      a <= ~(c | b);\n    end else if (c == 1'b1) begin\n      a <= ~(b * c);\n    end\n  end\nendmodule"
       }
-    ],
-    "explanation": "Trong một số nhánh, tín hiệu b không được gán đầy đủ nên có thể suy ra phần tử lưu trữ/latch; đồng thời logic phụ thuộc c để chọn nhánh xử lý."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -2099,7 +2107,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "always @(posedge clock)\n  a = b;\n\nalways @(posedge clock)\n  b = a;"
       }
-    ],
-    "explanation": "Hai khối always cùng kích ở cạnh lên và đều dùng blocking assignment nên thứ tự thực thi giữa hai khối là không xác định, kết quả phụ thuộc thứ tự mô phỏng."
+    ]
   }
-]);
+]
+);

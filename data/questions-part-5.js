@@ -1,5 +1,6 @@
-// Question bank part 5/6 - generated from original script.js
-window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
+// Question bank questions-part-5 - cleaned and answer-audited
+window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
+[
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
     "source_file": "TỔNG HỢP CÂU HỎI TRẮC NGHIỆM(1).pdf",
@@ -40,8 +41,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "assign d = ~(c | b);\nassign c = ~(a | d);"
       }
-    ],
-    "explanation": "Hai cổng NOR mắc hồi tiếp chéo tạo ra khả năng lưu trạng thái 1 bit, tương ứng mạch chốt 1 bit."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -60,7 +60,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       {
         "id": "B",
         "text": "Khi một mô-đun X được gọi nhiều lần từ một số mô-đun khác, chỉ một bản sao của mô-đun X được đưa vào phần cứng sau khi tổng hợp.",
-        "correct": false
+        "correct": true
       },
       {
         "id": "C",
@@ -70,18 +70,19 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       {
         "id": "D",
         "text": "Không thể khởi tạo nhiều hơn một mô-đun trong một mô-đun khác.",
-        "correct": false
+        "correct": true
       },
       {
         "id": "E",
         "text": "Cả B và C",
-        "correct": true
+        "correct": false
       }
     ],
     "answers": [
-      "E"
+      "B",
+      "D"
     ],
-    "type": "single",
+    "type": "multi",
     "id": "main_226"
   },
   {
@@ -129,8 +130,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong đề",
         "code": "output reg clk1, clk2;\n\ninitial begin\n  clk1 = 1'b0;\n  clk2 = 1'b1;\n\n  forever clk1 = !clk1;\n\n  repeat (5) #5 clk2 = ~clk2;\n  #75 $finish;\nend"
       }
-    ],
-    "explanation": "Lệnh forever không có độ trễ nên chạy lặp vô hạn ngay trong khối initial; các dòng repeat và #75 $finish phía sau không được thực hiện."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -353,8 +353,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module (a, b, ci, r, co);\n  input a, b, ci;\n  output r, co;\n\n  assign r  = a ^ b ^ ci;\n  assign co = a & ci + a & b + b & cin;\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cú pháp khai báo module trong Verilog phải là: module <tên_module>(danh_sách_cổng);. Ở dòng đầu đề gốc chỉ ghi module (a, b, ci, r, co); nên sau từ khóa module bị thiếu tên module. Vì vậy chọn C. Tên module. Các lựa chọn A và B quá chung chung, còn D không phải lỗi chính mà đề đang hỏi."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -397,8 +396,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module Adder(A, B, R);\n  input  [3:0] A;\n  input  [3:0] B;\n  output [4:0] R;\n  wire c1, c2, c3;\n\n  FullAdder add0(.a(A[0]), .b(B[0]), .ci(1'b0), .co(c1), .r(R[0]));\n  FullAdder add1(.a(A[1]), .b(B[1]), .ci(c1),   .co(c2), .r(R[1]));\n  FullAdder add2(.a(A[2]), .b(B[2]), .ci(c2),   .co(c3), .r(R[2]));\n  FullAdder add3(.a(A[3]), .b(B[3]), .ci(c3),   .co(R[4]), .r(R[3]));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Trong chương trình có 4 lần gọi FullAdder: add0, add1, add2, add3 tương ứng 4 bit A[0] đến A[3] và B[0] đến B[3]. Các carry c1, c2, c3 được nối tầng, R[4] là bit nhớ cuối. Vì vậy đây là bộ cộng 4 bit, chọn A."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -441,8 +439,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "title": "Đoạn code trong ảnh được gõ lại để dễ đọc",
         "code": "wire A, B, Y;\nassign Y = A & B;"
       }
-    ],
-    "explanation": "Dòng assign Y = A & B dùng toán tử & giữa hai tín hiệu A và B. Đây là phép AND theo bit, nên mạch được mô tả là cổng AND. Chọn C."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -485,8 +482,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module Mymodule(I, O);\n  input [3:0] I;\n  output reg [1:0] O;\n\n  always @(I) begin\n    if      (I == 4'b0001) O = 2'b00;\n    else if (I == 4'b0010) O = 2'b01;\n    else if (I == 4'b0100) O = 2'b10;\n    else if (I == 4'b1000) O = 2'b11;\n  end\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Ngõ vào I có 4 bit dạng one-hot: 0001, 0010, 0100, 1000. Chương trình mã hóa mỗi trường hợp thành ngõ ra O 2 bit: 00, 01, 10, 11. Mạch biến nhiều đường vào thành mã nhị phân ít bit hơn nên là ENCODER. Chọn A."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -529,8 +525,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module Mymodule(I, O);\n  input [1:0] I;\n  output reg [3:0] O;\n\n  always @(I) begin\n    if      (I == 2'b00) O = 4'b0001;\n    else if (I == 2'b01) O = 4'b0010;\n    else if (I == 2'b10) O = 4'b0100;\n    else                 O = 4'b1000;\n  end\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Ngõ vào I là 2 bit, còn ngõ ra O là 4 bit one-hot. Với mỗi giá trị I, chỉ một bit của O được bật: 0001, 0010, 0100, 1000. Đây là mạch giải mã 2 sang 4 nên chọn B. DECODER."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -573,8 +568,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module Mymodule(I, O, EN, HL);\n  input [1:0] I;\n  input EN, HL;\n  output [3:0] O;\n  reg [3:0] temp;\n\n  always @(I, EN, HL) begin\n    if (EN == 0)\n      temp = 4'b0000;\n    else begin\n      if      (I == 2'b00) temp = 4'b0001;\n      else if (I == 2'b01) temp = 4'b0010;\n      else if (I == 2'b10) temp = 4'b0100;\n      else                 temp = 4'b1000;\n    end\n  end\n\n  assign O = (HL == 1'b1) ? temp : ~temp;\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Với EN=1, chương trình không vào nhánh temp=0000 mà xét I. I=2'b10 nên temp=0100. Do HL=0 nên O = ~temp = ~0100 = 1011. Vì vậy chọn C."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -617,8 +611,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module Mymodule(I, O, EN, HL);\n  input [1:0] I;\n  input EN, HL;\n  output [3:0] O;\n  reg [3:0] temp;\n\n  always @(I, EN, HL) begin\n    if (EN == 0)\n      temp = 4'b0000;\n    else begin\n      if      (I == 2'b00) temp = 4'b0001;\n      else if (I == 2'b01) temp = 4'b0010;\n      else if (I == 2'b10) temp = 4'b0100;\n      else                 temp = 4'b1000;\n    end\n  end\n\n  assign O = (HL == 1'b1) ? temp : ~temp;\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Trong code, I chỉ được khai báo 2 bit: input [1:0] I. Đề lại cho I=3'b001 là giá trị 3 bit, không đúng kích thước tín hiệu được khai báo. Vì vậy theo lựa chọn của đề, ngõ ra này không tồn tại. Chọn D."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -661,8 +654,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module Mymodule(I, O, EN, HL);\n  input [1:0] I;\n  input EN, HL;\n  output [3:0] O;\n  reg [3:0] temp;\n\n  always @(I, EN, HL) begin\n    if (EN == 0)\n      temp = 4'b0000;\n    else begin\n      if      (I == 2'b00) temp = 4'b0001;\n      else if (I == 2'b01) temp = 4'b0010;\n      else if (I == 2'b10) temp = 4'b0100;\n      else                 temp = 4'b1000;\n    end\n  end\n\n  assign O = (HL == 1'b1) ? temp : ~temp;\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Khi EN=0, chương trình vào ngay nhánh if (EN == 0) và gán temp = 4'b0000. Vì vậy kết quả cần chọn là C. 0000."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -705,8 +697,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "always @(I, sel) begin\n  if      (sel == 2'b00) O = I[0];\n  else if (sel == 2'b01) O = I[1];\n  else if (sel == 2'b10) O = I[2];\n  else                   O = I[3];\nend"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Tín hiệu sel chọn một trong bốn bit I[0], I[1], I[2], I[3] đưa ra O. Một ngõ ra chọn từ nhiều ngõ vào theo tín hiệu chọn là mạch MUX. Chọn A."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -749,8 +740,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "always @(I, sel) begin\n  if      (sel == 2'b00) O = {3'b000, I};\n  else if (sel == 2'b01) O = {2'b00, I, 1'b0};\n  else if (sel == 2'b10) O = {1'b0, I, 2'b00};\n  else                   O = {I, 3'b000};\nend"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Tín hiệu I được đưa đến một vị trí khác nhau trong vector O tùy theo sel: 000I, 00I0, 0I00 hoặc I000. Một ngõ vào được phân phối ra nhiều vị trí/ngõ ra theo tín hiệu chọn là DEMUX. Chọn B."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -793,8 +783,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module MYMODULE(A, B, C, S);\n  input A, B;\n  output reg C, S;\n\n  always @(A, B) begin\n    C = A & B;\n    S = A ^ B;\n  end\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Mạch có hai ngõ vào A, B. Bit nhớ C = A & B và bit tổng S = A ^ B. Đây đúng là công thức của bộ cộng bán phần half-adder. Chọn A."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -837,8 +826,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module FULL_ADDER(A, B, CI, S, CO);\n  input A, B, CI;\n  output CO, S;\n\n  assign S  = A ^ B ^ CI;\n  assign CO = (A & B) + (B & CI) + (A & CI);\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Mạch có ba ngõ vào A, B, CI. Bit tổng S = A ^ B ^ CI và bit nhớ CO được tạo từ các tích đôi của A, B, CI. Đây là công thức của bộ cộng toàn phần full-adder. Chọn B."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -881,8 +869,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Dòng 1 khai báo module F_(ADDER)(...) dùng dấu ngoặc trong tên module, làm tên module không hợp lệ. Tên định danh Verilog không được chứa ký tự ( ). Vì vậy dòng sai là dòng 1, chọn A."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -925,8 +912,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. 3."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -969,8 +955,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Theo cú pháp module trong Verilog, kết thúc module phải dùng đúng từ khóa `endmodule` và không đặt dấu chấm phẩy sau nó. Dòng (6) trong đề là `endmodule;`, nên lỗi nằm ở dòng 6. Dòng (7) `module ADDER_4B(A, B, S);` là một khai báo module hợp lệ."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1013,8 +998,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là B. 9."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1057,8 +1041,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. 10."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1101,8 +1084,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là D. 15."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1145,8 +1127,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là D. 16."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1189,8 +1170,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. Kiểu biến."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1233,8 +1213,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là D. Từ khóa."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1277,8 +1256,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "(1)  module F_(ADDER)(a, b, s, ci, co);\n(2)    input a, b, ci;\n(3)    output co, s\n(4)    assign s = a ^ b ^ ci;\n(5)    assign co = a & b + (b & co) + a & co;\n(6)  endmodule;\n(7)  module ADDER_4B(A, B, S);\n(8)    input wire [3:0] A;\n(9)    input [3:-1] B;\n(10)   output reg [4:0] S;\n(11)   wire c1, c2, c3;\n(12)   F_ADDER fad0(.a(A[0]), .b(B[0]), .s(S[0]), .ci(0),  .co(c1));\n(13)   F_ADDER fad1(.a(A[1]), .b(B[1]), .s(S[1]), .ci(c1), .co(c2));\n(14)   F_ADDER fad2(.a(A[2]), .ci(c2), .b(B[2]), .s(S[2]), .co(c3));\n(15)   F_ADDER ADDER_4B(.a(A[3]), .b(B[3]), .s(S[3]), .ci(c3), .co(S[4]));\n(16) Endmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là C. Tên định danh."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1466,8 +1444,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "alt": "Sơ đồ mạch chốt SR đầy đủ",
         "caption": "Sơ đồ mạch chốt SR dùng cho câu này - trang 43"
       }
-    ],
-    "explanation": "Sơ đồ có hai cổng NOR hồi tiếp chéo và có thêm cặp cổng điều khiển ở ngõ vào nên đây là mạch chốt SR có tín hiệu cho phép, không phải Flip-Flop vì không có kích cạnh clock."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1510,8 +1487,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module RS_LATCH(\n  input wire R, S, CLK,\n  output reg Q, Qb\n);\n\nalways @(R, S, CLK) begin\n  if ((CLK == 1) && (S == 0) && (R == 1)) begin\n    Q = 0; Qb = 1;\n  end else if ((CLK == 1) && (S == 1) && (R == 0)) begin\n    Q = 1; Qb = 0;\n  end\nend\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là B. Mạch chốt SR."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1554,8 +1530,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "alt": "Sơ đồ mạch chốt D đầy đủ",
         "caption": "Sơ đồ mạch chốt D dùng cho câu này - trang 43"
       }
-    ],
-    "explanation": "Sơ đồ có tín hiệu D được đưa trực tiếp và qua cổng đảo để tạo hai nhánh S/R điều khiển cặp cổng hồi tiếp, vì vậy đây là mạch chốt D."
+    ]
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1598,8 +1573,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module D_L(clk, D, q);\n  input D, clk;\n  output reg q;\n\n  always @(clk, D)\n    if (clk)\n      q = D;\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. Mạch chốt D."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1642,8 +1616,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DFF(clk, D, q);\n  input D, clk;\n  output reg q;\n\n  always @(posedge clk) begin\n    q = D;\n  end\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là D. Flip Flop D."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1686,8 +1659,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module T_FF(T, Q, QB, CLK);\n  input T, CLK;\n  output reg Q, QB;\n\n  always @(posedge CLK) begin\n    if (T == 1) begin\n      Q  = ~Q;\n      QB = ~QB;\n    end\n  end\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là D. Flip Flop T."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1730,8 +1702,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DFF(clk, D, q);\n  input D, clk;\n  output reg q;\n\n  always @(posedge clk) begin\n    q = D;\n  end\nendmodule\n\nmodule SRSS(in, clk, out);\n  input in, clk;\n  output reg out;\n  wire q1, q2, q3;\n\n  DFF dff1(.clk(clk), .d(in), .q(q1));\n  DFF dff2(.clk(clk), .d(q1), .q(q2));\n  DFF dff3(.clk(clk), .d(q2), .q(q3));\n  DFF dff4(.clk(clk), .d(q3), .q(out));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. Thanh ghi dịch 4 bit vào nối tiếp ra nối tiếp."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1774,8 +1745,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module DFF(C, D, q);\n  input C, D;\n  output reg q;\n\n  always @(posedge C) begin\n    q = D;\n  end\nendmodule\n\nmodule SRSP(C, in, q);\n  input C, in;\n  output [3:0] q;\n\n  DFF D1(.C(C), .D(in),   .q(q[0]));\n  DFF D2(.C(C), .D(q[0]), .q(q[1]));\n  DFF D3(.C(C), .D(q[1]), .q(q[2]));\n  DFF D4(.C(C), .D(q[2]), .q(q[3]));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là B. Thanh ghi dịch 4 bit vào nối tiếp ra song song."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1818,8 +1788,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module UP_COUNTER4B_RST_SP_UD(clk, rst, sp, count, ud);\n  input sp, clk, rst, ud;\n  output reg [3:0] count;\n\n  always @(posedge clk) begin\n    if (rst == 1)\n      count = 4'b0000;\n    else if (sp == 1)\n      if (ud == 1)\n        count = count + 1;\n      else\n        count = count - 1;\n    else\n      count = count;\n  end\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là D. Mạch đếm lên xuống 4 bit có điều khiển."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1862,8 +1831,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "module TFF(T, Q, QB, CLK);\n  input T, CLK;\n  output reg Q, QB;\n\n  always @(posedge CLK)\n    if (T == 1) begin\n      Q  = ~Q;\n      QB = ~QB;\n    end\nendmodule\n\nmodule COUNTER_TTF(clk, q);\n  input clk;\n  output [2:0] q;\n  wire qb1, qb2;\n\n  TFF tff1(.T(1'b1), .Q(q[0]), .QB(qb1), .CLK(clk));\n  TFF tff2(.T(1'b1), .Q(q[1]), .QB(qb2), .CLK(qb1));\n  TFF tff3(.T(1'b1), .Q(q[2]), .CLK(qb2));\nendmodule"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. Mạch đếm lên không đồng bộ 3 bit."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1949,8 +1917,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "always @(posedge clk)\n  if (rst == 1)\n    led = 8'b1000_0000;\n  else if (led == 8'b0000_0000)\n    led = 8'b1000_0000;\n  else\n    led = led >> 1;"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. Sáng dịch từ trái sang phải."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -1993,8 +1960,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "always @(posedge clk) begin\n  if (rst == 1)\n    led = 8'b1000_0001;\n  else begin\n    if (led == 8'b0000_0000)\n      led = 8'b1000_0001;\n    else begin\n      led[3:0] = led[3:0] << 1;\n      led[7:4] = led[7:4] >> 1;\n    end\n  end\nend"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. Sáng dịch từ ngoài vào trong."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -2037,8 +2003,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "always @(posedge clk)\n  if (rst == 1)\n    led = 8'b1000_0000;\n  else if (led == 8'b1111_1111)\n    led = 8'b0000_0000;\n  else\n    led = (led >> 1) + 8'b1000_0000;"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là B. Sáng dần từ trái sang phải."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -2081,8 +2046,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
         "code": "if (led == 8'b1111_1111)\n  led = 8'b0000_0000;\nelse begin\n  led[3:0] = led[3:0] << 1 + 4'b0001;\n  led[7:4] = led[7:4] >> 1 + 4'b1000;\nend"
       }
     ],
-    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt.",
-    "explanation": "Cần đọc đoạn code theo thứ tự thực thi, danh sách nhạy và kiểu gán. Đáp án đúng là A. Sáng dần từ ngoài vào trong."
+    "note": "Đã bổ sung khung code chữ trong câu hỏi để người học dễ đọc; không hiển thị lại ảnh code gốc để tránh rối mắt."
   },
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
@@ -2259,10 +2223,9 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
       }
     ],
     "answers": [
-      "B",
       "D"
     ],
-    "type": "multi",
+    "type": "single",
     "id": "main_278"
   },
   {
@@ -2337,4 +2300,5 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "type": "single",
     "id": "main_280"
   }
-]);
+]
+);

@@ -1,5 +1,6 @@
-// Question bank part 1/6 - generated from original script.js
-window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
+// Question bank questions-part-1 - cleaned and answer-audited
+window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
+[
   {
     "source": "Tổng hợp câu hỏi trắc nghiệm",
     "source_file": "TỔNG HỢP CÂU HỎI TRẮC NGHIỆM(1).pdf",
@@ -2017,4 +2018,5 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat([
     "type": "single",
     "id": "main_56"
   }
-]);
+]
+);
