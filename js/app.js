@@ -40,16 +40,16 @@ const SPECIAL_DEVICE_MESSAGES = {
   "LKQ-MR3IRDJA-KC4JTM60": {
     icon: "🐶",
     title: "cho tôi xin in4 em gái của bạn",
-    subtitle: "Để mở khóa website, hãy nhập câu xác nhận vui vẻ bên dưới.",
+    subtitle: "Để mở khóa website, hãy nhập một đường dẫn Facebook hợp lệ bên dưới.",
     effect: "congratulation",
     photo: "assets/special-device-photo-3.png",
     photoAlt: "Ảnh chúc mừng thiết bị đặc biệt thứ ba",
     unlockPrompt: {
-      label: "Nhập câu xác nhận",
-      placeholder: "Nhập: xin chào",
-      requiredText: "xin chào",
-      successMessage: "Đã xác nhận. Website được mở khóa cho thiết bị này.",
-      errorMessage: "Chưa đúng câu xác nhận nên chưa mở khóa được website."
+      label: "Nhập đường dẫn Facebook hợp lệ",
+      placeholder: "Ví dụ: https://www.facebook.com/ten-tai-khoan",
+      facebookUrl: true,
+      successMessage: "Đường dẫn Facebook hợp lệ. Website được mở khóa cho thiết bị này.",
+      errorMessage: "Vui lòng nhập một đường dẫn Facebook hợp lệ."
     }
   }
 };
@@ -953,14 +953,38 @@ function isSpecialPromptUnlocked() {
   }
 }
 
-function setSpecialPromptUnlocked() {
+function setSpecialPromptUnlocked(value = "") {
   try {
     localStorage.setItem(SPECIAL_PROMPT_UNLOCK_KEY, JSON.stringify({
       deviceId: getDeviceId(),
       ok: true,
+      value,
       confirmedAt: new Date().toISOString()
     }));
   } catch (_) {}
+}
+
+function normalizePotentialUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return "https://" + raw;
+}
+
+function isValidFacebookUrl(value) {
+  try {
+    const url = new URL(normalizePotentialUrl(value));
+    const protocolOk = url.protocol === "http:" || url.protocol === "https:";
+    const host = url.hostname.toLowerCase();
+    const hostOk =
+      host === "facebook.com" ||
+      host.endsWith(".facebook.com") ||
+      host === "fb.com" ||
+      host.endsWith(".fb.com");
+    return protocolOk && hostOk;
+  } catch (_) {
+    return false;
+  }
 }
 
 function maybeShowSpecialDeviceCelebration(force = false) {
@@ -1017,7 +1041,7 @@ function maybeShowSpecialDeviceCelebration(force = false) {
 
   overlay.innerHTML = `
     <div class="special-device-confetti">${particleHtml}</div>
-    <div class="special-device-card${config.photo ? " has-photo" : ""}${config.quiz ? " has-quiz" : ""}">
+    <div class="special-device-card${config.photo ? " has-photo" : ""}${config.quiz ? " has-quiz" : ""}${config.unlockPrompt ? " has-unlock" : ""}">
       <div class="special-device-main">
         <div class="special-device-icon" aria-hidden="true">${escapeHTML(config.icon || "🐶")}</div>
         <div class="special-device-copy">
@@ -1039,12 +1063,15 @@ function maybeShowSpecialDeviceCelebration(force = false) {
     const input = overlay.querySelector('[data-special-unlock-input]');
     const btn = overlay.querySelector('[data-special-unlock-btn]');
     const msg = overlay.querySelector('[data-special-unlock-message]');
-    const expected = String(config.unlockPrompt.requiredText || "").trim().toLowerCase();
-
     const submitUnlock = () => {
-      const value = String(input?.value || "").trim().toLowerCase();
-      if (value && value === expected) {
-        setSpecialPromptUnlocked();
+      const rawValue = String(input?.value || "").trim();
+      const valueForStore = normalizePotentialUrl(rawValue);
+      const valid = config.unlockPrompt.facebookUrl
+        ? isValidFacebookUrl(rawValue)
+        : rawValue.toLowerCase() === String(config.unlockPrompt.requiredText || "").trim().toLowerCase();
+
+      if (valid) {
+        setSpecialPromptUnlocked(valueForStore);
         if (msg) {
           msg.textContent = config.unlockPrompt.successMessage || "Đã xác nhận.";
           msg.className = "special-device-unlock-message ok";
@@ -1062,6 +1089,7 @@ function maybeShowSpecialDeviceCelebration(force = false) {
           msg.textContent = config.unlockPrompt.errorMessage || "Chưa đúng xác nhận.";
           msg.className = "special-device-unlock-message error";
         }
+        input?.focus();
       }
     };
 
@@ -1141,6 +1169,15 @@ function maybeShowSpecialDeviceCelebration(force = false) {
   }
 
   const close = () => {
+    if (config.unlockPrompt && !isSpecialPromptUnlocked()) {
+      const msg = overlay.querySelector('[data-special-unlock-message]');
+      if (msg) {
+        msg.textContent = config.unlockPrompt.errorMessage || "Vui lòng xác nhận để mở khóa website.";
+        msg.className = "special-device-unlock-message error";
+      }
+      overlay.querySelector('[data-special-unlock-input]')?.focus();
+      return;
+    }
     overlay.classList.add("closing");
     setTimeout(() => overlay.remove(), 280);
   };

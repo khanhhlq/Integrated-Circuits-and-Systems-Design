@@ -1897,3 +1897,95 @@ body.dark-mode .special-device-unlock-input {
   color: #f8fbff;
   background: rgba(15, 23, 42, .85);
 }
+
+
+/* V23: fixed layout for Facebook unlock special popup */
+.special-device-card.has-unlock {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(340px, 420px);
+  grid-template-rows: auto 1fr;
+  align-items: stretch;
+  gap: 20px;
+  max-width: min(980px, 96vw);
+  padding: 28px 58px 28px 28px;
+}
+
+.special-device-card.has-unlock .special-device-main {
+  grid-column: 1;
+  grid-row: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.special-device-card.has-unlock .special-device-copy {
+  min-width: 0;
+}
+
+.special-device-card.has-unlock .special-device-copy h2,
+.special-device-card.has-unlock h2 {
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1.05;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+.special-device-card.has-unlock .special-device-photo-wrap {
+  grid-column: 1;
+  grid-row: 2;
+  width: 100%;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.special-device-card.has-unlock .special-device-photo {
+  max-width: min(360px, 100%);
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+.special-device-card.has-unlock .special-device-unlock {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 100%;
+  margin-top: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 340px;
+}
+
+.special-device-card.has-unlock .special-device-close {
+  z-index: 4;
+}
+
+@media (max-width: 860px) {
+  .special-device-card.has-unlock {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    max-width: min(96vw, 680px);
+    padding: 24px;
+  }
+
+  .special-device-card.has-unlock .special-device-main,
+  .special-device-card.has-unlock .special-device-photo-wrap,
+  .special-device-card.has-unlock .special-device-unlock {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .special-device-card.has-unlock .special-device-copy h2,
+  .special-device-card.has-unlock h2 {
+    font-size: clamp(28px, 8vw, 42px);
+  }
+
+  .special-device-card.has-unlock .special-device-photo {
+    max-width: min(86vw, 420px);
+  }
+}
