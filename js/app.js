@@ -10,7 +10,17 @@ const THEME_STORAGE_KEY = "tkhts_theme_mode_v1";
 const PUBLIC_KEY_N = BigInt("0xab4c9775518e19d7f56d6e38a8e6f9c529181ff464964689e46a6babc525daef59ac4039399c8c70dd213d3cc9c71323caf31d9a4d3c0fafbde074f72c09e9231621fc7436bcb6facc80b1265da5d8b955167f4f26ec68167858e06f7fbcb1c5abc1d27482576c6c7baf1e3f52cb225d298d22b9310a8c52011d54a4051f4fd587712b276732b45a95d61865dfd18162c4a81a4d715ed1e35f5ec73e2acff30eeb73ffeabb57db44ce80c1aa1e16427f46f92aa6ee8a82ce737fd0b6513dccbb0957baa6d66b3e2c1293b12bb887a66b6f1a817857c17c09cc15851d74c2b297683c31b527f94a612ed792025b4a878c9e29204647e55e662c8821ab68e1e533");
 const PUBLIC_KEY_E = BigInt(65537);
 const RSA_KEY_BYTES = 256;
+
 const LICENSE_PRODUCT = "TKHTS-LKQ-24161276";
+const SPECIAL_DEVICE_MESSAGES = {
+  "LKQ-MR36KCTH-8H7GQTXG": {
+    icon: "🐶",
+    title: "con tuất đức mua hahaha",
+    subtitle: "Chúc mừng thiết bị này đã được ghi nhận!",
+    effect: "congratulation"
+  }
+};
+let specialDeviceCelebrationShown = false;
 let isAdmin = false;
 const DEFAULT_CORRECT = {};
 let savedCorrections = {};
@@ -853,6 +863,58 @@ function updateDeviceCodeUI() {
   });
 }
 
+function getSpecialDeviceConfig() {
+  return SPECIAL_DEVICE_MESSAGES[getDeviceId()] || null;
+}
+
+function maybeShowSpecialDeviceCelebration(force = false) {
+  const config = getSpecialDeviceConfig();
+  if (!config) return;
+  if (specialDeviceCelebrationShown && !force) return;
+  specialDeviceCelebrationShown = true;
+
+  const oldOverlay = document.querySelector(".special-device-overlay");
+  if (oldOverlay) oldOverlay.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "special-device-overlay";
+  overlay.setAttribute("role", "status");
+  overlay.setAttribute("aria-live", "polite");
+
+  const particles = ["🎉", "✨", "🎊", "🐶", "🦴", "⭐", "🥳", "🐾"];
+  const particleHtml = Array.from({ length: 34 }, (_, i) => {
+    const icon = particles[i % particles.length];
+    const left = Math.round((i * 29) % 100);
+    const delay = (i % 9) * 0.12;
+    const duration = 2.3 + (i % 5) * 0.25;
+    const size = 18 + (i % 4) * 6;
+    return `<span style="left:${left}%;animation-delay:${delay}s;animation-duration:${duration}s;font-size:${size}px">${icon}</span>`;
+  }).join("");
+
+  overlay.innerHTML = `
+    <div class="special-device-confetti">${particleHtml}</div>
+    <div class="special-device-card">
+      <div class="special-device-icon" aria-hidden="true">${escapeHTML(config.icon || "🐶")}</div>
+      <div>
+        <p class="special-device-kicker">CONGRATULATIONS</p>
+        <h2>${escapeHTML(config.title || "")}</h2>
+        <p>${escapeHTML(config.subtitle || "")}</p>
+      </div>
+      <button type="button" class="special-device-close" aria-label="Đóng thông báo">×</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const close = () => {
+    overlay.classList.add("closing");
+    setTimeout(() => overlay.remove(), 280);
+  };
+  overlay.querySelector(".special-device-close")?.addEventListener("click", close);
+  setTimeout(close, 5200);
+}
+
+
 function canonicalKey(str) {
   return String(str || "").trim();
 }
@@ -1005,8 +1067,10 @@ function activateLicense() {
     return;
   }
   localStorage.setItem(LICENSE_STORAGE_KEY, JSON.stringify({ key, deviceId: getDeviceId(), activatedAt: new Date().toISOString() }));
-  showLicenseMessage("Kích hoạt thành công. Bạn có thể sử dụng website trên thiết bị này.", "ok");
+  const special = getSpecialDeviceConfig();
+  showLicenseMessage(special ? `${special.icon || "🐶"} ${special.title}` : "Kích hoạt thành công. Bạn có thể sử dụng website trên thiết bị này.", "ok");
   unlockApp("license");
+  maybeShowSpecialDeviceCelebration(true);
 }
 
 function restoreAdminSession() {
@@ -1022,6 +1086,9 @@ function unlockApp(mode = "license") {
   document.body.classList.add("license-unlocked");
   updateLicenseStatus(mode);
   updateAdminUI();
+  if (canUseApp() || isAdmin) {
+    setTimeout(() => maybeShowSpecialDeviceCelebration(false), 260);
+  }
 }
 
 function showLicenseGate(message, isError = false) {
@@ -1040,7 +1107,8 @@ function updateLicenseStatus(mode) {
     el.textContent = "Admin đang đăng nhập";
     el.classList.add("admin");
   } else if (canUseApp()) {
-    el.textContent = "Đã kích hoạt 1 thiết bị";
+    const special = getSpecialDeviceConfig();
+    el.textContent = special ? `${special.icon || "🐶"} ${special.title}` : "Đã kích hoạt 1 thiết bị";
     el.classList.add("active");
   } else {
     el.textContent = "Chưa kích hoạt";
