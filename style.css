@@ -1818,3 +1818,82 @@ body.dark-mode .special-device-card p:last-child {
   30% { filter: brightness(1.12); }
   55% { filter: brightness(.96); }
 }
+
+
+/* V22: special safe unlock prompt */
+.special-device-unlock {
+  width: 100%;
+  margin-top: 4px;
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255,255,255,.72);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.92), 0 10px 28px rgba(15,23,42,.08);
+}
+
+.special-device-unlock-label {
+  display: block;
+  margin: 4px 0 8px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.special-device-unlock-input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid rgba(37, 99, 235, .25);
+  border-radius: 14px;
+  font: inherit;
+  font-weight: 700;
+  outline: none;
+  background: rgba(255,255,255,.92);
+  color: #0f172a;
+}
+
+.special-device-unlock-input:focus {
+  border-color: rgba(37, 99, 235, .75);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, .13);
+}
+
+.special-device-unlock-btn {
+  margin-top: 12px;
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  padding: 13px 16px;
+  cursor: pointer;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(135deg, #2563eb, #16a34a);
+  box-shadow: 0 12px 26px rgba(37, 99, 235, .22);
+}
+
+.special-device-unlock-message {
+  margin: 12px 0 0;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.special-device-unlock-message.ok {
+  color: #047857;
+}
+
+.special-device-unlock-message.error {
+  color: #b91c1c;
+}
+
+.dark-mode .special-device-unlock,
+body.dark-mode .special-device-unlock {
+  background: rgba(15, 23, 42, .6);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 10px 28px rgba(0,0,0,.28);
+}
+
+.dark-mode .special-device-unlock-label,
+body.dark-mode .special-device-unlock-label {
+  color: #f8fbff;
+}
+
+.dark-mode .special-device-unlock-input,
+body.dark-mode .special-device-unlock-input {
+  color: #f8fbff;
+  background: rgba(15, 23, 42, .85);
+}
