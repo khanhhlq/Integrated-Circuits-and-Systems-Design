@@ -1438,6 +1438,63 @@ html.dark-mode .inline-code {
   animation: specialPop .72s cubic-bezier(.2, 1.4, .35, 1) both;
 }
 
+.special-device-card.has-photo {
+  max-width: min(920px, 96vw);
+  align-items: stretch;
+}
+
+.special-device-main {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.special-device-copy {
+  min-width: 0;
+}
+
+.special-device-photo-wrap {
+  flex: 0 0 min(280px, 34vw);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.special-device-photo {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  border-radius: 24px;
+  background: rgba(255,255,255,.45);
+  box-shadow: 0 16px 50px rgba(15, 23, 42, .2), inset 0 0 0 1px rgba(255,255,255,.8);
+  animation: dogWiggle 1.6s ease-in-out infinite;
+}
+
+@media (max-width: 760px) {
+  .special-device-card.has-photo {
+    flex-direction: column;
+    padding-right: 24px;
+  }
+  .special-device-main {
+    width: 100%;
+  }
+  .special-device-photo-wrap {
+    width: 100%;
+    flex-basis: auto;
+  }
+  .special-device-photo {
+    max-width: min(82vw, 320px);
+  }
+  .special-device-close {
+    top: 10px;
+    right: 10px;
+  }
+}
+
 .dark-mode .special-device-card,
 body.dark-mode .special-device-card {
   color: #f8fbff;

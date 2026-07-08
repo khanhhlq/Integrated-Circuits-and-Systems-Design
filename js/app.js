@@ -17,8 +17,16 @@ const SPECIAL_DEVICE_MESSAGES = {
     icon: "🐶",
     title: "con tuất đức mua hahaha",
     subtitle: "Chúc mừng thiết bị này đã được ghi nhận!",
-    effect: "congratulation"
+    effect: "congratulation",
+    photo: "assets/special-device-dog-photo.png",
+    photoAlt: "Ảnh chúc mừng thiết bị đặc biệt"
   }
+};
+const DEFAULT_DEVICE_MESSAGE = {
+  icon: "🐶",
+  title: "Xin chàooooo!",
+  subtitle: "Chúc mừng bạn đã vào website luyện thi!",
+  effect: "congratulation"
 };
 let specialDeviceCelebrationShown = false;
 let isAdmin = false;
@@ -152,6 +160,15 @@ function bindEvents() {
       alert("Không bắt đầu được bài làm. Lỗi: " + (err && err.message ? err.message : err));
     }
   });
+  $("random32Btn")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    try {
+      startRandom32Exam();
+    } catch (err) {
+      console.error(err);
+      alert("Không tạo được đề random 32 câu. Lỗi: " + (err && err.message ? err.message : err));
+    }
+  });
   $("reviewBankBtn").addEventListener("click", () => showView("bankView"));
   $("theoryBtn")?.addEventListener("click", () => { renderTheoryView(); showView("theoryView"); });
   $("closeTheoryBtn")?.addEventListener("click", () => showView("setupView"));
@@ -222,6 +239,24 @@ function getFilteredPool(options = {}) {
     pool = pool.filter(q => q.chapter === chapter);
   }
   return pool;
+}
+
+function startRandom32Exam() {
+  const pool = getFilteredPool();
+  if (!pool.length) {
+    alert("Không có câu hỏi phù hợp với nguồn/chương hiện tại.");
+    return;
+  }
+  const count = Math.min(32, pool.length);
+  const timeLimitMin = parseInt($("timeLimit")?.value || "0", 10);
+  startExam({
+    pool,
+    count,
+    shuffleQuestions: true,
+    shuffleOptions: false,
+    instantFeedback: true,
+    timeLimitMin
+  });
 }
 
 function startExam(configOverride = null) {
@@ -864,7 +899,7 @@ function updateDeviceCodeUI() {
 }
 
 function getSpecialDeviceConfig() {
-  return SPECIAL_DEVICE_MESSAGES[getDeviceId()] || null;
+  return SPECIAL_DEVICE_MESSAGES[getDeviceId()] || DEFAULT_DEVICE_MESSAGE;
 }
 
 function maybeShowSpecialDeviceCelebration(force = false) {
@@ -891,15 +926,23 @@ function maybeShowSpecialDeviceCelebration(force = false) {
     return `<span style="left:${left}%;animation-delay:${delay}s;animation-duration:${duration}s;font-size:${size}px">${icon}</span>`;
   }).join("");
 
+  const photoHtml = config.photo ? `
+      <div class="special-device-photo-wrap">
+        <img class="special-device-photo" src="${escapeHTML(config.photo)}" alt="${escapeHTML(config.photoAlt || config.title || "Hình minh họa")}">
+      </div>` : "";
+
   overlay.innerHTML = `
     <div class="special-device-confetti">${particleHtml}</div>
-    <div class="special-device-card">
-      <div class="special-device-icon" aria-hidden="true">${escapeHTML(config.icon || "🐶")}</div>
-      <div>
-        <p class="special-device-kicker">CONGRATULATIONS</p>
-        <h2>${escapeHTML(config.title || "")}</h2>
-        <p>${escapeHTML(config.subtitle || "")}</p>
+    <div class="special-device-card${config.photo ? " has-photo" : ""}">
+      <div class="special-device-main">
+        <div class="special-device-icon" aria-hidden="true">${escapeHTML(config.icon || "🐶")}</div>
+        <div class="special-device-copy">
+          <p class="special-device-kicker">CONGRATULATIONS</p>
+          <h2>${escapeHTML(config.title || "")}</h2>
+          <p>${escapeHTML(config.subtitle || "")}</p>
+        </div>
       </div>
+      ${photoHtml}
       <button type="button" class="special-device-close" aria-label="Đóng thông báo">×</button>
     </div>
   `;
