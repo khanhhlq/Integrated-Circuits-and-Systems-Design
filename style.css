@@ -1989,3 +1989,19 @@ body.dark-mode .special-device-unlock-input {
     max-width: min(86vw, 420px);
   }
 }
+
+
+/* V24: strict Facebook unlock guard */
+.special-device-unlock-input.attention {
+  animation: unlockInputShake .42s ease-in-out 1;
+  border-color: rgba(239, 68, 68, .85) !important;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, .16) !important;
+}
+
+@keyframes unlockInputShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}

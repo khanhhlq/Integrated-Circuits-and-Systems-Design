@@ -6,7 +6,7 @@ const ADMIN_SESSION_KEY = "lkq_admin_session_v2";
 const ANSWER_CORRECTION_KEY = "tkhts_answer_corrections_v1";
 const AI_NOTE_STORAGE_KEY = "tkhts_ai_notes_v1";
 const THEME_STORAGE_KEY = "tkhts_theme_mode_v1";
-const SPECIAL_PROMPT_UNLOCK_KEY = "tkhts_special_prompt_unlock_v1";
+const SPECIAL_PROMPT_UNLOCK_KEY = "tkhts_special_prompt_unlock_v2_fb";
 // Chỉ chứa PUBLIC KEY để xác thực chữ ký license. Không chứa mật khẩu admin, private key hoặc thuật toán tạo key.
 const PUBLIC_KEY_N = BigInt("0xab4c9775518e19d7f56d6e38a8e6f9c529181ff464964689e46a6babc525daef59ac4039399c8c70dd213d3cc9c71323caf31d9a4d3c0fafbde074f72c09e9231621fc7436bcb6facc80b1265da5d8b955167f4f26ec68167858e06f7fbcb1c5abc1d27482576c6c7baf1e3f52cb225d298d22b9310a8c52011d54a4051f4fd587712b276732b45a95d61865dfd18162c4a81a4d715ed1e35f5ec73e2acff30eeb73ffeabb57db44ce80c1aa1e16427f46f92aa6ee8a82ce737fd0b6513dccbb0957baa6d66b3e2c1293b12bb887a66b6f1a817857c17c09cc15851d74c2b297683c31b527f94a612ed792025b4a878c9e29204647e55e662c8821ab68e1e533");
 const PUBLIC_KEY_E = BigInt(65537);
@@ -946,8 +946,13 @@ function isSpecialPromptDevice() {
 function isSpecialPromptUnlocked() {
   if (!isSpecialPromptDevice()) return true;
   try {
+    const config = SPECIAL_DEVICE_MESSAGES[getDeviceId()];
     const saved = JSON.parse(localStorage.getItem(SPECIAL_PROMPT_UNLOCK_KEY) || "{}");
-    return saved && saved.deviceId === getDeviceId() && saved.ok === true;
+    if (!(saved && saved.deviceId === getDeviceId() && saved.ok === true)) return false;
+    if (config?.unlockPrompt?.facebookUrl) {
+      return isValidFacebookUrl(saved.value || "");
+    }
+    return true;
   } catch (_) {
     return false;
   }
@@ -1172,10 +1177,13 @@ function maybeShowSpecialDeviceCelebration(force = false) {
     if (config.unlockPrompt && !isSpecialPromptUnlocked()) {
       const msg = overlay.querySelector('[data-special-unlock-message]');
       if (msg) {
-        msg.textContent = config.unlockPrompt.errorMessage || "Vui lòng xác nhận để mở khóa website.";
+        msg.textContent = config.unlockPrompt.errorMessage || "Vui lòng nhập đường dẫn Facebook hợp lệ để mở khóa website.";
         msg.className = "special-device-unlock-message error";
       }
-      overlay.querySelector('[data-special-unlock-input]')?.focus();
+      const input = overlay.querySelector('[data-special-unlock-input]');
+      input?.classList.add("attention");
+      setTimeout(() => input?.classList.remove("attention"), 600);
+      input?.focus();
       return;
     }
     overlay.classList.add("closing");
