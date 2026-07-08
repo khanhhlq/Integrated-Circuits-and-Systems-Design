@@ -20,6 +20,21 @@ const SPECIAL_DEVICE_MESSAGES = {
     effect: "congratulation",
     photo: "assets/special-device-dog-photo.png",
     photoAlt: "Ảnh chúc mừng thiết bị đặc biệt"
+  },
+  "LKQ-MR9Q7DVI-57ELZZMH": {
+    icon: "🐶",
+    title: "con tuất đức mua hahaha",
+    subtitle: "Chúc mừng thiết bị này đã được ghi nhận!",
+    effect: "congratulation",
+    photo: "assets/special-device-dog-photo-2.png",
+    photoAlt: "Ảnh chúc mừng thiết bị đặc biệt thứ hai",
+    quiz: {
+      question: "Bạn có thấy cánh cửa này không?",
+      yesText: "Có",
+      noText: "Không",
+      message: "Liệu bạn có thấy được ánh bình minh rọi vào buổi sáng mỗi khi thức dậy sau cánh cửa đó ?",
+      doorImage: "assets/door-quiz.svg"
+    }
   }
 };
 const DEFAULT_DEVICE_MESSAGE = {
@@ -925,15 +940,26 @@ function maybeShowSpecialDeviceCelebration(force = false) {
     const size = 18 + (i % 4) * 6;
     return `<span style="left:${left}%;animation-delay:${delay}s;animation-duration:${duration}s;font-size:${size}px">${icon}</span>`;
   }).join("");
-
   const photoHtml = config.photo ? `
       <div class="special-device-photo-wrap">
         <img class="special-device-photo" src="${escapeHTML(config.photo)}" alt="${escapeHTML(config.photoAlt || config.title || "Hình minh họa")}">
       </div>` : "";
 
+  const quizHtml = config.quiz ? `
+      <div class="special-device-quiz" data-special-quiz>
+        <div class="special-device-quiz-header">MINI QUIZ</div>
+        <img class="special-device-door-image" src="${escapeHTML(config.quiz.doorImage || "")}" alt="Hình ảnh cánh cửa">
+        <p class="special-device-quiz-question">${escapeHTML(config.quiz.question || "")}</p>
+        <div class="special-device-quiz-actions">
+          <button type="button" class="special-device-quiz-btn yes" data-quiz-yes>${escapeHTML(config.quiz.yesText || "Có")}</button>
+          <button type="button" class="special-device-quiz-btn no" data-quiz-no>${escapeHTML(config.quiz.noText || "Không")}</button>
+        </div>
+        <p class="special-device-quiz-answer hidden" data-quiz-answer>${escapeHTML(config.quiz.message || "")}</p>
+      </div>` : "";
+
   overlay.innerHTML = `
     <div class="special-device-confetti">${particleHtml}</div>
-    <div class="special-device-card${config.photo ? " has-photo" : ""}">
+    <div class="special-device-card${config.photo ? " has-photo" : ""}${config.quiz ? " has-quiz" : ""}">
       <div class="special-device-main">
         <div class="special-device-icon" aria-hidden="true">${escapeHTML(config.icon || "🐶")}</div>
         <div class="special-device-copy">
@@ -943,11 +969,44 @@ function maybeShowSpecialDeviceCelebration(force = false) {
         </div>
       </div>
       ${photoHtml}
+      ${quizHtml}
       <button type="button" class="special-device-close" aria-label="Đóng thông báo">×</button>
     </div>
   `;
 
   document.body.appendChild(overlay);
+
+  if (config.quiz) {
+    const yesBtn = overlay.querySelector('[data-quiz-yes]');
+    const noBtn = overlay.querySelector('[data-quiz-no]');
+    const answer = overlay.querySelector('[data-quiz-answer]');
+    const quizBox = overlay.querySelector('[data-special-quiz]');
+    const makeNoUnclickable = (event) => {
+      event?.preventDefault?.();
+      if (!noBtn) return;
+      noBtn.classList.remove('wiggle');
+      // force reflow to restart animation
+      void noBtn.offsetWidth;
+      noBtn.classList.add('wiggle');
+      const parent = noBtn.parentElement;
+      if (!parent) return;
+      const btnWidth = noBtn.offsetWidth || 110;
+      const parentWidth = parent.clientWidth || 260;
+      const current = parseFloat(noBtn.dataset.shift || '0');
+      let next = current === 0 ? Math.max(28, parentWidth - btnWidth - 12) : 0;
+      noBtn.dataset.shift = String(next);
+      noBtn.style.transform = `translateX(${next}px)`;
+    };
+    yesBtn?.addEventListener('click', () => {
+      answer?.classList.remove('hidden');
+      yesBtn.disabled = true;
+      if (noBtn) noBtn.disabled = true;
+      quizBox?.classList.add('answered');
+    });
+    ['click','pointerdown','mouseenter','touchstart','focus'].forEach(evt => {
+      noBtn?.addEventListener(evt, makeNoUnclickable);
+    });
+  }
 
   const close = () => {
     overlay.classList.add("closing");
