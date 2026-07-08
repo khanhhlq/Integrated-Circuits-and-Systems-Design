@@ -17170,21 +17170,21 @@ window.QUESTION_BANK = [
       {
         "id": "C",
         "text": "Module không thể chứa định nghĩa module khác",
-        "correct": true
+        "correct": false
       },
       {
         "id": "D",
         "text": "Không thể khởi tạo nhiều hơn một module",
-        "correct": false
+        "correct": true
       }
     ],
     "answers": [
       "B",
-      "C"
+      "D"
     ],
     "type": "multi",
     "id": "online2_21",
-    "aiNote": "Đáp án B và D là các phát biểu sai.\nTrong Verilog, mỗi lần instantiate module sẽ tạo một bản sao phần cứng riêng sau tổng hợp.\nMột module cũng có thể được khởi tạo nhiều lần; vì vậy nói chỉ có một bản sao hoặc không thể khởi tạo nhiều module là sai."
+    "aiNote": "Đáp án B và D đúng vì đây là hai phát biểu sai về module Verilog.\nB sai vì khi gọi/khởi tạo một module nhiều lần, sau tổng hợp sẽ tạo ra nhiều instance phần cứng tương ứng, không phải chỉ một bản sao phần cứng.\nD sai vì hoàn toàn có thể khởi tạo nhiều hơn một module hoặc nhiều instance trong một thiết kế Verilog.\nA không sai vì khởi tạo X 4 lần có thể tạo 4 bản sao/instance của module X.\nC không chọn sai theo phạm vi đề vì Verilog chuẩn không cho định nghĩa module lồng bên trong một module khác."
   },
   {
     "source": "KIỂM TRA ONLINE LẦN 2 - đã dịch tiếng Việt",
