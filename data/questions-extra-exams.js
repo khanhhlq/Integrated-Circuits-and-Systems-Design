@@ -27,7 +27,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       },
       {
         "id": "D",
-        "text": "Mạng Look-Up Table (LUT)",
+        "text": "Mạng Look-Up",
         "correct": true
       }
     ],
@@ -932,7 +932,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     "chapter": "ĐỀ THI CUỐI KỲ 32 CÂU/60 PHÚT - Đề bổ sung",
     "section": "Đề bổ sung",
     "question_no": "Câu 26",
-    "question": "Mô tả nào đúng cho mạch giải đa hợp 1 sang 2 với output wire [1:0] o?",
+    "question": "Mô tả nào tiếp theo sau đây đúng cho mạch giải đa hợp 1 sang 2 với output wire [1:0] o?",
     "options": [
       {
         "id": "A",
@@ -962,10 +962,11 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     "id": "exam01_26",
     "codeBlocks": [
       {
-        "title": "Đoạn code trong đề",
+        "title": "Module đã cho",
         "code": "module Mux(input wire i, input wire s, output wire [1:0] o);"
       }
-    ]
+    ],
+    "aiNote": "Đáp án C đúng vì đề khai báo ngõ ra o là output wire [1:0], nên có thể dùng continuous assignment bằng assign.\nMạch giải đa hợp 1 sang 2 đưa input i ra một trong hai ngõ o[0] hoặc o[1] theo tín hiệu chọn s.\nC dùng assign để tạo hai nhánh: o[0] = i & s và o[1] = i & (~s).\nB sai trong ngữ cảnh output wire vì gán trong always cần output reg/logic, còn A sai cú pháp và dùng phép chia không phù hợp."
   },
   {
     "source": "ĐỀ THI CUỐI KỲ 32 CÂU/60 PHÚT - Đề bổ sung",
@@ -2457,7 +2458,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     "chapter": "KIỂM TRA ONLINE LẦN 2 - đã dịch tiếng Việt",
     "section": "Đề bổ sung",
     "question_no": "Câu 13",
-    "question": "Những phát biểu nào được phép trong procedural block theo đề?",
+    "question": "Nếu A, B, C và D lần lượt là các biến reg, reg, integer và wire, mỗi biến có kích thước [7:0], những phát biểu nào được phép trong procedural block?",
     "options": [
       {
         "id": "A",
@@ -2476,7 +2477,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
       },
       {
         "id": "D",
-        "text": "C = A + B;",
+        "text": "C = A + D;",
         "correct": true
       }
     ],

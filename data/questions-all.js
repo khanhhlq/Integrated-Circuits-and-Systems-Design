@@ -14144,27 +14144,27 @@ window.QUESTION_BANK = [
     "options": [
       {
         "id": "A",
-        "text": "assign state_next = {Inputs, state_reg[6:0]};",
+        "text": "assign state_next = (Inputs, state_reg[6:0])",
         "correct": false
       },
       {
         "id": "B",
-        "text": "assign state_next = {Inputs, state_reg[7:1]};",
+        "text": "assign state_next = {Inputs, state_reg[7:1]}",
         "correct": true
       },
       {
         "id": "C",
-        "text": "always @(posedge Clk) state_next = {Inputs, state_reg[7:1]};",
+        "text": "always (posedge Clk) state_next = {Inputs, state_reg[7:1]}",
         "correct": false
       },
       {
         "id": "D",
-        "text": "always @(posedge Clk) state_next = (Inputs, state_reg[7:1]);",
+        "text": "always (posedge Clk) state_next = (Inputs, state_reg[7:1])",
         "correct": false
       },
       {
         "id": "E",
-        "text": "always @(posedge Clk) state_next = (Inputs >> 1);",
+        "text": "always (posedge Clk) state_next = (Inputs >> 1)",
         "correct": false
       }
     ],
@@ -14179,7 +14179,7 @@ window.QUESTION_BANK = [
         "caption": "Sơ đồ mạch ghi dịch vào nối tiếp ra nối tiếp dùng cho câu 29–30"
       }
     ],
-    "aiNote": "Đáp án B đúng vì next-state của thanh ghi dịch phải sẽ đưa Inputs vào bit cao, còn state_reg[7:1] dịch xuống các bit thấp.\nNext State Logic nên viết bằng assign tổ hợp, không đặt trong always cạnh clock.\nDo đề gốc có hình ảnh nên cần đối chiếu lại hướng dịch trong sơ đồ.\nCần kiểm tra lại đáp án."
+    "aiNote": "Đáp án B đúng vì khối Next State Logic là logic tổ hợp nên dùng assign để tạo state_next từ input nối tiếp và trạng thái hiện tại.\nCú pháp nối vector đúng là dùng ngoặc nhọn: {Inputs, state_reg[7:1]}.\nA và D dùng ngoặc tròn nên không phải phép nối vector đúng.\nC và E dùng dạng always thiếu ký tự @ và cũng không phù hợp với khối cập nhật trạng thái kế tiếp theo đề."
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -14192,27 +14192,27 @@ window.QUESTION_BANK = [
     "options": [
       {
         "id": "A",
-        "text": "assign state_reg = state_next",
+        "text": "assign state_reg=state_next",
         "correct": false
       },
       {
         "id": "B",
-        "text": "always @(posedge Clk) state_reg = state_next",
+        "text": "always (posedge Clk) state_reg=state_next",
         "correct": false
       },
       {
         "id": "C",
-        "text": "always @(posedge Clk) state_reg <= state_next",
+        "text": "always @(posedge Clk) state_reg=state_next",
         "correct": true
       },
       {
         "id": "D",
-        "text": "always @(posedge Clk) if (reset) state_reg = state_next",
+        "text": "always @(posedge Clk) if (reset) state_reg=state_next",
         "correct": false
       },
       {
         "id": "E",
-        "text": "always @(posedge Clk, reset) if (reset) state_reg = state_next",
+        "text": "always (posedge Clk, reset) if (reset) state_reg=state_next",
         "correct": false
       }
     ],
@@ -14227,7 +14227,7 @@ window.QUESTION_BANK = [
         "caption": "Sơ đồ mạch ghi dịch vào nối tiếp ra nối tiếp dùng cho câu 29–30"
       }
     ],
-    "aiNote": "Khối đồng bộ phải cập nhật trạng thái tại cạnh lên của clock, nên dùng always @(posedge Clk).\nstate_reg là thanh ghi trạng thái, nhận giá trị kế tiếp từ state_next sau mỗi xung clock.\nTrong mạch tuần tự đồng bộ, nên dùng phép gán không chặn <= để các FF cập nhật đồng thời.\nA là gán liên tục nên không tạo FF; B dùng = không chuẩn cho mạch tuần tự."
+    "aiNote": "Đáp án C đúng vì khối đồng bộ phải cập nhật state_reg tại cạnh lên của clock bằng dạng always @(posedge Clk).\nA là gán liên tục nên không mô tả thanh ghi đồng bộ.\nB và E thiếu ký tự @ trong event control nên không đúng cú pháp Verilog.\nD chỉ cập nhật khi reset=1 nên không phải khối đồng bộ cập nhật trạng thái bình thường.\nTrong thiết kế thực tế thường ưu tiên dùng <= cho thanh ghi, nhưng theo các lựa chọn trong đề thì C là đáp án đúng."
   },
   {
     "source": "Đề thi cuối học kỳ 2 năm học 2023–2024",
@@ -14288,7 +14288,7 @@ window.QUESTION_BANK = [
     "options": [
       {
         "id": "A",
-        "text": "always @(posedge clk or posedge reset)\n  if (reset) y <= 0;\n  else y <= y + 1;",
+        "text": "always @(posedge clk, posedge reset)\n  if (reset) y <= 0;\n  else y <= y + 1;",
         "correct": false
       },
       {
@@ -14351,7 +14351,7 @@ window.QUESTION_BANK = [
       },
       {
         "id": "D",
-        "text": "Mạng Look-Up Table (LUT)",
+        "text": "Mạng Look-Up",
         "correct": true
       }
     ],
@@ -15281,7 +15281,7 @@ window.QUESTION_BANK = [
     "chapter": "ĐỀ THI CUỐI KỲ 32 CÂU/60 PHÚT - Đề bổ sung",
     "section": "Đề bổ sung",
     "question_no": "Câu 26",
-    "question": "Mô tả nào đúng cho mạch giải đa hợp 1 sang 2?",
+    "question": "Mô tả nào tiếp theo sau đây đúng cho mạch giải đa hợp 1 sang 2 với output wire [1:0] o?",
     "options": [
       {
         "id": "A",
@@ -15291,12 +15291,12 @@ window.QUESTION_BANK = [
       {
         "id": "B",
         "text": "always @(i,s) if (s) o[0]=i; else o[1]=i;",
-        "correct": true
+        "correct": false
       },
       {
         "id": "C",
         "text": "assign o[0]=i&s; assign o[1]=i&(~s);",
-        "correct": false
+        "correct": true
       },
       {
         "id": "D",
@@ -15305,17 +15305,17 @@ window.QUESTION_BANK = [
       }
     ],
     "answers": [
-      "B"
+      "C"
     ],
     "type": "single",
     "id": "exam01_26",
     "codeBlocks": [
       {
         "title": "Module đã cho",
-        "code": "module deMux(input wire i, input wire s, output reg [1:0] o);"
+        "code": "module Mux(input wire i, input wire s, output wire [1:0] o);"
       }
     ],
-    "aiNote": "Đáp án C đúng vì demux 1 sang 2 có thể mô tả bằng hai phép gán liên tục.\no[0] nhận i khi s=1, còn o[1] nhận i khi s=0 theo biểu thức đã cho trong đáp án.\nCác phương án always gán cho output wire hoặc dùng toán tử / đều không phù hợp."
+    "aiNote": "Đáp án C đúng vì đề khai báo ngõ ra o là output wire [1:0], nên có thể dùng continuous assignment bằng assign.\nMạch giải đa hợp 1 sang 2 đưa input i ra một trong hai ngõ o[0] hoặc o[1] theo tín hiệu chọn s.\nC dùng assign để tạo hai nhánh: o[0] = i & s và o[1] = i & (~s).\nB sai trong ngữ cảnh output wire vì gán trong always cần output reg/logic, còn A sai cú pháp và dùng phép chia không phù hợp."
   },
   {
     "source": "ĐỀ THI CUỐI KỲ 32 CÂU/60 PHÚT - Đề bổ sung",
@@ -16846,7 +16846,7 @@ window.QUESTION_BANK = [
     "chapter": "KIỂM TRA ONLINE LẦN 2 - đã dịch tiếng Việt",
     "section": "Đề bổ sung",
     "question_no": "Câu 13",
-    "question": "Những phát biểu nào được phép trong procedural block theo đề?",
+    "question": "Nếu A, B, C và D lần lượt là các biến reg, reg, integer và wire, mỗi biến có kích thước [7:0], những phát biểu nào được phép trong procedural block?",
     "options": [
       {
         "id": "A",
@@ -16865,7 +16865,7 @@ window.QUESTION_BANK = [
       },
       {
         "id": "D",
-        "text": "C = A + B;",
+        "text": "C = A + D;",
         "correct": true
       }
     ],
@@ -16875,7 +16875,7 @@ window.QUESTION_BANK = [
     ],
     "type": "multi",
     "id": "online2_13",
-    "aiNote": "Đáp án C và D đúng vì trong procedural block có thể gán cho biến reg/integer.\nB và C trong đề tương ứng các biến có kiểu cho phép nhận gán thủ tục.\nKhông được gán procedural trực tiếp cho wire, nên các lựa chọn có D ở vế trái sẽ sai nếu D là wire."
+    "aiNote": "Đáp án C và D đúng vì trong procedural block chỉ được gán trực tiếp cho các biến procedural như reg/integer/logic.\nC đúng vì vế trái là B[3:0], mà B là biến kiểu reg nên có thể nhận gán trong always/initial.\nD đúng vì vế trái là C, mà C là integer nên cũng có thể nhận gán trong procedural block; D là wire nhưng chỉ được đọc ở vế phải.\nA và B sai vì đều gán trực tiếp vào D; nếu D là wire thì không được gán trong procedural block, mà phải dùng assign hoặc nối qua cổng module."
   },
   {
     "source": "KIỂM TRA ONLINE LẦN 2 - đã dịch tiếng Việt",
