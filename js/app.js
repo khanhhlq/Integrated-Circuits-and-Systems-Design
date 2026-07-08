@@ -15,7 +15,7 @@ const LICENSE_PRODUCT = "TKHTS-LKQ-24161276";
 const SPECIAL_DEVICE_MESSAGES = {
   "LKQ-MR36KCTH-8H7GQTXG": {
     icon: "🐶",
-    title: "con tuất đức mua hahaha",
+    title: "con tuất kỳ muahahahah",
     subtitle: "Chúc mừng thiết bị này đã được ghi nhận!",
     effect: "congratulation",
     photo: "assets/special-device-dog-photo.png",
@@ -23,7 +23,7 @@ const SPECIAL_DEVICE_MESSAGES = {
   },
   "LKQ-MR9Q7DVI-57ELZZMH": {
     icon: "🐶",
-    title: "con tuất đức mua hahaha",
+    title: "con tuất kỳ muahahahah",
     subtitle: "Chúc mừng thiết bị này đã được ghi nhận!",
     effect: "congratulation",
     photo: "assets/special-device-dog-photo-2.png",
@@ -948,7 +948,10 @@ function maybeShowSpecialDeviceCelebration(force = false) {
   const quizHtml = config.quiz ? `
       <div class="special-device-quiz" data-special-quiz>
         <div class="special-device-quiz-header">MINI QUIZ</div>
-        <img class="special-device-door-image" src="${escapeHTML(config.quiz.doorImage || "")}" alt="Hình ảnh cánh cửa">
+        <div class="special-device-door-stage">
+          <div class="special-device-sunrise" aria-hidden="true"></div>
+          <img class="special-device-door-image" src="${escapeHTML(config.quiz.doorImage || "")}" alt="Hình ảnh cánh cửa">
+        </div>
         <p class="special-device-quiz-question">${escapeHTML(config.quiz.question || "")}</p>
         <div class="special-device-quiz-actions">
           <button type="button" class="special-device-quiz-btn yes" data-quiz-yes>${escapeHTML(config.quiz.yesText || "Có")}</button>
@@ -981,31 +984,67 @@ function maybeShowSpecialDeviceCelebration(force = false) {
     const noBtn = overlay.querySelector('[data-quiz-no]');
     const answer = overlay.querySelector('[data-quiz-answer]');
     const quizBox = overlay.querySelector('[data-special-quiz]');
-    const makeNoUnclickable = (event) => {
+    const moveNoButton = (event) => {
       event?.preventDefault?.();
-      if (!noBtn) return;
+      if (!noBtn || noBtn.disabled) return;
       noBtn.classList.remove('wiggle');
-      // force reflow to restart animation
       void noBtn.offsetWidth;
       noBtn.classList.add('wiggle');
+
       const parent = noBtn.parentElement;
       if (!parent) return;
-      const btnWidth = noBtn.offsetWidth || 110;
-      const parentWidth = parent.clientWidth || 260;
-      const current = parseFloat(noBtn.dataset.shift || '0');
-      let next = current === 0 ? Math.max(28, parentWidth - btnWidth - 12) : 0;
-      noBtn.dataset.shift = String(next);
-      noBtn.style.transform = `translateX(${next}px)`;
+      const parentRect = parent.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = Math.max(80, parentRect.width - btnRect.width - 8);
+      const maxY = Math.max(22, parentRect.height - btnRect.height - 8);
+
+      const step = Number(noBtn.dataset.step || "0") + 1;
+      noBtn.dataset.step = String(step);
+
+      let nextX = (step * 137) % maxX;
+      let nextY = ((step * 59) % maxY) - maxY / 2;
+
+      // Nếu con trỏ đang ở gần nút Không, đẩy nút sang phía đối diện.
+      if (event && typeof event.clientX === "number") {
+        const centerX = btnRect.left + btnRect.width / 2;
+        const centerY = btnRect.top + btnRect.height / 2;
+        const dx = event.clientX - centerX;
+        const dy = event.clientY - centerY;
+        const distance = Math.hypot(dx, dy);
+        if (distance < 150) {
+          nextX = dx <= 0 ? maxX : 0;
+          nextY = Math.max(-maxY / 2, Math.min(maxY / 2, -dy * 0.45));
+        }
+      }
+
+      noBtn.style.setProperty("--no-x", `${nextX}px`);
+      noBtn.style.setProperty("--no-y", `${nextY}px`);
+      noBtn.style.transform = `translate(${nextX}px, ${nextY}px)`;
     };
+
+    const guardNoButton = (event) => {
+      const parent = noBtn?.parentElement;
+      if (!parent || !noBtn || noBtn.disabled) return;
+      const rect = noBtn.getBoundingClientRect();
+      const x = event.clientX;
+      const y = event.clientY;
+      const near = x >= rect.left - 70 && x <= rect.right + 70 && y >= rect.top - 70 && y <= rect.bottom + 70;
+      if (near) moveNoButton(event);
+    };
+
     yesBtn?.addEventListener('click', () => {
-      answer?.classList.remove('hidden');
       yesBtn.disabled = true;
       if (noBtn) noBtn.disabled = true;
-      quizBox?.classList.add('answered');
+      quizBox?.classList.add('opening-door');
+      setTimeout(() => {
+        answer?.classList.remove('hidden');
+        quizBox?.classList.add('answered');
+      }, 850);
     });
     ['click','pointerdown','mouseenter','touchstart','focus'].forEach(evt => {
-      noBtn?.addEventListener(evt, makeNoUnclickable);
+      noBtn?.addEventListener(evt, moveNoButton);
     });
+    quizBox?.addEventListener('pointermove', guardNoButton);
   }
 
   const close = () => {
@@ -1013,7 +1052,9 @@ function maybeShowSpecialDeviceCelebration(force = false) {
     setTimeout(() => overlay.remove(), 280);
   };
   overlay.querySelector(".special-device-close")?.addEventListener("click", close);
-  setTimeout(close, 5200);
+  if (!config.quiz) {
+    setTimeout(close, 5200);
+  }
 }
 
 

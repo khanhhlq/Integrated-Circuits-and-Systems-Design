@@ -1733,3 +1733,88 @@ body.dark-mode .special-device-card p:last-child {
     flex-wrap: wrap;
   }
 }
+
+
+/* V21: smooth dodge button + glass door opening effect */
+.special-device-door-stage {
+  position: relative;
+  width: min(220px, 100%);
+  margin: 2px auto 12px;
+  perspective: 900px;
+  transform-style: preserve-3d;
+  border-radius: 20px;
+}
+
+.special-device-door-stage::after {
+  content: "";
+  position: absolute;
+  inset: 10% 15%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 229, 132, .75), rgba(255, 188, 77, .18) 48%, transparent 72%);
+  opacity: 0;
+  transform: scale(.55);
+  filter: blur(10px);
+  transition: opacity .85s ease, transform 1s ease;
+  z-index: 0;
+}
+
+.special-device-door-image {
+  position: relative;
+  z-index: 2;
+  transform-origin: left center;
+  transition: transform 1.05s cubic-bezier(.2, .9, .2, 1), filter .8s ease, box-shadow .8s ease;
+  will-change: transform;
+}
+
+.special-device-sunrise {
+  position: absolute;
+  inset: 9% 16%;
+  z-index: 1;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 72%, rgba(255, 232, 132, .95) 0 14%, rgba(255, 193, 84, .55) 15% 30%, transparent 31%),
+    linear-gradient(180deg, rgba(125, 211, 252, .75), rgba(254, 243, 199, .9) 55%, rgba(251, 146, 60, .55));
+  opacity: 0;
+  transform: scale(.85);
+  transition: opacity .75s ease .25s, transform 1s ease .25s;
+}
+
+.special-device-quiz.opening-door .special-device-door-image,
+.special-device-quiz.answered .special-device-door-image {
+  transform: perspective(900px) rotateY(-68deg) translateX(-10px);
+  filter: brightness(1.12) saturate(1.08);
+  box-shadow: 22px 18px 45px rgba(15, 23, 42, .22);
+}
+
+.special-device-quiz.opening-door .special-device-sunrise,
+.special-device-quiz.answered .special-device-sunrise {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.special-device-quiz.opening-door .special-device-door-stage::after,
+.special-device-quiz.answered .special-device-door-stage::after {
+  opacity: 1;
+  transform: scale(1.35);
+}
+
+.special-device-quiz-actions {
+  overflow: visible;
+}
+
+.special-device-quiz-btn.no {
+  position: relative;
+  z-index: 3;
+  will-change: transform;
+  transition: transform .34s cubic-bezier(.2, .9, .2, 1), box-shadow .2s ease, opacity .2s ease;
+}
+
+.special-device-quiz-btn.no.wiggle {
+  animation: noBtnDodge .36s ease 1;
+}
+
+@keyframes noBtnDodge {
+  0%, 100% { filter: brightness(1); }
+  30% { filter: brightness(1.12); }
+  55% { filter: brightness(.96); }
+}
