@@ -60,6 +60,7 @@ const DEFAULT_DEVICE_MESSAGE = {
   effect: "congratulation"
 };
 let specialDeviceCelebrationShown = false;
+let specialPromptSessionUnlocked = false;
 let isAdmin = false;
 const DEFAULT_CORRECT = {};
 let savedCorrections = {};
@@ -875,6 +876,7 @@ function resetCurrentAnswerEdit() {
 
 /* ===== License / Admin functions ===== */
 function initLicenseAndAdmin() {
+  specialPromptSessionUnlocked = false;
   updateDeviceCodeUI();
   restoreAdminSession();
   updateAdminUI();
@@ -945,28 +947,11 @@ function isSpecialPromptDevice() {
 
 function isSpecialPromptUnlocked() {
   if (!isSpecialPromptDevice()) return true;
-  try {
-    const config = SPECIAL_DEVICE_MESSAGES[getDeviceId()];
-    const saved = JSON.parse(localStorage.getItem(SPECIAL_PROMPT_UNLOCK_KEY) || "{}");
-    if (!(saved && saved.deviceId === getDeviceId() && saved.ok === true)) return false;
-    if (config?.unlockPrompt?.facebookUrl) {
-      return isValidFacebookUrl(saved.value || "");
-    }
-    return true;
-  } catch (_) {
-    return false;
-  }
+  return specialPromptSessionUnlocked === true;
 }
 
 function setSpecialPromptUnlocked(value = "") {
-  try {
-    localStorage.setItem(SPECIAL_PROMPT_UNLOCK_KEY, JSON.stringify({
-      deviceId: getDeviceId(),
-      ok: true,
-      value,
-      confirmedAt: new Date().toISOString()
-    }));
-  } catch (_) {}
+  specialPromptSessionUnlocked = true;
 }
 
 function normalizePotentialUrl(value) {
