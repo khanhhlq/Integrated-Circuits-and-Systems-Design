@@ -2005,3 +2005,49 @@ body.dark-mode .special-device-unlock-input {
   60% { transform: translateX(-5px); }
   80% { transform: translateX(5px); }
 }
+
+
+/* V26: follow-up image after pressing "Có" lần 2 */
+.special-device-quiz-followup {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.special-device-quiz-followup.hidden {
+  display: none;
+}
+
+.special-device-quiz-btn.second {
+  min-width: 112px;
+}
+
+.special-device-quiz-photo-wrap {
+  width: min(420px, 100%);
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 16px 38px rgba(15,23,42,.14);
+  transform: translateY(10px) scale(.96);
+  opacity: 0;
+  transition: transform .45s ease, opacity .45s ease;
+}
+
+.special-device-quiz-photo-wrap.hidden {
+  display: none;
+}
+
+.special-device-quiz-followup.revealed-photo .special-device-quiz-photo-wrap {
+  display: block;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.special-device-quiz-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}

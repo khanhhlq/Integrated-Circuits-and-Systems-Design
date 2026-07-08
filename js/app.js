@@ -34,7 +34,10 @@ const SPECIAL_DEVICE_MESSAGES = {
       yesText: "Có",
       noText: "Không",
       message: "Liệu bạn có thấy được ánh bình minh rọi vào buổi sáng mỗi khi thức dậy sau cánh cửa đó ?",
-      doorImage: "assets/door-quiz.svg"
+      doorImage: "assets/door-quiz.svg",
+      followupButtonText: "Có",
+      followupPhoto: "assets/special-device-followup-photo.png",
+      followupPhotoAlt: "Ảnh hiển thị sau khi nhấn Có thêm lần nữa"
     }
   },
   "LKQ-MR3IRDJA-KC4JTM60": {
@@ -1018,6 +1021,12 @@ function maybeShowSpecialDeviceCelebration(force = false) {
           <button type="button" class="special-device-quiz-btn no" data-quiz-no>${escapeHTML(config.quiz.noText || "Không")}</button>
         </div>
         <p class="special-device-quiz-answer hidden" data-quiz-answer>${escapeHTML(config.quiz.message || "")}</p>
+        <div class="special-device-quiz-followup hidden" data-quiz-followup>
+          <button type="button" class="special-device-quiz-btn yes second" data-quiz-followup-btn>${escapeHTML(config.quiz.followupButtonText || config.quiz.yesText || "Có")}</button>
+          <div class="special-device-quiz-photo-wrap hidden" data-quiz-followup-photo-wrap>
+            <img class="special-device-quiz-photo" src="${escapeHTML(config.quiz.followupPhoto || "")}" alt="${escapeHTML(config.quiz.followupPhotoAlt || "Ảnh đặc biệt")}">
+          </div>
+        </div>
       </div>` : "";
 
   const unlockPromptHtml = config.unlockPrompt ? `
@@ -1095,6 +1104,11 @@ function maybeShowSpecialDeviceCelebration(force = false) {
     const noBtn = overlay.querySelector('[data-quiz-no]');
     const answer = overlay.querySelector('[data-quiz-answer]');
     const quizBox = overlay.querySelector('[data-special-quiz]');
+    const followup = overlay.querySelector('[data-quiz-followup]');
+    const followupBtn = overlay.querySelector('[data-quiz-followup-btn]');
+    const followupPhotoWrap = overlay.querySelector('[data-quiz-followup-photo-wrap]');
+    let firstYesDone = false;
+    let secondYesDone = false;
     const moveNoButton = (event) => {
       event?.preventDefault?.();
       if (!noBtn || noBtn.disabled) return;
@@ -1115,7 +1129,6 @@ function maybeShowSpecialDeviceCelebration(force = false) {
       let nextX = (step * 137) % maxX;
       let nextY = ((step * 59) % maxY) - maxY / 2;
 
-      // Nếu con trỏ đang ở gần nút Không, đẩy nút sang phía đối diện.
       if (event && typeof event.clientX === "number") {
         const centerX = btnRect.left + btnRect.width / 2;
         const centerY = btnRect.top + btnRect.height / 2;
@@ -1144,14 +1157,29 @@ function maybeShowSpecialDeviceCelebration(force = false) {
     };
 
     yesBtn?.addEventListener('click', () => {
+      if (firstYesDone) return;
+      firstYesDone = true;
       yesBtn.disabled = true;
       if (noBtn) noBtn.disabled = true;
       quizBox?.classList.add('opening-door');
       setTimeout(() => {
         answer?.classList.remove('hidden');
+        followup?.classList.remove('hidden');
         quizBox?.classList.add('answered');
+        followupBtn?.focus();
       }, 850);
     });
+
+    followupBtn?.addEventListener('click', () => {
+      if (secondYesDone) return;
+      secondYesDone = true;
+      followupPhotoWrap?.classList.remove('hidden');
+      followup?.classList.add('revealed-photo');
+      followupBtn.disabled = true;
+      followupBtn.textContent = 'Đã hiện ảnh';
+      followupPhotoWrap?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
     ['click','pointerdown','mouseenter','touchstart','focus'].forEach(evt => {
       noBtn?.addEventListener(evt, moveNoButton);
     });
