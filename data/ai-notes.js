@@ -179,7 +179,7 @@ window.AI_NOTES = {
   "online1_17": "Đáp án B đúng vì: Z.\nNet không có nguồn điều khiển sẽ ở trạng thái trở kháng cao Z.\nZ biểu thị đường dây bị thả nổi, không bị kéo lên 1 hoặc kéo xuống 0.",
   "online1_20": "Đáp án C đúng vì: Tạo mạch từ đặc tả đã cho.\nSynthesis là quá trình chuyển đặc tả/mô tả HDL thành cấu trúc mạch phần cứng.\nNó khác với mô phỏng, vì mô phỏng chỉ kiểm tra hành vi còn tổng hợp tạo netlist logic.",
   "online1_21": "Đáp án D đúng vì ^A là reduction XOR của A=10011, có 3 bit 1 nên C=1.\nA[3:1] = 001, {2{C}} = 11 và B[2:0] = 110.\nNối lại được 00111110.",
-  "online1_22": "Đáp án C đúng vì ~B với B=1xxx sẽ có bit MSB bằng 0.\nA có bit MSB bằng 1, nên A == ~B chắc chắn sai ngay ở bit cao nhất.\nVì có một bit xác định khác nhau nên kết quả so sánh là 0, không phải X.",
+  "online1_22": "Đáp án C đúng vì ~B với B=4'b1xxx sẽ có bit MSB bằng 0.\nA=4'b1xxz có bit MSB bằng 1, nên A == ~B chắc chắn sai ngay ở bit cao nhất.\nTrong so sánh logic `==`, nếu đã có một bit xác định khác nhau thì kết quả là 0.\nVì vậy kết quả là 0, không phải X.",
   "online2_1": "Đáp án D đúng vì toán tử ** là lũy thừa.\nA=4'b011 tương đương 3 và B=4'b0011 cũng tương đương 3.\nDo đó A**B = 3^3 = 27.",
   "online2_3": "Đáp án B đúng vì 'h1234 là hằng thập lục phân không khai báo độ rộng.\nTrong Verilog, hằng số không khai báo size thường được xử lý theo độ rộng mặc định tối thiểu/word, thường là 32 bit theo đề.\nMỗi chữ số hex có 4 bit, nhưng do không ghi size nên đề chọn 32 bit.",
   "online2_4": "Đáp án C đúng vì cả data0, data1, data2, data3 đều nhận trực tiếp din tại cùng cạnh lên clock.\nKhông có chuỗi data1 <= data0, data2 <= data1 nên đây không phải thanh ghi dịch.\nKết quả là bốn D Flip-Flop song song cùng lấy mẫu một tín hiệu din.",

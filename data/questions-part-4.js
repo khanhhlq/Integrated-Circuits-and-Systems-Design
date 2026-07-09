@@ -1185,7 +1185,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 25",
-    "question": "Nếu A= 4 1xxz và B=4'b1xxx thì A===B sẽ trả về kết quả là?",
+    "question": "Nếu A=4'b1xxz và B=4'b1xxx thì A===B sẽ trả về kết quả là?",
     "options": [
       {
         "id": "A",

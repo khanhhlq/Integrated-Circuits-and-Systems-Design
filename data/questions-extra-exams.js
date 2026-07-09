@@ -1953,7 +1953,7 @@ window.QUESTION_BANK = (window.QUESTION_BANK || []).concat(
     "chapter": "KIỂM TRA ONLINE LẦN 1 - đã dịch tiếng Việt",
     "section": "Đề bổ sung",
     "question_no": "Câu 22",
-    "question": "Nếu A=4'b1xxx và B=4'b1xxx, biểu thức A == ~B trả về gì?",
+    "question": "Nếu A=4'b1xxz và B=4'b1xxx, biểu thức A == ~B trả về gì?",
     "options": [
       {
         "id": "A",

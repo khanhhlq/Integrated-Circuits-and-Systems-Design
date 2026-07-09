@@ -7478,7 +7478,7 @@ window.QUESTION_BANK = [
     "chapter": "CHƯƠNG 3: NGÔN NGỮ VERILOG",
     "section": "II. KIẾN THỨC VẬN DỤNG",
     "question_no": "Câu 25",
-    "question": "Nếu A= 4 1xxz và B=4'b1xxx thì A===B sẽ trả về kết quả là?",
+    "question": "Nếu A=4'b1xxz và B=4'b1xxx thì A===B sẽ trả về kết quả là?",
     "options": [
       {
         "id": "A",
@@ -16328,7 +16328,7 @@ window.QUESTION_BANK = [
     "chapter": "KIỂM TRA ONLINE LẦN 1 - đã dịch tiếng Việt",
     "section": "Đề bổ sung",
     "question_no": "Câu 22",
-    "question": "Nếu A=4'b1xxx và B=4'b1xxx, biểu thức A == ~B trả về gì?",
+    "question": "Nếu A=4'b1xxz và B=4'b1xxx, biểu thức A == ~B trả về gì?",
     "options": [
       {
         "id": "A",
@@ -16356,7 +16356,7 @@ window.QUESTION_BANK = [
     ],
     "type": "single",
     "id": "online1_22",
-    "aiNote": "Đáp án C đúng vì ~B với B=1xxx sẽ có bit MSB bằng 0.\nA có bit MSB bằng 1, nên A == ~B chắc chắn sai ngay ở bit cao nhất.\nVì có một bit xác định khác nhau nên kết quả so sánh là 0, không phải X."
+    "aiNote": "Đáp án C đúng vì ~B với B=4'b1xxx sẽ có bit MSB bằng 0.\nA=4'b1xxz có bit MSB bằng 1, nên A == ~B chắc chắn sai ngay ở bit cao nhất.\nTrong so sánh logic `==`, nếu đã có một bit xác định khác nhau thì kết quả là 0.\nVì vậy kết quả là 0, không phải X."
   },
   {
     "source": "KIỂM TRA ONLINE LẦN 2 - đã dịch tiếng Việt",
