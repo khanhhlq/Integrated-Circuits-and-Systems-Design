@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRIVATE Admin Key Generator - Lê Quốc Khánh</title>
+<style>body{font-family:system-ui,Segoe UI,sans-serif;background:#f4f7fb;color:#172033;margin:0;padding:24px}.box{max-width:880px;margin:auto;background:#fff;border:1px solid #dbe4f0;border-radius:18px;padding:22px;box-shadow:0 14px 40px rgba(15,23,42,.08)}label{display:grid;gap:8px;margin:14px 0;font-weight:700}input,textarea,select{font:inherit;padding:12px;border:1px solid #dbe4f0;border-radius:12px}textarea{min-height:110px}button{padding:12px 16px;border-radius:12px;border:0;background:#2563eb;color:#fff;font-weight:800;cursor:pointer}.note{background:#fff7ed;padding:12px;border-radius:12px;color:#9a3412;font-weight:700}</style></head>
+<body><div class="box">
+<h1>PRIVATE Admin Key Generator</h1>
+<p class="note">File này chứa PRIVATE KEY. Chỉ Lê Quốc Khánh giữ, không gửi cho học viên. Public website chỉ gửi 3 file index.html, style.css, script.js.</p>
+<label>Loại key<select id="role"><option value="user">User key 50k / 1 thiết bị</option><option value="admin">Admin key chỉnh đáp án</option></select></label>
+<label>Mã thiết bị<input id="deviceId" placeholder="Dán mã thiết bị khách gửi"></label>
+<button onclick="makeKey()">Tạo key</button>
+<label>Key tạo ra<textarea id="out" readonly></textarea></label>
+<p>Liên hệ Zalo hiển thị trên web public: <strong>0772998989</strong></p>
+</div>
+<script>
+const PRIVATE_KEY_N = BigInt("0xab4c9775518e19d7f56d6e38a8e6f9c529181ff464964689e46a6babc525daef59ac4039399c8c70dd213d3cc9c71323caf31d9a4d3c0fafbde074f72c09e9231621fc7436bcb6facc80b1265da5d8b955167f4f26ec68167858e06f7fbcb1c5abc1d27482576c6c7baf1e3f52cb225d298d22b9310a8c52011d54a4051f4fd587712b276732b45a95d61865dfd18162c4a81a4d715ed1e35f5ec73e2acff30eeb73ffeabb57db44ce80c1aa1e16427f46f92aa6ee8a82ce737fd0b6513dccbb0957baa6d66b3e2c1293b12bb887a66b6f1a817857c17c09cc15851d74c2b297683c31b527f94a612ed792025b4a878c9e29204647e55e662c8821ab68e1e533");
+const PRIVATE_KEY_D = BigInt("0x176359ba96ec03f34c7b28756bfa3d5802085d348d17478244419379dc6d12bb634ef565dacbd910ffe02df042cc7f7c7f953a117b421c122ea69ad1b49d95cb48965355bab3817834bbcd74238d254e08a40db5cce6b23f7f27035db5df199697a0db0f354ca26d1d66078735d2ae5a71f5e72bc9da5ad64778adb9c7494328f7242efba57a38a1c5e646733ab580eda18f8b57e527576facc6c3cdfaaf009b9d2c98097f8a192c09bc6e3ed7c8d8db8dd55d7ea4d38735aafaef23ca481a0e2862dc01bf42258d6fe9c2fb70762e968dc1d10a43e779b10ea2ea5e4dbd44161625532c24f25258c37ba8c7f2d44fb004b5d6d5ea9e1053674ffa39c59cd8c1");
+const RSA_KEY_BYTES = 256;
+const LICENSE_PRODUCT = "TKHTS-LKQ-24161276";
+function base64UrlToBytes(str) {
+  str = String(str || "").replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/");
+  while (str.length % 4) str += "=";
+  const bin = atob(str);
+  return Array.from(bin, ch => ch.charCodeAt(0));
+}
+
+function bytesToString(bytes) {
+  return new TextDecoder().decode(new Uint8Array(bytes));
+}
+
+function bytesToBigInt(bytes) {
+  let hex = bytes.map(b => b.toString(16).padStart(2, "0")).join("");
+  return BigInt("0x" + (hex || "0"));
+}
+
+function bigIntToBytes(num, len) {
+  let hex = num.toString(16);
+  if (hex.length % 2) hex = "0" + hex;
+  let bytes = hex.match(/.{1,2}/g)?.map(h => parseInt(h, 16)) || [];
+  if (len) {
+    while (bytes.length < len) bytes.unshift(0);
+    if (bytes.length > len) bytes = bytes.slice(bytes.length - len);
+  }
+  return bytes;
+}
+
+function modPow(base, exp, mod) {
+  let result = 1n;
+  base = base % mod;
+  while (exp > 0n) {
+    if (exp & 1n) result = (result * base) % mod;
+    exp >>= 1n;
+    base = (base * base) % mod;
+  }
+  return result;
+}
+
+function sha256Bytes(message) {
+  function rotr(n, x) { return (x >>> n) | (x << (32 - n)); }
+  const K = [
+    0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+    0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+    0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+    0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+    0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+    0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+    0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+    0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+  ];
+  const msg = Array.from(new TextEncoder().encode(message));
+  const bitLen = msg.length * 8;
+  msg.push(0x80);
+  while ((msg.length % 64) !== 56) msg.push(0);
+  const hi = Math.floor(bitLen / 0x100000000);
+  const lo = bitLen >>> 0;
+  [hi, lo].forEach(num => msg.push((num>>>24)&255, (num>>>16)&255, (num>>>8)&255, num&255));
+  let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  for (let i = 0; i < msg.length; i += 64) {
+    const W = new Array(64);
+    for (let t = 0; t < 16; t++) W[t] = ((msg[i+4*t]<<24)|(msg[i+4*t+1]<<16)|(msg[i+4*t+2]<<8)|msg[i+4*t+3]) >>> 0;
+    for (let t = 16; t < 64; t++) {
+      const s0 = rotr(7,W[t-15]) ^ rotr(18,W[t-15]) ^ (W[t-15]>>>3);
+      const s1 = rotr(17,W[t-2]) ^ rotr(19,W[t-2]) ^ (W[t-2]>>>10);
+      W[t] = (W[t-16] + s0 + W[t-7] + s1) >>> 0;
+    }
+    let [a,b,c,d,e,f,g,h] = H;
+    for (let t = 0; t < 64; t++) {
+      const S1 = rotr(6,e) ^ rotr(11,e) ^ rotr(25,e);
+      const ch = (e & f) ^ (~e & g);
+      const temp1 = (h + S1 + ch + K[t] + W[t]) >>> 0;
+      const S0 = rotr(2,a) ^ rotr(13,a) ^ rotr(22,a);
+      const maj = (a & b) ^ (a & c) ^ (b & c);
+      const temp2 = (S0 + maj) >>> 0;
+      h = g; g = f; f = e; e = (d + temp1) >>> 0; d = c; c = b; b = a; a = (temp1 + temp2) >>> 0;
+    }
+    H = H.map((v, idx) => (v + [a,b,c,d,e,f,g,h][idx]) >>> 0);
+  }
+  const out = [];
+  H.forEach(num => out.push((num>>>24)&255, (num>>>16)&255, (num>>>8)&255, num&255));
+  return out;
+}
+
+function expectedPkcs1Block(payloadText) {
+  const digestInfo = [0x30,0x31,0x30,0x0d,0x06,0x09,0x60,0x86,0x48,0x01,0x65,0x03,0x04,0x02,0x01,0x05,0x00,0x04,0x20];
+  const hash = sha256Bytes(payloadText);
+  const tail = digestInfo.concat(hash);
+  const psLen = RSA_KEY_BYTES - tail.length - 3;
+  return [0x00, 0x01].concat(new Array(psLen).fill(0xff), [0x00], tail);
+}
+
+function constantTimeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a[i] ^ b[i];
+  return diff === 0;
+}
+
+
+function bytesToBase64Url(bytes) {
+  let bin = String.fromCharCode(...bytes);
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+}
+function stringToBase64Url(str) { return bytesToBase64Url(Array.from(new TextEncoder().encode(str))); }
+function signPayloadB64(payloadB64) {
+  const block = expectedPkcs1Block(payloadB64);
+  const m = bytesToBigInt(block);
+  const sig = modPow(m, PRIVATE_KEY_D, PRIVATE_KEY_N);
+  return bytesToBase64Url(bigIntToBytes(sig, RSA_KEY_BYTES));
+}
+function makeKey() {
+  const role = document.getElementById('role').value;
+  const deviceId = document.getElementById('deviceId').value.trim();
+  if (!deviceId) return alert('Nhập mã thiết bị trước');
+  const payload = { product: LICENSE_PRODUCT, role, deviceId, owner: 'Le Quoc Khanh - 24161276', price: role === 'user' ? '50000 VND' : 'ADMIN', issuedAt: new Date().toISOString().slice(0,19) };
+  const payloadB64 = stringToBase64Url(JSON.stringify(payload));
+  const sigB64 = signPayloadB64(payloadB64);
+  document.getElementById('out').value = 'LKQ1.' + payloadB64 + '.' + sigB64;
+}
+</script></body></html>
